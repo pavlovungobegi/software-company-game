@@ -517,7 +517,7 @@
       display: none;
       z-index: 9999;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(4px);
       animation: slideDown 0.3s ease-out;
     }
     
@@ -4326,6 +4326,20 @@
     
     function generateCandidateForTier(tierIndex, role) {
       const tier = role === 'developer' ? DEVELOPER_TIERS[tierIndex] : MARKETER_TIERS[tierIndex];
+      const efficiency = generateRandomEfficiency(tier.efficiency);
+      
+      // Calculate salary based on absolute efficiency value
+      // Use the 1.0x efficiency tier as the base reference ($5,000 for devs, $4,000 for marketers)
+      const tiers = role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+      const baseReferenceSalary = currency === "USD" ? tiers[1].monthlySalaryUSD : tiers[1].monthlySalaryEUR; // Intermediate tier (1.0x)
+      
+      // Salary = Base Reference Salary × Actual Efficiency × ±10% random variation
+      const baseSalary = baseReferenceSalary * efficiency;
+      
+      // Add ±10% random variation to salary (total 20% range)
+      const salaryVariation = 0.90 + (Math.random() * 0.20); // 0.90 to 1.10
+      const finalSalary = Math.round(baseSalary * salaryVariation);
+      
       return {
         id: Math.random().toString(36).substr(2, 9), // Unique ID for this candidate
         name: generateEmployeeName(),
@@ -4333,8 +4347,8 @@
         tier: tierIndex,
         tierName: tier.name,
         skill: tier.skill,
-        efficiency: generateRandomEfficiency(tier.efficiency),
-        monthlySalary: currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR
+        efficiency: efficiency,
+        monthlySalary: finalSalary
       };
     }
     
@@ -4650,7 +4664,8 @@
       const currentTier = tiers[employee.tier];
       
       // Calculate efficiency based on experience
-      const baseEfficiency = currentTier.efficiency;
+      // Use employee's base efficiency (what they were hired at) as the starting point
+      const baseEfficiency = employee.baseEfficiency || currentTier.efficiency;
       const gainedEfficiency = employee.experienceMonths * EXPERIENCE_RATE;
       const newEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
       
@@ -4661,17 +4676,22 @@
       if (newEfficiency >= currentTier.efficiencyCap && employee.tier < tiers.length - 1) {
         // Promote to next tier
         const oldTierName = employee.tierName;
+        const oldSalary = employee.monthlySalary;
         employee.tier += 1;
         const newTier = tiers[employee.tier];
         
         employee.tierName = newTier.name;
         employee.skill = newTier.skill;
+        
+        // Reset to industry standard salary for new tier (regardless of efficiency-based hiring salary)
         employee.monthlySalary = currency === 'USD' ? newTier.monthlySalaryUSD : newTier.monthlySalaryEUR;
         employee.efficiency = newTier.efficiency; // Reset to new tier base
+        employee.baseEfficiency = newTier.efficiency; // Reset base efficiency for new tier
         employee.experienceMonths = 0; // Reset experience for new tier
         
-        // Log promotion
-        logEvent(`🎓 ${employee.name} promoted from ${oldTierName} to ${employee.tierName}!`);
+        // Log promotion with salary change
+        const salaryIncrease = employee.monthlySalary - oldSalary;
+        logEvent(`🎓 ${employee.name} promoted from ${oldTierName} to ${employee.tierName}! Salary: ${formatCurrency(oldSalary)} → ${formatCurrency(employee.monthlySalary)} (+${formatCurrency(salaryIncrease)})`);
         showNotification(`🎓 ${employee.name} promoted to ${employee.tierName}!`, 'success');
       }
     }
@@ -4815,8 +4835,9 @@
         const currentTier = tiers[emp.tier];
         const experienceMonths = emp.experienceMonths || 0;
         const gainedEfficiency = experienceMonths * EXPERIENCE_RATE;
-        const currentEfficiency = Math.min(currentTier.efficiency + gainedEfficiency, currentTier.efficiencyCap);
-        const progressToNextTier = (currentEfficiency - currentTier.efficiency) / (currentTier.efficiencyCap - currentTier.efficiency) * 100;
+        const baseEfficiency = emp.baseEfficiency || currentTier.efficiency;
+        const currentEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
+        const progressToNextTier = (currentEfficiency - baseEfficiency) / (currentTier.efficiencyCap - baseEfficiency) * 100;
         const isMaxTier = emp.tier >= tiers.length - 1 && currentEfficiency >= currentTier.efficiencyCap;
         
         let experienceBar = '';
@@ -5285,6 +5306,7 @@
       candidateToHire = { ...candidate, tierIndex };
       
       const modal = document.getElementById('hireConfirmModal');
+      
       document.getElementById('hireConfirmName').textContent = candidate.name;
       document.getElementById('hireConfirmRole').textContent = candidate.tierName;
       document.getElementById('hireConfirmEfficiency').textContent = `${candidate.efficiency}x`;
@@ -5324,6 +5346,7 @@
         tierName: candidate.tierName,
         skill: candidate.skill,
         efficiency: candidate.efficiency,
+        baseEfficiency: candidate.efficiency, // Store hired efficiency as baseline
         monthlySalary: candidate.monthlySalary,
         experienceMonths: 0 // Track work experience for progression
       };
@@ -5778,6 +5801,10 @@
           if (dev.experienceMonths === undefined) {
             dev.experienceMonths = 0;
           }
+          // Migration: Add baseEfficiency to old employees (use current efficiency as baseline)
+          if (dev.baseEfficiency === undefined) {
+            dev.baseEfficiency = dev.efficiency || DEVELOPER_TIERS[dev.tier].efficiency;
+          }
         });
         marketers.forEach(mkt => {
           if (!mkt.skill && mkt.tier !== undefined) {
@@ -5786,6 +5813,10 @@
           // Migration: Add experienceMonths to old employees
           if (mkt.experienceMonths === undefined) {
             mkt.experienceMonths = 0;
+          }
+          // Migration: Add baseEfficiency to old employees (use current efficiency as baseline)
+          if (mkt.baseEfficiency === undefined) {
+            mkt.baseEfficiency = mkt.efficiency || MARKETER_TIERS[mkt.tier].efficiency;
           }
         });
         
