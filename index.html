@@ -91,9 +91,115 @@
       animation: flash 0.5s infinite;
     }
     
+    .next-billing-info {
+      font-size: 0.75rem;
+      text-align: center;
+      margin-top: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      color: white;
+      font-weight: 600;
+    }
+    
+    .next-billing-info .cash-flow-positive {
+      color: #14d192;
+      font-weight: 700;
+    }
+    
+    .next-billing-info .cash-flow-negative {
+      color: #df7575;
+      font-weight: 700;
+    }
+    
     @keyframes flash {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.6; }
+    }
+    
+    /* Notification System */
+    .notification-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    
+    .notification {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-size: 0.95rem;
+      font-weight: 600;
+      min-width: 300px;
+      max-width: 500px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: slideDown 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
+      pointer-events: auto;
+    }
+    
+    .notification.success {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    .notification.warning {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+    
+    .notification.error {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .notification-icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .notification-text {
+      flex: 1;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+    }
+    
+    @media (max-width: 1024px) {
+      .notification {
+        min-width: 250px;
+        max-width: 90vw;
+        font-size: 0.85rem;
+        padding: 0.75rem 1rem;
+      }
+      
+      .notification-icon {
+        font-size: 1.25rem;
+      }
+      
+      .notification-container {
+        top: 10px;
+      }
     }
     
     .founder-badge {
@@ -254,6 +360,12 @@
         padding: 0.3rem 0.6rem;
       }
       
+      .next-billing-info {
+        font-size: 0.7rem;
+        padding: 0;
+        margin-top: 0;
+      }
+      
       .header-controls {
         padding: 0.3rem 0.75rem;
       }
@@ -296,8 +408,8 @@
       }
       
       /* Hide desktop event log on mobile (it becomes its own panel) */
-      body > div > .event-log {
-        display: none;
+      #desktopEventLogWrapper {
+        display: none !important;
       }
       
       /* Show event log panel on mobile */
@@ -794,7 +906,7 @@
     }
     
     .scrollable-list {
-      max-height: 52vh;
+      max-height: 58vh;
       overflow-y: auto;
       padding-right: 0.5rem;
     }
@@ -820,8 +932,8 @@
     .modal-intro {
       color: #6b7280;
       font-size: 0.8rem;
-      margin-bottom: 0.75rem;
-      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
       background: #f9fafb;
       border-radius: 6px;
       border-left: 3px solid #2563eb;
@@ -1342,6 +1454,9 @@
   </style>
 </head>
 <body>
+  <!-- Notification Container -->
+  <div class="notification-container" id="notificationContainer"></div>
+
   <!-- Header Wrapper - Contains both header bars -->
   <div class="header-wrapper">
     <!-- Header -->
@@ -1372,6 +1487,7 @@
       </div>
       <div class="header-right">
         <div class="cash-display green" id="cashDisplay">$0</div>
+        <div class="next-billing-info" id="nextBillingInfo"></div>
       </div>
     </div>
 
@@ -1483,7 +1599,7 @@
   </div>
 
   <!-- Event Log -->
-  <div style="max-width: 1800px; margin: 0 auto; padding: 0 1.5rem 1.5rem;">
+  <div id="desktopEventLogWrapper" style="max-width: 1800px; margin: 0 auto; padding: 0 1.5rem 1.5rem;">
     <div class="event-log">
       <div id="eventLog"></div>
     </div>
@@ -1509,7 +1625,7 @@
     <div class="modal">
       <div class="modal-header">🔬 Start R&D Project</div>
       <div class="modal-body">
-        <div class="modal-intro">R&D projects provide permanent upgrades and unlock new products. Complete prerequisites to unlock advanced projects.</div>
+        <div class="modal-intro">R&D projects provide permanent upgrades and unlock new products.</div>
         <div class="scrollable-list" id="rndProjectsList"></div>
       </div>
       <div class="modal-footer">
@@ -1538,7 +1654,6 @@
     <div class="modal">
       <div class="modal-header">👨‍💻 Hire Developer</div>
       <div class="modal-body">
-        <div class="modal-intro">Select a developer skill tier to hire. Higher skilled developers work faster but cost more.</div>
         <div class="scrollable-list" id="hireDeveloperList"></div>
       </div>
       <div class="modal-footer">
@@ -1552,7 +1667,6 @@
     <div class="modal">
       <div class="modal-header">📢 Hire Marketer</div>
       <div class="modal-body">
-        <div class="modal-intro">Higher skilled marketers attract more customers but cost more.</div>
         <div class="scrollable-list" id="hireMarketerList"></div>
       </div>
       <div class="modal-footer">
@@ -1668,6 +1782,46 @@
         <button class="btn" onclick="hideFireEmployeeModal()" style="flex: 1;">Cancel</button>
         <button class="btn" onclick="confirmFireEmployee()" style="flex: 1; background: #ef4444; border-color: #dc2626; color: white;">
           🔥 Confirm Fire
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hire Confirmation Modal -->
+  <div class="modal-overlay" id="hireConfirmModal">
+    <div class="modal">
+      <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+        ✅ Hire Employee
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div style="font-size: 1.1rem; font-weight: 600; color: #111827; margin-bottom: 1rem;" id="hireConfirmName">
+          Candidate Name
+        </div>
+        <div style="background: #f9fafb; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: left;">
+          <div style="display: grid; gap: 0.5rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">Role:</span>
+              <span style="font-weight: 600;" id="hireConfirmRole">Senior Developer</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">Efficiency:</span>
+              <span style="font-weight: 600;" id="hireConfirmEfficiency">2.2x</span>
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; margin: 0.5rem 0; padding-top: 0.5rem;"></div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #dc2626; font-weight: 600;">Monthly Salary:</span>
+              <span style="font-weight: 700; color: #dc2626;" id="hireConfirmSalary">$7,000/month</span>
+            </div>
+          </div>
+        </div>
+        <div style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+          💡 This candidate will be removed from the pool once hired.
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
+        <button class="btn" onclick="hideHireConfirmModal()" style="flex: 1;">Cancel</button>
+        <button class="btn" onclick="confirmHireCandidate()" style="flex: 1; background: #10b981; border-color: #059669; color: white;">
+          ✅ Confirm Hire
         </button>
       </div>
     </div>
@@ -1879,6 +2033,12 @@
     let currentOfficeTier = 0; // Home Office (no rent)
     
     let nextProductId = 1;
+    
+    // Candidate pools - refreshed monthly
+    let developerCandidates = {}; // { tierIndex: [candidate1, candidate2, candidate3, candidate4] }
+    let marketerCandidates = {}; // { tierIndex: [candidate1, candidate2, candidate3, candidate4] }
+    let lastCandidateRefresh = 0; // Track which month we last refreshed
+    let candidateToHire = null; // Temporary storage for confirmation modal
 
     // ============================================
     // PRODUCT TEMPLATES (15 products)
@@ -2251,11 +2411,15 @@
     // ============================================
     // EMPLOYEE & OFFICE TIERS (Phase 3)
     // ============================================
+    // Employee progression: 100 months of work = 1.0x efficiency gain
+    const EXPERIENCE_RATE = 0.01; // Efficiency gain per month of work
+    
     const DEVELOPER_TIERS = [
       {
         name: "Junior Developer",
         skill: "junior",
         efficiency: 0.5,
+        efficiencyCap: 1.0, // Promotes to Intermediate at 1.0x
         monthlySalaryUSD: 3000,
         monthlySalaryEUR: 2700
       },
@@ -2263,6 +2427,7 @@
         name: "Intermediate Developer",
         skill: "intermediate",
         efficiency: 1.0,
+        efficiencyCap: 1.5, // Promotes to Senior at 1.5x
         monthlySalaryUSD: 5000,
         monthlySalaryEUR: 4500
       },
@@ -2270,6 +2435,7 @@
         name: "Senior Developer",
         skill: "senior",
         efficiency: 1.5,
+        efficiencyCap: 2.0, // Promotes to Lead at 2.0x
         monthlySalaryUSD: 7000,
         monthlySalaryEUR: 6300
       },
@@ -2277,6 +2443,7 @@
         name: "Lead Developer",
         skill: "lead",
         efficiency: 2.0,
+        efficiencyCap: 3.0, // Promotes to Expert at 3.0x
         monthlySalaryUSD: 9000,
         monthlySalaryEUR: 8100
       },
@@ -2284,6 +2451,7 @@
         name: "Expert Developer",
         skill: "expert",
         efficiency: 3.0,
+        efficiencyCap: 5.0, // Max efficiency, no further promotion
         monthlySalaryUSD: 12000,
         monthlySalaryEUR: 10800
       }
@@ -2294,6 +2462,7 @@
         name: "Junior Marketer",
         skill: "junior",
         efficiency: 0.5,
+        efficiencyCap: 1.0, // Promotes to Intermediate at 1.0x
         monthlySalaryUSD: 2500,
         monthlySalaryEUR: 2250
       },
@@ -2301,6 +2470,7 @@
         name: "Intermediate Marketer",
         skill: "intermediate",
         efficiency: 1.0,
+        efficiencyCap: 1.5, // Promotes to Senior at 1.5x
         monthlySalaryUSD: 4000,
         monthlySalaryEUR: 3600
       },
@@ -2308,6 +2478,7 @@
         name: "Senior Marketer",
         skill: "senior",
         efficiency: 1.5,
+        efficiencyCap: 2.0, // Promotes to Lead at 2.0x
         monthlySalaryUSD: 5500,
         monthlySalaryEUR: 4950
       },
@@ -2315,6 +2486,7 @@
         name: "Lead Marketer",
         skill: "lead",
         efficiency: 2.0,
+        efficiencyCap: 3.0, // Promotes to Expert at 3.0x
         monthlySalaryUSD: 7000,
         monthlySalaryEUR: 6300
       },
@@ -2322,6 +2494,7 @@
         name: "Expert Marketer",
         skill: "expert",
         efficiency: 3.0,
+        efficiencyCap: 5.0, // Max efficiency, no further promotion
         monthlySalaryUSD: 10000,
         monthlySalaryEUR: 9000
       }
@@ -2498,6 +2671,37 @@
       if (eventLog.length > 50) eventLog.pop(); // Keep last 50
       updateEventLog();
     }
+    
+    // ============================================
+    // NOTIFICATION SYSTEM
+    // ============================================
+    
+    function showNotification(message, type = 'success') {
+      const container = document.getElementById('notificationContainer');
+      
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      
+      // Set icon based on type
+      let icon = '✅';
+      if (type === 'success') icon = '✅';
+      if (type === 'warning') icon = '⚠️';
+      if (type === 'error') icon = '❌';
+      
+      notification.innerHTML = `
+        <span class="notification-icon">${icon}</span>
+        <span class="notification-text">${message}</span>
+      `;
+      
+      // Add to container
+      container.appendChild(notification);
+      
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
 
     function updateEventLog() {
       const container = document.getElementById('eventLog');
@@ -2528,6 +2732,16 @@
       } else {
         display.classList.add('green');
       }
+      
+      // Calculate and display next billing cash flow
+      const nextBillingInfo = document.getElementById('nextBillingInfo');
+      const cashFlow = calculateNetCashFlow();
+      const daysUntilBilling = currentDay === 0 ? 30 : (30 - (currentDay % 30));
+      
+      const flowClass = cashFlow >= 0 ? 'cash-flow-positive' : 'cash-flow-negative';
+      const flowSign = cashFlow >= 0 ? '+' : '';
+      
+      nextBillingInfo.innerHTML = `<span class="${flowClass}">${flowSign}${formatCurrency(cashFlow)}</span>`;
     }
 
     function updateDayDisplay() {
@@ -2911,15 +3125,19 @@
       if (project.effect.type === 'unlock_product') {
         unlockedProducts.push(project.effect.value);
         logEvent(`🎉 R&D Complete! Unlocked product: ${project.effect.value}`);
+        showNotification(`🔬 R&D Complete: ${project.name} - Unlocked ${project.effect.value}!`, 'success');
       } else if (project.effect.type === 'organic_growth') {
         const percentage = (project.effect.value * 100).toFixed(0);
         logEvent(`🎉 R&D Complete! Organic growth +${percentage}%`);
+        showNotification(`🔬 R&D Complete: ${project.name} - Organic growth +${percentage}%!`, 'success');
       } else if (project.effect.type === 'churn_reduction') {
         const percentage = (project.effect.value * 100).toFixed(0);
         logEvent(`🎉 R&D Complete! Churn reduction -${percentage}%`);
+        showNotification(`🔬 R&D Complete: ${project.name} - Churn reduction -${percentage}%!`, 'success');
       } else if (project.effect.type === 'employee_efficiency') {
         const percentage = (project.effect.value * 100).toFixed(0);
         logEvent(`🎉 R&D Complete! Employee efficiency +${percentage}%`);
+        showNotification(`🔬 R&D Complete: ${project.name} - Employee efficiency +${percentage}%!`, 'success');
       }
       
       // Remove from active projects
@@ -2933,16 +3151,50 @@
     
     function updateRndUI() {
       const container = document.getElementById('rndContainer');
+      const effects = getRndEffects();
+      
+      // Build bonus display section
+      let bonusHTML = '';
+      const hasAnyBonus = effects.organicGrowth > 0 || effects.churnReduction > 0 || effects.employeeEfficiency > 0;
+      
+      if (hasAnyBonus) {
+        bonusHTML += '<div class="finance-card" style="margin-bottom: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">';
+        bonusHTML += '<h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600;">🎯 Accumulated R&D Bonuses</h3>';
+        bonusHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem;">';
+        
+        if (effects.organicGrowth > 0) {
+          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
+          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">+' + (effects.organicGrowth * 100).toFixed(0) + '%</div>';
+          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">📈 Organic Growth</div>';
+          bonusHTML += '</div>';
+        }
+        
+        if (effects.churnReduction > 0) {
+          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
+          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">-' + (effects.churnReduction * 100).toFixed(0) + '%</div>';
+          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">🛡️ Churn Rate</div>';
+          bonusHTML += '</div>';
+        }
+        
+        if (effects.employeeEfficiency > 0) {
+          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
+          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">+' + (effects.employeeEfficiency * 100).toFixed(0) + '%</div>';
+          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">⚡ Employee Efficiency</div>';
+          bonusHTML += '</div>';
+        }
+        
+        bonusHTML += '</div>';
+        bonusHTML += '</div>';
+      }
       
       if (rndProjects.length === 0) {
-        container.innerHTML = '<div class="empty-state">No R&D projects yet. Start researching!</div>';
+        container.innerHTML = bonusHTML + '<div class="empty-state">No active R&D projects. Start researching!</div>';
         return;
       }
       
-      const effects = getRndEffects();
       const efficiencyMultiplier = 1 + effects.employeeEfficiency;
       
-      container.innerHTML = rndProjects.map(project => {
+      const projectsHTML = rndProjects.map(project => {
         const progress = (project.currentProgress / project.developmentEffort) * 100;
         const progressClamped = Math.min(progress, 100);
         
@@ -3001,7 +3253,7 @@
             if (id === 'founder') return founder.name + ' (Founder)';
             const developer = developers.find(d => d.id === id);
             if (developer) {
-              const skillLabel = developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1);
+              const skillLabel = developer.skill ? developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1) : developer.tierName;
               return developer.name + ' (' + skillLabel + ')';
             }
             return 'Developer #' + id;
@@ -3057,9 +3309,13 @@
         
         return html;
       }).join('');
+      
+      // Set container HTML with bonus section + projects
+      container.innerHTML = bonusHTML + projectsHTML;
     }
     
     function showNewRndModal() {
+      pauseGame(); // Auto-pause when opening modal
       const modal = document.getElementById('newRndModal');
       const list = document.getElementById('rndProjectsList');
       
@@ -3159,6 +3415,7 @@
     
     function hideNewRndModal() {
       document.getElementById('newRndModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
     }
     
     function handleCreateRndProject() {
@@ -3174,6 +3431,7 @@
     }
     
     function showAssignToRndModal(projectId) {
+      pauseGame(); // Auto-pause when opening modal
       const project = rndProjects.find(p => p.id === projectId);
       if (!project) return;
       
@@ -3235,6 +3493,7 @@
     
     function hideAssignToRndModal() {
       document.getElementById('assignToRndModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
     }
     
     function assignToRnd(projectId, developerId) {
@@ -3315,6 +3574,7 @@
       product.assignedDevelopers = [];
       
       logEvent(`🎉 "${product.name}" published and ready for customers!`);
+      showNotification(`🎉 ${product.name} published and ready for customers!`, 'success');
       updateProductsUI();
     }
     
@@ -3337,6 +3597,7 @@
             product.assignedMarketers = [];
             
             logEvent(`☠️ "${product.name}" is now deprecated (end of life)`);
+            showNotification(`☠️ ${product.name} is now deprecated (end of life)`, 'warning');
             updateProductsUI();
           }
         }
@@ -3393,6 +3654,7 @@
             const lastWarningDay = product.lastCapacityWarning || -999;
             if (currentDay > lastWarningDay) {
               logEvent(`⚠️ Server full! "${product.name}" cannot gain subscribers. Upgrade server!`);
+              showNotification(`⚠️ Server capacity full! Upgrade server to gain more subscribers.`, 'warning');
               product.lastCapacityWarning = currentDay;
             }
           }
@@ -3503,7 +3765,7 @@
               if (id === 'founder') return founder.name + ' (Founder)';
               const developer = developers.find(d => d.id === id);
               if (developer) {
-                const skillLabel = developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1);
+                const skillLabel = developer.skill ? developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1) : developer.tierName;
                 return developer.name + ' (' + skillLabel + ')';
               }
               return 'Developer #' + id;
@@ -3692,6 +3954,7 @@
     }
     
     function showNewProductModal() {
+      pauseGame(); // Auto-pause when opening modal
       const modal = document.getElementById('newProductModal');
       const list = document.getElementById('productTemplatesList');
       
@@ -3761,6 +4024,7 @@
     
     function hideNewProductModal() {
       document.getElementById('newProductModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
     }
     
     function handleCreateProduct() {
@@ -3830,6 +4094,9 @@
       
       // Phase 3: Customer acquisition (daily)
       updateCustomerAcquisition();
+      
+      // Update employee experience and check for promotions
+      updateEmployeeExperience();
       
       // Phase 3: Monthly billing (every 30 days)
       if (currentDay % 30 === 0) {
@@ -4000,10 +4267,12 @@
     }
     
     function downgradeServer() {
+      pauseGame(); // Auto-pause when opening modal
       if (!canDowngradeServer()) {
         const prevTier = SERVER_TIERS[currentServerTier - 1];
         const totalSubs = getTotalSubscribers();
         alert(`❌ Cannot downgrade!\n\nYou have ${totalSubs.toLocaleString()} subscribers but ${prevTier.name} only supports ${prevTier.maxSubscribers.toLocaleString()}.\n\nReduce subscriber count first (wait for churn or deprecate products).`);
+        startGame(); // Auto-resume after alert
         return;
       }
       
@@ -4023,6 +4292,7 @@
     
     function hideDowngradeServerModal() {
       document.getElementById('downgradeServerModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
     }
     
     function confirmDowngradeServer() {
@@ -4041,6 +4311,78 @@
       hideDowngradeServerModal();
       updateFinancesUI();
     }
+    
+    // ============================================
+    // CANDIDATE POOL SYSTEM
+    // ============================================
+    
+    function generateRandomEfficiency(baseEfficiency) {
+      // ±20% deviation (40% total range)
+      const minEfficiency = baseEfficiency * 0.8;
+      const maxEfficiency = baseEfficiency * 1.2;
+      const randomEfficiency = minEfficiency + Math.random() * (maxEfficiency - minEfficiency);
+      return Math.round(randomEfficiency * 100) / 100; // Round to 2 decimals
+    }
+    
+    function generateCandidateForTier(tierIndex, role) {
+      const tier = role === 'developer' ? DEVELOPER_TIERS[tierIndex] : MARKETER_TIERS[tierIndex];
+      return {
+        id: Math.random().toString(36).substr(2, 9), // Unique ID for this candidate
+        name: generateEmployeeName(),
+        role: role,
+        tier: tierIndex,
+        tierName: tier.name,
+        skill: tier.skill,
+        efficiency: generateRandomEfficiency(tier.efficiency),
+        monthlySalary: currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR
+      };
+    }
+    
+    function refreshCandidatePools() {
+      // Generate 4 candidates for each developer tier
+      developerCandidates = {};
+      for (let i = 0; i < DEVELOPER_TIERS.length; i++) {
+        developerCandidates[i] = [];
+        for (let j = 0; j < 4; j++) {
+          developerCandidates[i].push(generateCandidateForTier(i, 'developer'));
+        }
+      }
+      
+      // Generate 4 candidates for each marketer tier
+      marketerCandidates = {};
+      for (let i = 0; i < MARKETER_TIERS.length; i++) {
+        marketerCandidates[i] = [];
+        for (let j = 0; j < 4; j++) {
+          marketerCandidates[i].push(generateCandidateForTier(i, 'marketer'));
+        }
+      }
+      
+      lastCandidateRefresh = getCurrentMonth();
+      logEvent("📋 Candidate pools refreshed for this month");
+    }
+    
+    function getCurrentMonth() {
+      return Math.floor(currentDay / 30);
+    }
+    
+    function checkAndRefreshCandidates() {
+      const currentMonth = getCurrentMonth();
+      if (currentMonth > lastCandidateRefresh) {
+        refreshCandidatePools();
+      }
+    }
+    
+    function removeCandidateFromPool(candidateId, role, tierIndex) {
+      if (role === 'developer') {
+        developerCandidates[tierIndex] = developerCandidates[tierIndex].filter(c => c.id !== candidateId);
+      } else {
+        marketerCandidates[tierIndex] = marketerCandidates[tierIndex].filter(c => c.id !== candidateId);
+      }
+    }
+    
+    // ============================================
+    // HIRING EMPLOYEES
+    // ============================================
     
     function hireDeveloper(tierIndex) {
       if (!canHireMoreEmployees()) {
@@ -4146,10 +4488,12 @@
     }
     
     function downgradeOffice() {
+      pauseGame(); // Auto-pause when opening modal
       if (!canDowngradeOffice()) {
         const prevTier = OFFICE_TIERS[currentOfficeTier - 1];
         const teamSize = getCurrentTeamSize();
         alert(`❌ Cannot downgrade!\n\nYou have ${teamSize} people but ${prevTier.name} only fits ${prevTier.capacity}.\n\nFire employees first to reduce team size.`);
+        startGame(); // Auto-resume after alert
         return;
       }
       
@@ -4169,6 +4513,7 @@
     
     function hideDowngradeOfficeModal() {
       document.getElementById('downgradeOfficeModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
     }
     
     function confirmDowngradeOffice() {
@@ -4191,6 +4536,7 @@
     let employeeToFire = null;
     
     function fireEmployee(employeeId) {
+      pauseGame(); // Auto-pause when opening modal
       const employee = [...developers, ...marketers].find(e => e.id === employeeId);
       if (!employee) return;
       
@@ -4198,6 +4544,7 @@
       
       if (cash < severancePay) {
         alert(`❌ Cannot afford severance pay!\n\nFiring ${employee.name} requires ${formatCurrency(severancePay)} in severance.\n\nCurrent cash: ${formatCurrency(cash)}`);
+        startGame(); // Auto-resume after alert
         return;
       }
       
@@ -4217,6 +4564,7 @@
     function hideFireEmployeeModal() {
       document.getElementById('fireEmployeeModal').classList.remove('active');
       employeeToFire = null;
+      startGame(); // Auto-resume when closing modal
     }
     
     function confirmFireEmployee() {
@@ -4257,6 +4605,75 @@
       updateCashDisplay();
       updateEmployeesUI();
       updateProductsUI();
+    }
+    
+    // ============================================
+    // EMPLOYEE EXPERIENCE & PROGRESSION
+    // ============================================
+    
+    function updateEmployeeExperience() {
+      // Update experience for developers
+      developers.forEach(dev => {
+        // Check if developer is assigned to any work
+        const isWorking = products.some(p => 
+          (p.status === 'in_development' || p.status === 'published') && 
+          p.assignedDevelopers.includes(dev.id)
+        ) || rndProjects.some(p => p.assignedDevelopers.includes(dev.id));
+        
+        if (isWorking) {
+          dev.experienceMonths = (dev.experienceMonths || 0) + (1/30); // 1 day = 1/30 month
+          
+          // Check for promotion
+          checkEmployeePromotion(dev, 'developer');
+        }
+      });
+      
+      // Update experience for marketers
+      marketers.forEach(mkt => {
+        // Check if marketer is assigned to any work
+        const isWorking = products.some(p => 
+          p.status === 'published' && 
+          p.assignedMarketers.includes(mkt.id)
+        );
+        
+        if (isWorking) {
+          mkt.experienceMonths = (mkt.experienceMonths || 0) + (1/30); // 1 day = 1/30 month
+          
+          // Check for promotion
+          checkEmployeePromotion(mkt, 'marketer');
+        }
+      });
+    }
+    
+    function checkEmployeePromotion(employee, role) {
+      const tiers = role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+      const currentTier = tiers[employee.tier];
+      
+      // Calculate efficiency based on experience
+      const baseEfficiency = currentTier.efficiency;
+      const gainedEfficiency = employee.experienceMonths * EXPERIENCE_RATE;
+      const newEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
+      
+      // Update efficiency
+      employee.efficiency = newEfficiency;
+      
+      // Check if reached cap and can promote
+      if (newEfficiency >= currentTier.efficiencyCap && employee.tier < tiers.length - 1) {
+        // Promote to next tier
+        const oldTierName = employee.tierName;
+        employee.tier += 1;
+        const newTier = tiers[employee.tier];
+        
+        employee.tierName = newTier.name;
+        employee.skill = newTier.skill;
+        employee.monthlySalary = currency === 'USD' ? newTier.monthlySalaryUSD : newTier.monthlySalaryEUR;
+        employee.efficiency = newTier.efficiency; // Reset to new tier base
+        employee.experienceMonths = 0; // Reset experience for new tier
+        
+        // Log promotion
+        logEvent(`🎓 ${employee.name} promoted from ${oldTierName} to ${employee.tierName}!`);
+        showNotification(`🎓 ${employee.name} promoted to ${employee.tierName}!`, 'success');
+      }
     }
     
     function updateEmployeesUI() {
@@ -4369,13 +4786,60 @@
       
       employeeList.innerHTML = [...developers, ...marketers].map(emp => {
         // Find which product this employee is assigned to
-        const assignment = products.find(p => {
+        let assignment = null;
+        let assignmentType = '';
+        
+        // Check products
+        const productAssignment = products.find(p => {
           if (emp.role === 'developer') {
             return p.assignedDevelopers.includes(emp.id);
           } else {
             return p.assignedMarketers.includes(emp.id);
           }
         });
+        
+        if (productAssignment) {
+          assignment = productAssignment;
+          assignmentType = 'Product';
+        } else if (emp.role === 'developer') {
+          // Check R&D projects (only developers can work on R&D)
+          const rndAssignment = rndProjects.find(p => p.assignedDevelopers.includes(emp.id));
+          if (rndAssignment) {
+            assignment = rndAssignment;
+            assignmentType = 'R&D';
+          }
+        }
+        
+        // Calculate experience progress
+        const tiers = emp.role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+        const currentTier = tiers[emp.tier];
+        const experienceMonths = emp.experienceMonths || 0;
+        const gainedEfficiency = experienceMonths * EXPERIENCE_RATE;
+        const currentEfficiency = Math.min(currentTier.efficiency + gainedEfficiency, currentTier.efficiencyCap);
+        const progressToNextTier = (currentEfficiency - currentTier.efficiency) / (currentTier.efficiencyCap - currentTier.efficiency) * 100;
+        const isMaxTier = emp.tier >= tiers.length - 1 && currentEfficiency >= currentTier.efficiencyCap;
+        
+        let experienceBar = '';
+        if (!isMaxTier) {
+          const nextTierName = emp.tier < tiers.length - 1 ? tiers[emp.tier + 1].name : 'Max Level';
+          experienceBar = `
+            <div style="margin-top: 0.5rem;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.2rem;">
+                <span>📈 Progress to ${nextTierName}</span>
+                <span>${Math.round(progressToNextTier)}%</span>
+              </div>
+              <div style="background: #e5e7eb; border-radius: 4px; height: 6px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: ${progressToNextTier}%; transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+          `;
+        } else {
+          experienceBar = `
+            <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #10b981; text-align: center; font-weight: 600;">
+              ⭐ Maximum Level Reached
+            </div>
+          `;
+        }
         
         return `
           <div class="employee-card">
@@ -4396,13 +4860,14 @@
               </button>
             </div>
             <div class="employee-stats">
-              <div class="employee-stat">⚡ Efficiency: ${emp.efficiency}x</div>
+              <div class="employee-stat">⚡ Efficiency: ${currentEfficiency.toFixed(2)}x</div>
               <div class="employee-stat">💰 Salary: ${formatCurrency(emp.monthlySalary)}/mo</div>
             </div>
+            ${experienceBar}
             <div class="employee-assignment ${assignment ? 'assignment-active' : ''}">
               ${assignment ? 
-                `📌 Working on: ${assignment.name}` : 
-                '💤 Unassigned (assign to a product)'
+                `${assignmentType === 'R&D' ? '🔬' : '📌'} Working on: ${assignment.name}${assignmentType === 'R&D' ? ' (R&D)' : ''}` : 
+                '💤 Unassigned (assign to a product or R&D)'
               }
             </div>
           </div>
@@ -4580,12 +5045,14 @@
     }
     
     function showHireDeveloperModal() {
+      pauseGame(); // Auto-pause when opening modal
+      checkAndRefreshCandidates(); // Ensure candidates are generated for current month
+      
       const modal = document.getElementById('hireDeveloperModal');
       const list = document.getElementById('hireDeveloperList');
       
       list.innerHTML = DEVELOPER_TIERS.map((tier, index) => {
         const salary = currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR;
-        const canAfford = cash >= salary;
         const hasCapacity = canHireMoreEmployees();
         const unlockThreshold = EMPLOYEE_UNLOCK_THRESHOLDS[tier.skill];
         const isUnlocked = lifetimeEarnings >= unlockThreshold;
@@ -4610,20 +5077,26 @@
           `;
         }
         
+        const candidates = developerCandidates[index] || [];
+        const availableCount = candidates.length;
+        
         return `
           <button 
             class="hire-btn" 
-            onclick="hireDeveloper(${index}); hideHireDeveloperModal();"
-            ${!canAfford || !hasCapacity ? 'disabled' : ''}
+            onclick="showDeveloperCandidates(${index});"
+            ${!hasCapacity || availableCount === 0 ? 'disabled' : ''}
             style="width: 100%; margin-bottom: 0.5rem;"
           >
             <div class="hire-btn-info">
               <div class="hire-btn-title">
                 <span class="skill-badge skill-${tier.skill}">${tier.name}</span>
               </div>
-              <div class="hire-btn-stats">⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo</div>
+              <div class="hire-btn-stats">
+                ⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo
+                ${availableCount === 0 ? '<br><span style="color: #ef4444;">⚠️ No candidates available this month</span>' : `<br><span style="color: #10b981;">👥 ${availableCount} candidate${availableCount > 1 ? 's' : ''} available</span>`}
+              </div>
             </div>
-            <div class="hire-btn-cost">${formatCurrency(salary)}</div>
+            <div class="hire-btn-cost">${availableCount > 0 ? 'View' : 'Sold Out'}</div>
           </button>
         `;
       }).join('');
@@ -4633,15 +5106,67 @@
     
     function hideHireDeveloperModal() {
       document.getElementById('hireDeveloperModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
+    }
+    
+    function showDeveloperCandidates(tierIndex) {
+      const modal = document.getElementById('hireDeveloperModal');
+      const list = document.getElementById('hireDeveloperList');
+      const tier = DEVELOPER_TIERS[tierIndex];
+      const candidates = developerCandidates[tierIndex] || [];
+      
+      list.innerHTML = `
+        <div style="margin-bottom: 0.3rem;">
+          <button 
+            onclick="showHireDeveloperModal()" 
+            class="btn"
+            style="padding: 0.4rem 0.8rem; font-size: 0.9rem; margin-bottom: 0.5rem;"
+          >
+            ← Back to Tiers
+          </button>
+          <h3 style="color: #1f2937;">Available ${tier.name}s</h3>
+          <p style="color: #6b7280; font-size: 0.9rem;">
+            Select a candidate to review their details. Pool refreshes monthly.
+          </p>
+        </div>
+        ${candidates.map(candidate => {
+          const canAfford = cash >= candidate.monthlySalary;
+          const hasCapacity = canHireMoreEmployees();
+          
+          return `
+            <button 
+              class="hire-btn" 
+              onclick="showHireConfirmation('${candidate.id}', 'developer', ${tierIndex});"
+              ${!canAfford || !hasCapacity ? 'disabled' : ''}
+              style="width: 100%; margin-bottom: 0.5rem;"
+            >
+              <div class="hire-btn-info">
+                <div class="hire-btn-title">
+                  <strong>${candidate.name}</strong>
+                </div>
+                <div class="hire-btn-stats">
+                  ⚡ ${candidate.efficiency}x efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
+                  ${!canAfford ? '<br><span style="color: #ef4444;">⚠️ Cannot afford</span>' : ''}
+                  ${!hasCapacity ? '<br><span style="color: #ef4444;">⚠️ No office capacity</span>' : ''}
+                </div>
+              </div>
+              <div class="hire-btn-cost">${formatCurrency(candidate.monthlySalary)}</div>
+            </button>
+          `;
+        }).join('')}
+        ${candidates.length === 0 ? '<div class="empty-state">No candidates available this month. Wait for next month\'s pool refresh.</div>' : ''}
+      `;
     }
     
     function showHireMarketerModal() {
+      pauseGame(); // Auto-pause when opening modal
+      checkAndRefreshCandidates(); // Ensure candidates are generated for current month
+      
       const modal = document.getElementById('hireMarketerModal');
       const list = document.getElementById('hireMarketerList');
       
       list.innerHTML = MARKETER_TIERS.map((tier, index) => {
         const salary = currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR;
-        const canAfford = cash >= salary;
         const hasCapacity = canHireMoreEmployees();
         const unlockThreshold = EMPLOYEE_UNLOCK_THRESHOLDS[tier.skill];
         const isUnlocked = lifetimeEarnings >= unlockThreshold;
@@ -4666,20 +5191,26 @@
           `;
         }
         
+        const candidates = marketerCandidates[index] || [];
+        const availableCount = candidates.length;
+        
         return `
           <button 
             class="hire-btn" 
-            onclick="hireMarketer(${index}); hideHireMarketerModal();"
-            ${!canAfford || !hasCapacity ? 'disabled' : ''}
+            onclick="showMarketerCandidates(${index});"
+            ${!hasCapacity || availableCount === 0 ? 'disabled' : ''}
             style="width: 100%; margin-bottom: 0.5rem;"
           >
             <div class="hire-btn-info">
               <div class="hire-btn-title">
                 <span class="skill-badge skill-${tier.skill}">${tier.name}</span>
               </div>
-              <div class="hire-btn-stats">⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo</div>
+              <div class="hire-btn-stats">
+                ⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo
+                ${availableCount === 0 ? '<br><span style="color: #ef4444;">⚠️ No candidates available this month</span>' : `<br><span style="color: #10b981;">👥 ${availableCount} candidate${availableCount > 1 ? 's' : ''} available</span>`}
+              </div>
             </div>
-            <div class="hire-btn-cost">${formatCurrency(salary)}</div>
+            <div class="hire-btn-cost">${availableCount > 0 ? 'View' : 'Sold Out'}</div>
           </button>
         `;
       }).join('');
@@ -4689,6 +5220,136 @@
     
     function hideHireMarketerModal() {
       document.getElementById('hireMarketerModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
+    }
+    
+    function showMarketerCandidates(tierIndex) {
+      const modal = document.getElementById('hireMarketerModal');
+      const list = document.getElementById('hireMarketerList');
+      const tier = MARKETER_TIERS[tierIndex];
+      const candidates = marketerCandidates[tierIndex] || [];
+      
+      list.innerHTML = `
+        <div style="margin-bottom: 1rem;">
+          <button 
+            onclick="showHireMarketerModal()" 
+            class="btn"
+            style="padding: 0.4rem 0.8rem; font-size: 0.9rem; margin-bottom: 0.5rem;"
+          >
+            ← Back to Tiers
+          </button>
+          <h3 style="margin: 0.5rem 0; color: #1f2937;">Available ${tier.name}s</h3>
+          <p style="margin: 0.5rem 0; color: #6b7280; font-size: 0.9rem;">
+            Select a candidate to review their details. Pool refreshes monthly.
+          </p>
+        </div>
+        ${candidates.map(candidate => {
+          const canAfford = cash >= candidate.monthlySalary;
+          const hasCapacity = canHireMoreEmployees();
+          
+          return `
+            <button 
+              class="hire-btn" 
+              onclick="showHireConfirmation('${candidate.id}', 'marketer', ${tierIndex});"
+              ${!canAfford || !hasCapacity ? 'disabled' : ''}
+              style="width: 100%; margin-bottom: 0.5rem;"
+            >
+              <div class="hire-btn-info">
+                <div class="hire-btn-title">
+                  <strong>${candidate.name}</strong>
+                </div>
+                <div class="hire-btn-stats">
+                  ⚡ ${candidate.efficiency}x efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
+                  ${!canAfford ? '<br><span style="color: #ef4444;">⚠️ Cannot afford</span>' : ''}
+                  ${!hasCapacity ? '<br><span style="color: #ef4444;">⚠️ No office capacity</span>' : ''}
+                </div>
+              </div>
+              <div class="hire-btn-cost">${formatCurrency(candidate.monthlySalary)}</div>
+            </button>
+          `;
+        }).join('')}
+        ${candidates.length === 0 ? '<div class="empty-state">No candidates available this month. Wait for next month\'s pool refresh.</div>' : ''}
+      `;
+    }
+    
+    // ============================================
+    // HIRE CONFIRMATION MODAL
+    // ============================================
+    
+    function showHireConfirmation(candidateId, role, tierIndex) {
+      const candidates = role === 'developer' ? developerCandidates[tierIndex] : marketerCandidates[tierIndex];
+      const candidate = candidates.find(c => c.id === candidateId);
+      
+      if (!candidate) return;
+      
+      candidateToHire = { ...candidate, tierIndex };
+      
+      const modal = document.getElementById('hireConfirmModal');
+      document.getElementById('hireConfirmName').textContent = candidate.name;
+      document.getElementById('hireConfirmRole').textContent = candidate.tierName;
+      document.getElementById('hireConfirmEfficiency').textContent = `${candidate.efficiency}x`;
+      document.getElementById('hireConfirmSalary').textContent = `${formatCurrency(candidate.monthlySalary)}/month`;
+      
+      modal.classList.add('active');
+    }
+    
+    function hideHireConfirmModal() {
+      document.getElementById('hireConfirmModal').classList.remove('active');
+      candidateToHire = null;
+    }
+    
+    function confirmHireCandidate() {
+      if (!candidateToHire) return;
+      
+      const candidate = candidateToHire;
+      
+      if (!canHireMoreEmployees()) {
+        logEvent("❌ Office at capacity! Upgrade your office to hire more people.");
+        hideHireConfirmModal();
+        return;
+      }
+      
+      if (cash < candidate.monthlySalary) {
+        logEvent(`❌ Not enough cash to hire ${candidate.name}. Need ${formatCurrency(candidate.monthlySalary)}`);
+        hideHireConfirmModal();
+        return;
+      }
+      
+      // Create employee from candidate
+      const employee = {
+        id: nextEmployeeId++,
+        name: candidate.name,
+        role: candidate.role,
+        tier: candidate.tier,
+        tierName: candidate.tierName,
+        skill: candidate.skill,
+        efficiency: candidate.efficiency,
+        monthlySalary: candidate.monthlySalary,
+        experienceMonths: 0 // Track work experience for progression
+      };
+      
+      if (candidate.role === 'developer') {
+        developers.push(employee);
+        logEvent(`✅ Hired ${employee.name} (${employee.tierName}) at ${formatCurrency(employee.monthlySalary)}/mo (${employee.efficiency}x efficiency)`);
+      } else {
+        marketers.push(employee);
+        logEvent(`✅ Hired ${employee.name} (${employee.tierName}) at ${formatCurrency(employee.monthlySalary)}/mo (${employee.efficiency}x efficiency)`);
+      }
+      
+      // Remove candidate from pool
+      removeCandidateFromPool(candidate.id, candidate.role, candidate.tierIndex);
+      
+      hideHireConfirmModal();
+      
+      // Close hiring modal and refresh
+      if (candidate.role === 'developer') {
+        hideHireDeveloperModal();
+      } else {
+        hideHireMarketerModal();
+      }
+      
+      updateCashDisplay();
+      updateEmployeesUI();
     }
     
     // ============================================
@@ -4717,6 +5378,7 @@
     let currentAssignProductId = null;
     
     function showAssignDeveloperModal(productId) {
+      pauseGame(); // Auto-pause when opening modal
       currentAssignProductId = productId;
       const product = products.find(p => p.id === productId);
       if (!product) return;
@@ -4781,9 +5443,11 @@
     function hideAssignDeveloperModal() {
       document.getElementById('assignDeveloperModal').classList.remove('active');
       currentAssignProductId = null;
+      startGame(); // Auto-resume when closing modal
     }
     
     function showAssignMarketerModal(productId) {
+      pauseGame(); // Auto-pause when opening modal
       currentAssignProductId = productId;
       const product = products.find(p => p.id === productId);
       if (!product) return;
@@ -4847,6 +5511,7 @@
     function hideAssignMarketerModal() {
       document.getElementById('assignMarketerModal').classList.remove('active');
       currentAssignProductId = null;
+      startGame(); // Auto-resume when closing modal
     }
     
     function canAffordOfficeUpgrade() {
@@ -4859,6 +5524,9 @@
     function handleMonthlyBilling() {
       const month = Math.floor(currentDay / 30);
       logEvent(`📅 Month ${month} completed - Processing monthly billing...`);
+      
+      // Refresh candidate pools for new month
+      refreshCandidatePools();
       
       // ============================================
       // REVENUE COLLECTION
@@ -5039,6 +5707,11 @@
           // UI State
           expandedTeamSections: expandedTeamSections,
           
+          // Candidate Pools
+          developerCandidates: developerCandidates,
+          marketerCandidates: marketerCandidates,
+          lastCandidateRefresh: lastCandidateRefresh,
+          
           // Event log (keep last 50 events)
           eventLog: eventLog.slice(-50)
         }
@@ -5096,6 +5769,26 @@
         developers = save.gameState.developers || [];
         marketers = save.gameState.marketers || [];
         
+        // Migration: Add skill property to old employees if missing
+        developers.forEach(dev => {
+          if (!dev.skill && dev.tier !== undefined) {
+            dev.skill = DEVELOPER_TIERS[dev.tier].skill;
+          }
+          // Migration: Add experienceMonths to old employees
+          if (dev.experienceMonths === undefined) {
+            dev.experienceMonths = 0;
+          }
+        });
+        marketers.forEach(mkt => {
+          if (!mkt.skill && mkt.tier !== undefined) {
+            mkt.skill = MARKETER_TIERS[mkt.tier].skill;
+          }
+          // Migration: Add experienceMonths to old employees
+          if (mkt.experienceMonths === undefined) {
+            mkt.experienceMonths = 0;
+          }
+        });
+        
         // Restore R&D system
         rndProjects = save.gameState.rndProjects || [];
         completedRndProjects = save.gameState.completedRndProjects || [];
@@ -5108,6 +5801,16 @@
         
         // Restore UI state
         expandedTeamSections = save.gameState.expandedTeamSections || {};
+        
+        // Restore candidate pools
+        developerCandidates = save.gameState.developerCandidates || {};
+        marketerCandidates = save.gameState.marketerCandidates || {};
+        lastCandidateRefresh = save.gameState.lastCandidateRefresh || 0;
+        
+        // If no candidate pools exist, generate them
+        if (Object.keys(developerCandidates).length === 0) {
+          refreshCandidatePools();
+        }
         
         // Restore event log
         eventLog = save.gameState.eventLog || [];
@@ -5214,6 +5917,12 @@
       completedRndProjects = [];
       unlockedProducts = ['Task Manager']; // Only Task Manager unlocked at start
       nextRndProjectId = 1;
+      
+      // Initialize candidate pools
+      developerCandidates = {};
+      marketerCandidates = {};
+      lastCandidateRefresh = 0;
+      refreshCandidatePools();
       
       // Log start
       logEvent(`🎉 ${companyName} founded by ${founder.name}!`);
