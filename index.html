@@ -24,6 +24,25 @@
       padding-top: 130px;
     }
     
+    /* Pause Border Overlay */
+    .pause-border-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 9999;
+      border: 3px solid #fbbf24;
+      box-shadow: inset 0 0 0 2px rgba(251, 191, 36, 0.3);
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+    
+    .pause-border-overlay.active {
+      opacity: 1;
+    }
+    
     /* Header Wrapper - Fixed Container */
     .header-wrapper {
       position: fixed;
@@ -36,12 +55,12 @@
     
     /* Header */
     .header {
-      background: #2563eb;
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
       color: white;
-      padding: 1rem 2rem;
+      padding: 1rem 1.5rem 1.5rem;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
     }
     
     .header-controls {
@@ -55,65 +74,126 @@
     
     .header-left {
       display: flex;
-      align-items: center;
-      gap: 2rem;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .header-right {
+      text-align: right;
     }
     
     .company-name {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: bold;
     }
     
     .day-counter {
-      font-size: 1.2rem;
-      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: #bfdbfe;
     }
     
     .day-counter small {
-      font-size: 0.8rem;
-      opacity: 0.9;
+      font-size: inherit;
     }
     
     .cash-display {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: bold;
       font-family: 'Courier New', monospace;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.2);
+      color: white;
+      background: none;
+      padding: 0;
     }
     
-    .cash-display.green { background: #10b981; }
-    .cash-display.yellow { background: #f59e0b; }
-    .cash-display.red { background: #ef4444; }
+    .cash-display.green, 
+    .cash-display.yellow, 
+    .cash-display.red, 
     .cash-display.flashing-red { 
-      background: #ef4444;
-      animation: flash 0.5s infinite;
+      background: none;
+      color: white;
     }
     
     .next-billing-info {
-      font-size: 0.75rem;
-      text-align: center;
+      font-size: 0.875rem;
+      text-align: right;
       margin-top: 0.25rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      color: white;
+      padding: 0;
+      border-radius: 0;
+      color: #6ee7b7;
       font-weight: 600;
     }
     
     .next-billing-info .cash-flow-positive {
-      color: #14d192;
+      color: #6ee7b7;
       font-weight: 700;
     }
     
     .next-billing-info .cash-flow-negative {
-      color: #df7575;
+      color: #fca5a5;
       font-weight: 700;
     }
     
     @keyframes flash {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.6; }
+    }
+    
+    /* Filter Pills */
+    .filter-container {
+      background: white;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      margin: -1rem 1rem 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-pill {
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .filter-pill:not(.active) {
+      background: #f3f4f6;
+      color: #374151;
+    }
+    
+    .filter-pill:not(.active):hover {
+      background: #e5e7eb;
+    }
+    
+    /* Default active state - blue background with white text (for employee filters) */
+    .filter-pill.active {
+      background: #2563eb;
+      color: white;
+    }
+    
+    /* Product filter specific colors (override default blue) */
+    .filter-pill.active[data-filter="in_development"] {
+      background: #d97706;
+      color: white;
+    }
+    
+    .filter-pill.active[data-filter="published"],
+    .filter-pill.active[data-filter="live"] {
+      background: #059669;
+      color: white;
+    }
+    
+    .filter-pill.active[data-filter="deprecated"] {
+      background: #dc2626;
+      color: white;
     }
     
     /* Notification System */
@@ -235,14 +315,12 @@
     
     .speed-btn.active {
       background: rgba(255,255,255,0.4);
-      font-weight: bold;
     }
     
     /* Yellowish highlight for pause button when game is paused */
     #pauseBtn.active {
       background: #fef3c7;
       color: #78350f;
-      font-weight: bold;
     }
     
     #pauseBtn.active:hover {
@@ -332,6 +410,34 @@
       border-color: #2563eb;
     }
     
+    .mobile-nav-btn {
+      position: relative;
+    }
+    
+    .nav-notification-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 10px;
+      height: 10px;
+      background: #ef4444;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+      animation: pulse-notification 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-notification {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+      }
+    }
+    
     /* Mobile Styles */
     @media (max-width: 1024px) {
       body {
@@ -341,41 +447,71 @@
       
       /* Much smaller header on mobile */
       .header {
-        padding: 0.35rem 0.75rem;
+        padding: 0.75rem 1rem 1rem;
       }
       
       .header-left {
-        gap: 0.5rem;
-        flex-wrap: wrap;
+        gap: 0.15rem;
       }
       
       .company-name {
-        font-size: 0.85rem;
+        font-size: 1rem;
       }
       
       .day-counter {
         font-size: 0.75rem;
       }
       
-      .day-counter small {
-        font-size: 0.6rem;
-        display: block;
-      }
-      
-      .founder-badge {
-        font-size: 0.65rem;
-        padding: 0.15rem 0.4rem;
-      }
-      
       .cash-display {
-        font-size: 0.9rem;
-        padding: 0.3rem 0.6rem;
+        font-size: 1.25rem;
       }
       
       .next-billing-info {
+        font-size: 0.75rem;
+        margin-top: 0.15rem;
+      }
+      
+      /* Filter container on mobile */
+      .filter-container {
+        margin: -0.75rem 0.75rem 0.75rem;
+        padding: 0.5rem;
+      }
+      
+      .filter-pill {
         font-size: 0.7rem;
-        padding: 0;
-        margin-top: 0;
+        padding: 0.3rem 0.6rem;
+      }
+      
+      /* Product cards on mobile */
+      .product-card-header {
+        padding: 0.75rem;
+      }
+      
+      .product-name {
+        font-size: 0.9rem;
+      }
+      
+      .product-status {
+        font-size: 0.7rem;
+        padding: 0.1rem 0.4rem;
+      }
+      
+      .product-stats {
+        gap: 0.5rem;
+        font-size: 0.8rem;
+      }
+      
+      .product-stat-icon {
+        font-size: 0.9rem;
+      }
+      
+      .product-details {
+        padding: 0.75rem;
+      }
+      
+      .product-detail-row {
+        font-size: 0.8rem;
+        padding: 0.3rem 0;
       }
       
       .header-controls {
@@ -691,73 +827,159 @@
     
     /* Product Cards */
     .product-card {
-      border: 2px solid #e5e7eb;
-      border-radius: 6px;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      margin-bottom: 0.75rem;
+      background: white;
+      overflow: hidden;
     }
     
-    .product-card.in-development {
-      border-color: #9ca3af;
-      background: #fffbeb;
+    .product-card-header {
+      padding: 0.7rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
     
-    .product-card.published {
-      border-color: #10b981;
-      background: #f0fdf4;
-    }
-    
-    .product-card.deprecated {
-      border-color: #ef4444;
-      background: #fef2f2;
-      opacity: 0.7;
+    .product-card-header:hover {
+      background: #f9fafb;
     }
     
     .product-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.3rem;
+      gap: 0.5rem;
+    }
+    
+    .product-header-left {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .product-title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
     }
     
     .product-name {
-      font-weight: bold;
-      font-size: 0.9rem;
+      font-weight: 600;
+      font-size: 1rem;
       color: #111827;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .product-status {
-      padding: 0.15rem 0.5rem;
-      border-radius: 10px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      text-transform: uppercase;
+      padding: 0.125rem 0.5rem;
+      border-radius: 0.25rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      flex-shrink: 0;
     }
     
     .status-dev {
       background: #fef3c7;
       color: #92400e;
+      border: 1px solid #fde68a;
     }
     
     .status-published {
       background: #d1fae5;
       color: #065f46;
+      border: 1px solid #a7f3d0;
     }
     
     .status-deprecated {
       background: #fee2e2;
       color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    
+    .status-employee {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+    
+    .product-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+    }
+    
+    .product-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      color: #374151;
+    }
+    
+    .product-stat-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    
+    .product-stat-value {
+      font-weight: 500;
+    }
+    
+    .product-stat-label {
+      color: #6b7280;
+    }
+    
+    .product-expand-icon {
+      flex-shrink: 0;
+      color: #9ca3af;
+      font-size: 1.25rem;
+      line-height: 1;
+      transition: transform 0.3s ease-in-out;
+    }
+    
+    .product-details {
+      border-top: 1px solid #e5e7eb;
+      background: #f9fafb;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      padding: 0 1rem;
+      transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+    }
+    
+    .product-details.expanded {
+      max-height: 2000px;
+      opacity: 1;
+      padding: 1rem;
     }
     
     .product-info {
-      font-size: 0.75rem;
+      font-size: 0.875rem;
       color: #6b7280;
-      margin-bottom: 0.3rem;
-      line-height: 1.3;
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
     }
     
     .product-info strong {
-      color: #374151;
+      color: #111827;
+    }
+    
+    .product-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.375rem 0;
+      font-size: 0.875rem;
+    }
+    
+    .product-detail-label {
+      color: #6b7280;
+    }
+    
+    .product-detail-value {
+      font-weight: 500;
+      color: #111827;
     }
     
     .progress-bar {
@@ -965,7 +1187,7 @@
       border: 1px solid #d1d5db;
       border-radius: 6px;
       font-size: 0.7rem;
-      min-width: 75%;
+      min-width: 60%;
     }
     
     .assigned-person-name {
@@ -1796,6 +2018,9 @@
   </style>
 </head>
 <body>
+  <!-- Pause Border Indicator -->
+  <div class="pause-border-overlay" id="pauseBorderOverlay"></div>
+  
   <!-- Notification Container -->
   <div class="notification-container" id="notificationContainer"></div>
 
@@ -1806,25 +2031,7 @@
       <div class="header-left">
         <div class="company-name" id="companyNameDisplay">My Startup</div>
         <div class="day-counter">
-          Day <span id="dayCounter">0</span>
-          <small>(<span id="yearMonth">Year 0, Month 0</span>)</small>
-        </div>
-        <div class="founder-badge">
-          <span>👨‍💼 Lvl <span id="founderLevel">1</span> (<span id="founderXP">0</span> XP)</span>
-          <div class="founder-xp-tooltip">
-            <div><strong id="founderName">Founder</strong></div>
-            <div>Level <span id="tooltipLevel">1</span> - <span id="tooltipEfficiency">100</span>% Efficiency</div>
-            <div>XP: <span id="tooltipCurrentXP">0</span> / <span id="tooltipNextLevelXP">100</span></div>
-            <div class="xp-progress-bar">
-              <div class="xp-progress-fill" id="xpProgressBar" style="width: 0%"></div>
-            </div>
-            <div style="font-size: 0.75rem; margin-top: 0.25rem; color: #d1d5db;">
-              <span id="tooltipXPNeeded">100</span> XP to next level
-            </div>
-            <div style="font-size: 0.8rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #374151;">
-              <span id="tooltipCurrentAssignment">Not assigned</span>
-            </div>
-          </div>
+          Day <span id="dayCounter">0</span> • <span id="yearMonth">Year 0, Month 0</span>
         </div>
       </div>
       <div class="header-right">
@@ -1838,9 +2045,9 @@
     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
       <div class="speed-controls">
         <button class="speed-btn" id="pauseBtn" title="Pause game">⏸ Pause<span style="font-size: 0.7rem; opacity: 0.7;">(Space)</span></button>
-        <button class="speed-btn active" id="playBtn" title="Play game">▶ Play (1x)<span style="font-size: 0.7rem; opacity: 0.7;">(Space)</span></button>
+        <button class="speed-btn active" id="playBtn" title="Play game">▶ Play<span style="font-size: 0.7rem; opacity: 0.7;">(Space)</span></button>
         <button class="speed-btn" id="speed2xBtn" title="Play at 2x speed">2x</button>
-        <button class="speed-btn" id="speed5xBtn" title="Play at 5x speed">5x</button>
+        <!--<button class="speed-btn" id="speed5xBtn" title="Play at 5x speed">5x</button>-->
       </div>
       <div class="game-controls">
         <button class="game-ctrl-btn" id="saveBtn" title="Save game to browser storage">Save</button>
@@ -1857,9 +2064,28 @@
     <!-- Products Panel -->
     <div class="panel">
       <div class="panel-header">
-        <span>Products</span>
+        <span>Products (<span id="productCount">0</span>)</span>
         <button class="btn btn-success" id="newProductBtn">+ New Product</button>
       </div>
+      
+      <!-- Filter Pills -->
+      <div class="filter-container">
+        <div class="filter-pills">
+          <button class="filter-pill active all" data-filter="all" onclick="filterProducts('all')">
+            All (<span id="filterCountAll">0</span>)
+          </button>
+          <button class="filter-pill in-dev" data-filter="in_development" onclick="filterProducts('in_development')">
+            In Dev (<span id="filterCountDev">0</span>)
+          </button>
+          <button class="filter-pill live" data-filter="published" onclick="filterProducts('published')">
+            Live (<span id="filterCountLive">0</span>)
+          </button>
+          <button class="filter-pill deprecated" data-filter="deprecated" onclick="filterProducts('deprecated')">
+            Deprecated (<span id="filterCountDeprecated">0</span>)
+          </button>
+        </div>
+      </div>
+      
       <div id="productsContainer">
         <div class="empty-state">No products yet. Start building!</div>
       </div>
@@ -1895,6 +2121,25 @@
           </button>
         </div>
         
+        <!-- Employee Filter Pills -->
+        <div class="product-filter-pills" style="margin-bottom: 1rem;">
+          <button class="filter-pill active" data-filter="all" onclick="filterEmployees('all')">
+            All (<span id="employee-count-all">0</span>)
+          </button>
+          <button class="filter-pill" data-filter="developer" onclick="filterEmployees('developer')">
+            Developers (<span id="employee-count-developer">0</span>)
+          </button>
+          <button class="filter-pill" data-filter="marketer" onclick="filterEmployees('marketer')">
+            Marketers (<span id="employee-count-marketer">0</span>)
+          </button>
+          <button class="filter-pill" data-filter="unassigned" onclick="filterEmployees('unassigned')">
+            Unassigned (<span id="employee-count-unassigned">0</span>)
+          </button>
+          <button class="filter-pill" data-filter="promotion" onclick="filterEmployees('promotion')">
+            Ready for Promotion (<span id="employee-count-promotion">0</span>)
+          </button>
+        </div>
+        
         <!-- Employee List -->
         <div id="employeeList"></div>
       </div>
@@ -1919,19 +2164,19 @@
   <!-- Mobile Navigation (Bottom Tab Bar) -->
   <div class="mobile-nav">
     <div class="mobile-nav-buttons">
-      <button class="mobile-nav-btn active" onclick="scrollToPanel(0)">
+      <button class="mobile-nav-btn active" onclick="scrollToPanel(0)" id="nav-products">
         📦
       </button>
-      <button class="mobile-nav-btn" onclick="scrollToPanel(1)">
+      <button class="mobile-nav-btn" onclick="scrollToPanel(1)" id="nav-rnd">
         🔬
       </button>
-      <button class="mobile-nav-btn" onclick="scrollToPanel(2)">
+      <button class="mobile-nav-btn" onclick="scrollToPanel(2)" id="nav-team">
         👥
       </button>
-      <button class="mobile-nav-btn" onclick="scrollToPanel(3)">
+      <button class="mobile-nav-btn" onclick="scrollToPanel(3)" id="nav-finance">
         💰
       </button>
-      <button class="mobile-nav-btn" onclick="scrollToPanel(4)">
+      <button class="mobile-nav-btn" onclick="scrollToPanel(4)" id="nav-log">
         📋
       </button>
     </div>
@@ -1949,7 +2194,7 @@
     <div class="modal">
       <div class="modal-header">🔨 Create New Product</div>
       <div class="modal-body">
-        <div class="modal-intro">Products have different development time, lifetime, pricing, and server costs.</div>
+        <div class="modal-intro">Products have different development time, lifetime, and pricing.</div>
         <div class="scrollable-list" id="productTemplatesList"></div>
       </div>
       <div class="modal-footer">
@@ -2465,11 +2710,17 @@
     let tickTimer = null;
 
     let founder = {
+      id: 'founder',
       name: "Founder",
       efficiency: 1.0,
-      skillLevel: 1,
-      experiencePoints: 0,
-      assignedProduct: null
+      baseEfficiency: 1.0,
+      skill: "intermediate", // Founder starts as intermediate level
+      tierName: "Founder",
+      monthlySalary: 0, // Founder doesn't take a salary
+      experienceMonths: 0,
+      assignedProduct: null,
+      readyForPromotion: false,
+      efficiencyCap: 4.0 // 400% cap (same as expert employees)
     };
 
     let products = [];
@@ -2511,7 +2762,6 @@
         lifetimeMonths: 36,
         monthlyPriceUSD: 13,
         monthlyPriceEUR: 12,
-        serverCostPerUser: 0.075,
         description: "Simple to-do list app"
       },
       {
@@ -2520,7 +2770,6 @@
         lifetimeMonths: 48,
         monthlyPriceUSD: 20,
         monthlyPriceEUR: 19,
-        serverCostPerUser: 0.09,
         description: "Employee time logging"
       },
       {
@@ -2529,7 +2778,6 @@
         lifetimeMonths: 72,
         monthlyPriceUSD: 34,
         monthlyPriceEUR: 32,
-        serverCostPerUser: 0.15,
         description: "Basic CRM"
       },
       {
@@ -2538,7 +2786,6 @@
         lifetimeMonths: 72,
         monthlyPriceUSD: 41,
         monthlyPriceEUR: 39,
-        serverCostPerUser: 0.18,
         description: "Campaign management"
       },
       {
@@ -2547,7 +2794,6 @@
         lifetimeMonths: 60,
         monthlyPriceUSD: 55,
         monthlyPriceEUR: 51,
-        serverCostPerUser: 0.225,
         description: "Data viz tool"
       },
       {
@@ -2556,7 +2802,6 @@
         lifetimeMonths: 84,
         monthlyPriceUSD: 27,
         monthlyPriceEUR: 25,
-        serverCostPerUser: 0.12,
         description: "Billing & invoices"
       },
       {
@@ -2565,7 +2810,6 @@
         lifetimeMonths: 84,
         monthlyPriceUSD: 69,
         monthlyPriceEUR: 64,
-        serverCostPerUser: 0.3,
         description: "Full PM tool"
       },
       {
@@ -2574,7 +2818,6 @@
         lifetimeMonths: 96,
         monthlyPriceUSD: 83,
         monthlyPriceEUR: 77,
-        serverCostPerUser: 0.27,
         description: "Employee management"
       },
       {
@@ -2583,7 +2826,6 @@
         lifetimeMonths: 108,
         monthlyPriceUSD: 104,
         monthlyPriceEUR: 97,
-        serverCostPerUser: 0.45,
         description: "Online store builder"
       },
       {
@@ -2592,7 +2834,6 @@
         lifetimeMonths: 72,
         monthlyPriceUSD: 125,
         monthlyPriceEUR: 116,
-        serverCostPerUser: 0.525,
         description: "Remote meetings"
       },
       {
@@ -2601,7 +2842,6 @@
         lifetimeMonths: 48,
         monthlyPriceUSD: 139,
         monthlyPriceEUR: 130,
-        serverCostPerUser: 0.6,
         description: "Customer service bot"
       },
       {
@@ -2610,7 +2850,6 @@
         lifetimeMonths: 132,
         monthlyPriceUSD: 209,
         monthlyPriceEUR: 194,
-        serverCostPerUser: 0.75,
         description: "Enterprise resource planning"
       },
       {
@@ -2619,7 +2858,6 @@
         lifetimeMonths: 60,
         monthlyPriceUSD: 62,
         monthlyPriceEUR: 58,
-        serverCostPerUser: 0.24,
         description: "Post scheduling & analytics"
       },
       {
@@ -2628,7 +2866,6 @@
         lifetimeMonths: 72,
         monthlyPriceUSD: 34,
         monthlyPriceEUR: 32,
-        serverCostPerUser: 0.135,
         description: "Secure credential vault"
       },
       {
@@ -2637,7 +2874,6 @@
         lifetimeMonths: 48,
         monthlyPriceUSD: 25,
         monthlyPriceEUR: 22,
-        serverCostPerUser: 0.105,
         description: "Drag-and-drop forms"
       }
     ];
@@ -3280,54 +3516,9 @@
     }
 
     function updateFounderDisplay() {
-      const xp = Math.floor(founder.experiencePoints);
-      document.getElementById('founderLevel').textContent = founder.skillLevel;
-      document.getElementById('founderXP').textContent = xp;
-      
-      // Update tooltip
-      document.getElementById('founderName').textContent = founder.name;
-      document.getElementById('tooltipLevel').textContent = founder.skillLevel;
-      document.getElementById('tooltipEfficiency').textContent = Math.round(founder.efficiency * 100);
-      document.getElementById('tooltipCurrentXP').textContent = xp;
-      
-      // Calculate XP needed for next level
-      let nextLevelXP = 100;
-      if (founder.skillLevel === 1) nextLevelXP = 100;
-      else if (founder.skillLevel === 2) nextLevelXP = 250;
-      else if (founder.skillLevel === 3) nextLevelXP = 500;
-      else if (founder.skillLevel === 4) nextLevelXP = 1000;
-      else nextLevelXP = 1000; // Max level
-      
-      document.getElementById('tooltipNextLevelXP').textContent = nextLevelXP;
-      
-      // Update current assignment
-      const assignmentEl = document.getElementById('tooltipCurrentAssignment');
-      if (founder.assignedProduct) {
-        const product = products.find(p => p.id === founder.assignedProduct);
-        if (product) {
-          const isDeveloper = product.assignedDevelopers.includes('founder');
-          const isMarketer = product.assignedMarketers.includes('founder');
-          
-          if (isDeveloper) {
-            assignmentEl.textContent = `👨‍💻 Developing: ${product.name}`;
-          } else if (isMarketer) {
-            assignmentEl.textContent = `📢 Marketing: ${product.name}`;
-          } else {
-            assignmentEl.textContent = 'Not assigned';
-          }
-        } else {
-          assignmentEl.textContent = 'Not assigned';
-        }
-      } else {
-        assignmentEl.textContent = 'Not assigned';
-      }
-      
-      const xpNeeded = Math.max(0, nextLevelXP - xp);
-      document.getElementById('tooltipXPNeeded').textContent = xpNeeded;
-      
-      // Update progress bar
-      const progressPercent = founder.skillLevel >= 5 ? 100 : Math.min(100, (xp / nextLevelXP) * 100);
-      document.getElementById('xpProgressBar').style.width = progressPercent + '%';
+      // Founder is now displayed in the Team panel as a regular employee
+      // This function is kept for backward compatibility but does nothing
+      // All founder display is handled in updateEmployeesUI()
     }
 
     // ============================================
@@ -3358,7 +3549,6 @@
         subscribers: 0,
         churnRate: 0.05,
         marketingMultiplier: 1.0,
-        serverCostPerUser: template.serverCostPerUser,
         assignedDevelopers: [], // No auto-assignment
         assignedMarketers: []
       };
@@ -3505,7 +3695,6 @@
           if (product.assignedDevelopers.includes('founder')) {
             const contribution = (founder.efficiency / 30) * efficiencyMultiplier; // 1 month = 30 days
             dailyProgress += contribution;
-            founder.experiencePoints += contribution * 10; // 10 XP per man-month
           }
           
           // Employee developer contributions
@@ -3527,9 +3716,6 @@
           }
         }
       });
-      
-      // Check for founder level up
-      checkFounderLevelUp();
     }
     
     // ============================================
@@ -3623,7 +3809,6 @@
         if (project.assignedDevelopers.includes('founder')) {
           const contribution = (founder.efficiency / 30) * efficiencyMultiplier;
           dailyProgress += contribution;
-          founder.experiencePoints += contribution * 10; // 10 XP per man-month
         }
         
         // Employee developer contributions
@@ -3721,26 +3906,10 @@
       
       if (rndProjects.length === 0) {
         container.innerHTML = bonusHTML + '<div class="empty-state">No active R&D projects. Start researching!</div>';
-        // Clear expanded states when no R&D projects
-        Object.keys(expandedTeamSections).forEach(sectionId => {
-          if (sectionId.startsWith('rnd-')) {
-            delete expandedTeamSections[sectionId];
-          }
-        });
         return;
       }
       
-      // Clean up expanded states for R&D projects that no longer exist
-      const currentRndProjectIds = rndProjects.map(p => p.id);
-      Object.keys(expandedTeamSections).forEach(sectionId => {
-        // Only clean up R&D sections (format: 'rnd-X')
-        if (sectionId.startsWith('rnd-')) {
-          const projectId = parseInt(sectionId.split('-')[1]);
-          if (!currentRndProjectIds.includes(projectId)) {
-            delete expandedTeamSections[sectionId];
-          }
-        }
-      });
+      // Note: R&D project team sections are no longer collapsible, so no cleanup needed
       
       const efficiencyMultiplier = 1 + effects.employeeEfficiency;
       
@@ -3781,71 +3950,111 @@
           Math.ceil((project.developmentEffort - project.currentProgress) / (totalEfficiency / 30)) : 
           '∞';
         
+        // Main card container (matching product card structure but not collapsible)
         let html = '<div class="product-card">';
+        
+        // Header section (matching product card design)
+        html += '<div class="product-card-header">';
         html += '<div class="product-header">';
+        
+        // Left side: Name, status, and stats
+        html += '<div class="product-header-left">';
+        html += '<div class="product-title-row">';
         html += '<div class="product-name">🔬 ' + project.name + '</div>';
-        html += '<div class="product-status status-development">In Progress</div>';
+        html += '<div class="product-status status-dev">In Progress</div>';
         html += '</div>';
-        html += '<div class="product-info">' + project.description + '</div>';
-        html += '<div class="product-info">';
-        html += '<strong>' + effectText + '</strong>';
-        html += '</div>';
-        html += '<div class="progress-bar">';
-        html += '<div class="progress-fill" style="width: ' + progressClamped + '%">' + Math.round(progressClamped) + '%</div>';
-        html += '</div>';
-        html += '<div class="product-info">';
-        html += '<strong>Progress:</strong> ' + project.currentProgress.toFixed(2) + ' / ' + project.developmentEffort + ' man-months<br>';
         
-        // Show estimated completion or warning
-        if (project.assignedDevelopers.length > 0) {
-          html += '<strong>Est. completion:</strong> ' + (daysLeft === '∞' ? 'Never (no developers assigned!)' : '~' + daysLeft + ' days');
-        } else {
-          html += '<strong>⚠️ No developers assigned!</strong> Assign developers to start research.';
+        // Stats (progress % and estimated completion)
+        html += '<div class="product-stats">';
+        
+        html += '<div class="product-stat">';
+        html += '<span class="product-stat-icon">📈</span>';
+        html += '<span class="product-stat-value">' + Math.round(progressClamped) + '%</span>';
+        html += '</div>';
+        
+        html += '<div class="product-stat">';
+        html += '<span class="product-stat-icon">📅</span>';
+        html += '<span class="product-stat-label">~' + (daysLeft === '∞' ? '∞' : daysLeft + ' days') + '</span>';
+        html += '</div>';
+        
+        html += '</div>'; // Close stats
+        html += '</div>'; // Close header-left
+        
+        html += '</div>'; // Close header
+        html += '</div>'; // Close card-header
+        
+        // Details section (always expanded for R&D)
+        html += '<div class="product-details expanded">';
+        
+        // Description
+        html += '<div class="product-detail-row">';
+        html += '<span style="color: #6b7280; font-size: 0.875rem;">' + project.description + '</span>';
+        html += '</div>';
+        
+        // Effect text
+        html += '<div class="product-detail-row">';
+        html += '<span style="color: #1f2937; font-size: 0.875rem; font-weight: 600;">' + effectText + '</span>';
+        html += '</div>';
+        
+        // Progress bar in single line (matching product card design)
+        html += '<div style="display: flex; align-items: center; gap: 0.75rem; margin: 0.75rem 0;">';
+        
+        // Label
+        html += '<span style="font-size: 0.875rem; color: #374151; font-weight: 500; white-space: nowrap;">Progress</span>';
+        
+        // Progress bar with percentage inside
+        html += '<div style="flex: 1; position: relative; background: #e5e7eb; border-radius: 8px; height: 24px; overflow: hidden;">';
+        html += '<div style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: ' + progressClamped + '%; transition: width 0.3s ease;"></div>';
+        html += '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: ' + (progressClamped > 50 ? '#ffffff' : '#374151') + ';">';
+        html += Math.round(progressClamped) + '%';
+        html += '</div>';
+        html += '</div>';
+        
+        // Total man-months
+        html += '<span style="font-size: 0.875rem; color: #6b7280; white-space: nowrap;">' + project.developmentEffort + ' months</span>';
+        
+        html += '</div>';
+        
+        // Show warning if no developers assigned
+        if (project.assignedDevelopers.length === 0) {
+          html += '<div style="padding: 0.5rem; background: #fef3c7; border: 1px solid #fbbf24; border-radius: 6px; margin-bottom: 0.5rem; font-size: 0.875rem; color: #92400e;">';
+          html += '⚠️ No developers assigned! Assign developers to start research.';
+          html += '</div>';
         }
+        
+        // Development Team section (non-collapsible, matching product card design)
+        html += '<div style="margin-top: 0.75rem;">';
+        html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
+        html += '👥 Development Team (' + devCount + ')';
         html += '</div>';
         
-        // Assignment section - collapsible development team
-        const rndSectionId = 'rnd-' + project.id;
-        const isRndExpanded = expandedTeamSections[rndSectionId] === true;
-        
-        html += '<div style="margin-top: 0.5rem; padding: 0.4rem; background: #e5e5e5; border-radius: 4px;">';
-        html += '<div class="team-section-header" onclick="toggleTeamSection(\'' + rndSectionId + '\')">';
-        html += '<div class="team-section-title" style="color: #2563eb;">';
-        html += '<span>👨‍💻 Development Team</span>';
-        html += '<span class="team-count' + (devCount === 0 ? ' warning' : '') + '">(' + devCount + ')' + (devCount === 0 ? ' ⚠️' : '') + '</span>';
-        html += '</div>';
-        html += '<span class="team-toggle' + (isRndExpanded ? ' expanded' : '') + '" id="toggle-' + rndSectionId + '">▼</span>';
-        html += '</div>';
-        
-        html += '<div class="team-section-content' + (isRndExpanded ? ' expanded' : '') + '" id="' + rndSectionId + '">';
-        html += '<div style="display: flex; flex-direction: column; gap: 0.3rem; padding-top: 0.4rem;">';
+        html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
         
         // Show assigned developers
         project.assignedDevelopers.forEach(devId => {
           if (devId === 'founder') {
             html += '<div class="assigned-person-card">';
-            html += '<span class="person-role">👤 ' + founder.name + ' (Founder)</span>';
-            html += '<button class="unassign-btn" onclick="unassignFromRnd(' + project.id + ', \'founder\')">✕</button>';
+            html += '<span class="assigned-person-name">' + founder.name + ' <span class="person-role">(Founder)</span></span>';
+            html += '<button class="unassign-btn" onclick="unassignFromRnd(' + project.id + ', \'founder\')">✖</button>';
             html += '</div>';
           } else {
             const dev = developers.find(d => d.id === devId);
             if (dev) {
               const skillLabel = dev.skill.charAt(0).toUpperCase() + dev.skill.slice(1);
               html += '<div class="assigned-person-card">';
-              html += '<span class="person-role">' + dev.name + ' (' + skillLabel + ')</span>';
-              html += '<button class="unassign-btn" onclick="unassignFromRnd(' + project.id + ', ' + devId + ')">✕</button>';
+              html += '<span class="assigned-person-name">' + dev.name + ' <span class="person-role">(' + skillLabel + ')</span></span>';
+              html += '<button class="unassign-btn" onclick="unassignFromRnd(' + project.id + ', ' + devId + ')">✖</button>';
               html += '</div>';
             }
           }
         });
         
         // Add developer button
-        html += '<button class="add-person-btn" onclick="showAssignToRndModal(' + project.id + ')">➕ Assign Developer</button>';
+        html += '<button class="add-person-btn" onclick="showAssignToRndModal(' + project.id + ')">➕ Add Developer</button>';
         
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
-        html += '</div>';
+        html += '</div></div>'; // Close team cards and team section
+        html += '</div>'; // Close details section
+        html += '</div>'; // Close card
         
         return html;
       }).join('');
@@ -4226,33 +4435,6 @@
       });
     }
     
-    function checkFounderLevelUp() {
-      const xp = founder.experiencePoints;
-      let newLevel = founder.skillLevel;
-      let newEfficiency = founder.efficiency;
-      
-      if (xp >= 1000 && founder.skillLevel < 5) {
-        newLevel = 5;
-        newEfficiency = 1.5;
-      } else if (xp >= 500 && founder.skillLevel < 4) {
-        newLevel = 4;
-        newEfficiency = 1.3;
-      } else if (xp >= 250 && founder.skillLevel < 3) {
-        newLevel = 3;
-        newEfficiency = 1.2;
-      } else if (xp >= 100 && founder.skillLevel < 2) {
-        newLevel = 2;
-        newEfficiency = 1.1;
-      }
-      
-      if (newLevel > founder.skillLevel) {
-        founder.skillLevel = newLevel;
-        founder.efficiency = newEfficiency;
-        logEvent(`🌟 ${founder.name} leveled up to Level ${newLevel}! Efficiency: ${Math.round(newEfficiency * 100)}%`);
-        updateFounderDisplay();
-      }
-    }
-    
     function updateProductsUI() {
       const container = document.getElementById('productsContainer');
       
@@ -4279,24 +4461,22 @@
         return;
       }
       
-      // Clean up expanded states for products that no longer exist
-      const currentProductIds = visibleProducts.map(p => p.id);
-      Object.keys(expandedTeamSections).forEach(sectionId => {
-        // Only clean up product sections (dev- and mkt-), not R&D sections (rnd-)
-        if (sectionId.startsWith('dev-') || sectionId.startsWith('mkt-')) {
-          // Extract product ID from section ID (format: 'dev-1' or 'mkt-1')
-          const productId = parseInt(sectionId.split('-')[1]);
-          if (!currentProductIds.includes(productId)) {
-            delete expandedTeamSections[sectionId];
-          }
-        }
-      });
+      // Note: Product team sections (dev/mkt) are no longer collapsible, so no cleanup needed
+      // Only R&D project team sections use expandedTeamSections now
       
       container.innerHTML = visibleProducts.map(product => {
-        let html = '<div class="product-card ' + product.status + '">';
+        const isExpanded = expandedProductCards[product.id] === true;
         
-        // Header
+        // Main card container
+        let html = '<div class="product-card" data-status="' + product.status + '" data-id="' + product.id + '">';
+        
+        // Collapsible Header (always visible)
+        html += '<div class="product-card-header" onclick="toggleProductCard(' + product.id + ')">';
         html += '<div class="product-header">';
+        
+        // Left side: Name, status, and stats
+        html += '<div class="product-header-left">';
+        html += '<div class="product-title-row">';
         html += '<div class="product-name">' + product.name + '</div>';
         html += '<div class="product-status status-' + (product.status === 'in_development' ? 'dev' : product.status) + '">';
         html += product.status === 'in_development' ? 'In Development' : 
@@ -4304,70 +4484,140 @@
         html += '</div>';
         html += '</div>';
         
-        // In Development
+        // Stats based on status
+        html += '<div class="product-stats">';
+        
         if (product.status === 'in_development') {
           const progress = Math.min(100, (product.currentProgress / product.developmentEffort) * 100);
-          html += '<div class="progress-bar">';
-          html += '<div class="progress-fill" style="width: ' + progress + '%">' + Math.round(progress) + '%</div>';
-          html += '</div>';
-          html += '<div class="product-info">';
-          html += '<strong>Progress:</strong> ' + product.currentProgress.toFixed(2) + ' / ' + product.developmentEffort + ' man-months<br>';
           
-          // Show assigned developers
-          if (product.assignedDevelopers.length > 0) {
-            html += '<strong>Assigned:</strong> ';
-            const devNames = product.assignedDevelopers.map(id => {
-              if (id === 'founder') return founder.name + ' (Founder)';
-              const developer = developers.find(d => d.id === id);
-              if (developer) {
-                const skillLabel = developer.skill ? developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1) : developer.tierName;
-                return developer.name + ' (' + skillLabel + ')';
-              }
-              return 'Developer #' + id;
-            });
-            html += devNames.join(', ') + '<br>';
-            
-            // Calculate estimated completion with current team (including R&D efficiency bonus)
-            let totalEfficiency = 0;
-            if (product.assignedDevelopers.includes('founder')) {
-              totalEfficiency += founder.efficiency * efficiencyMultiplier;
-            }
-            // Add hired developers' efficiency
-            product.assignedDevelopers.forEach(devId => {
-              if (devId !== 'founder') {
-                const developer = developers.find(d => d.id === devId);
-                if (developer) {
-                  totalEfficiency += developer.efficiency * efficiencyMultiplier;
-                }
-              }
-            });
-            const daysLeft = totalEfficiency > 0 ? 
-              Math.ceil((product.developmentEffort - product.currentProgress) / (totalEfficiency / 30)) : 
-              '∞';
-            html += '<strong>Est. completion:</strong> ' + (daysLeft === '∞' ? 'Never (no developers assigned!)' : '~' + daysLeft + ' days');
-          } else {
-            html += '<strong>⚠️ No developers assigned!</strong> Assign developers to start building.';
-          }
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">📈</span>';
+          html += '<span class="product-stat-value">' + Math.round(progress) + '%</span>';
           html += '</div>';
           
-          // Assignment section - collapsible development team
+          // Number of assigned developers
           const devCount = product.assignedDevelopers.length;
-          const devSectionId = 'dev-' + product.id;
-          const isDevExpanded = expandedTeamSections[devSectionId] === true;
-          
-          html += '<div style="margin-top: 0.4rem; padding: 0.25rem; background: #e5e5e5; border-radius: 6px;">';
-          html += '<div class="team-section-header" onclick="toggleTeamSection(\'' + devSectionId + '\')">';
-          html += '<div class="team-section-title">';
-          html += '<span>👥 Development Team</span>';
-          html += '<span class="team-count' + (devCount === 0 ? ' warning' : '') + '">(' + devCount + ')' + (devCount === 0 ? ' ⚠️' : '') + '</span>';
-          html += '</div>';
-          html += '<span class="team-toggle' + (isDevExpanded ? ' expanded' : '') + '" id="toggle-' + devSectionId + '">▼</span>';
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">👥</span>';
+          html += '<span class="product-stat-value">' + devCount + '</span>';
           html += '</div>';
           
-          html += '<div class="team-section-content' + (isDevExpanded ? ' expanded' : '') + '" id="' + devSectionId + '">';
-          html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.4rem;">';
+          // Calculate estimated completion
+          let totalEfficiency = 0;
+          if (product.assignedDevelopers.includes('founder')) {
+            totalEfficiency += founder.efficiency * efficiencyMultiplier;
+          }
+          product.assignedDevelopers.forEach(devId => {
+            if (devId !== 'founder') {
+              const developer = developers.find(d => d.id === devId);
+              if (developer) {
+                totalEfficiency += developer.efficiency * efficiencyMultiplier;
+              }
+            }
+          });
+          const daysLeft = totalEfficiency > 0 ? 
+            Math.ceil((product.developmentEffort - product.currentProgress) / (totalEfficiency / 30)) : 
+            '∞';
           
-          // Show assigned developers only
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">📅</span>';
+          html += '<span class="product-stat-label">~' + (daysLeft === '∞' ? '∞' : daysLeft + ' days') + '</span>';
+          html += '</div>';
+        }
+        
+        if (product.status === 'published') {
+          const monthlyRevenue = product.subscribers * product.monthlyPrice;
+          
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">💰</span>';
+          html += '<span class="product-stat-value">' + formatCurrency(monthlyRevenue) + '</span>';
+          html += '<span class="product-stat-label">/mo</span>';
+          html += '</div>';
+          
+          // Number of assigned people (developers + marketers)
+          const totalAssignees = product.assignedDevelopers.length + product.assignedMarketers.length;
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">👥</span>';
+          html += '<span class="product-stat-value">' + totalAssignees + '</span>';
+          html += '</div>';
+          
+          const monthsLeft = Math.round(product.remainingLifetimeMonths);
+          const yearsLeft = Math.floor(monthsLeft / 12);
+          const remainingMonths = monthsLeft % 12;
+          let lifetimeText = '';
+          if (yearsLeft > 0) lifetimeText = yearsLeft + 'y';
+          if (remainingMonths > 0) {
+            if (lifetimeText) lifetimeText += ' ';
+            lifetimeText += remainingMonths + 'm';
+          }
+          
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">⏰</span>';
+          html += '<span class="product-stat-label">' + lifetimeText + '</span>';
+          html += '</div>';
+        }
+        
+        if (product.status === 'deprecated') {
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">👥</span>';
+          html += '<span class="product-stat-value">' + product.subscribers.toLocaleString() + '</span>';
+          html += '<span class="product-stat-label">subs</span>';
+          html += '</div>';
+          
+          const deprecatedRevenue = product.subscribers * product.monthlyPrice;
+          html += '<div class="product-stat">';
+          html += '<span class="product-stat-icon">💰</span>';
+          html += '<span class="product-stat-label">' + formatCurrency(deprecatedRevenue) + '/mo</span>';
+          html += '</div>';
+        }
+        
+        html += '</div>'; // Close stats
+        html += '</div>'; // Close header-left
+        
+        // Right side: Expand/collapse icon
+        html += '<div class="product-expand-icon" id="product-expand-icon-' + product.id + '" style="transform: rotate(' + (isExpanded ? '180deg' : '0deg') + ');">';
+        html += isExpanded ? '▲' : '▼';
+        html += '</div>';
+        
+        html += '</div>'; // Close header
+        html += '</div>'; // Close card-header
+        
+        // Details section (shown when expanded)
+        html += '<div class="product-details' + (isExpanded ? ' expanded' : '') + '" id="product-details-' + product.id + '">';
+        
+        // Additional details based on status
+        if (product.status === 'in_development') {
+          const progressPercent = Math.min(100, (product.currentProgress / product.developmentEffort) * 100);
+          
+          // Progress bar in single line
+          html += '<div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; margin-bottom: 0.75rem;">';
+          
+          // Label
+          html += '<span style="font-size: 0.875rem; color: #374151; font-weight: 500; white-space: nowrap;">Progress</span>';
+          
+          // Progress bar with percentage inside
+          html += '<div style="flex: 1; position: relative; background: #e5e7eb; border-radius: 8px; height: 24px; overflow: hidden;">';
+          html += '<div style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: ' + progressPercent + '%; transition: width 0.3s ease;"></div>';
+          html += '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: ' + (progressPercent > 50 ? '#ffffff' : '#374151') + ';">';
+          html += Math.round(progressPercent) + '%';
+          html += '</div>';
+          html += '</div>';
+          
+          // Total man-months
+          html += '<span style="font-size: 0.875rem; color: #6b7280; white-space: nowrap;">' + product.developmentEffort + ' months</span>';
+          
+          html += '</div>';
+          
+          // Development Team section (non-collapsible)
+          const devCount = product.assignedDevelopers.length;
+          
+          html += '<div style="margin-top: 0.75rem;">';
+          html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
+          html += '👥 Development Team (' + devCount + ')';
+          html += '</div>';
+          
+          html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
+          
           const founderAssigned = product.assignedDevelopers.includes('founder');
           if (founderAssigned) {
             html += '<div class="assigned-person-card">';
@@ -4376,7 +4626,6 @@
             html += '</div>';
           }
           
-          // Assigned developers
           product.assignedDevelopers.forEach(devId => {
             if (devId !== 'founder') {
               const dev = developers.find(d => d.id === devId);
@@ -4390,74 +4639,31 @@
             }
           });
           
-          // Add developer button
           html += '<button class="add-person-btn" onclick="showAssignDeveloperModal(' + product.id + ')">➕ Add Developer</button>';
-          
-          html += '</div>';
-          html += '</div>';
-          html += '</div>';
+          html += '</div></div>';
         }
         
-        // Published
         if (product.status === 'published') {
-          const monthlyRevenue = product.subscribers * product.monthlyPrice;
-          const monthlyServerCost = product.subscribers * product.serverCostPerUser;
-          const monthlyNetRevenue = monthlyRevenue - monthlyServerCost;
-          
-          // Lifetime indicator calculation
-          const monthsLeft = Math.round(product.remainingLifetimeMonths);
-          let lifetimeClass = 'lifetime-green';
-          if (monthsLeft < 6) lifetimeClass = 'lifetime-red';
-          else if (monthsLeft < 12) lifetimeClass = 'lifetime-orange';
-          else if (monthsLeft < 36) lifetimeClass = 'lifetime-yellow';
-          
-          const yearsLeft = Math.floor(monthsLeft / 12);
-          const remainingMonths = monthsLeft % 12;
-          let lifetimeText = '';
-          if (yearsLeft > 0) lifetimeText = yearsLeft + ' year' + (yearsLeft > 1 ? 's' : '');
-          if (remainingMonths > 0) {
-            if (lifetimeText) lifetimeText += ', ';
-            lifetimeText += remainingMonths + ' month' + (remainingMonths > 1 ? 's' : '');
-          }
-          
-          // Horizontal layout: info on left (75%), lifetime on right (25%)
-          html += '<div style="display: flex; gap: 0.5rem; align-items: flex-start;">';
-          
-          // Left side: Product info (75%)
-          html += '<div class="product-info" style="flex: 7; margin-bottom: 0;">';
-          html += '<strong>Subscribers:</strong> ' + product.subscribers + '<br>';
-          html += '<strong>Monthly Revenue:</strong> ' + formatCurrency(monthlyNetRevenue) + ' <span style="font-size: 0.85rem; color: #6b7280;">(net)</span><br>';
-          html += '<span style="color: #6b7280;">Revenue: ' + formatCurrency(monthlyRevenue) + ' - Server: ' + formatCurrency(monthlyServerCost) + '</span><br>';
-          html += '<strong>Price:</strong> ' + formatCurrency(product.monthlyPrice) + '/mo per customer';
+          html += '<div class="product-detail-row">';
+          html += '<span class="product-detail-label">Subscribers</span>';
+          html += '<span class="product-detail-value">' + product.subscribers.toLocaleString() + '</span>';
           html += '</div>';
           
-          // Right side: Lifetime indicator (25%)
-          html += '<div style="flex: 3; display: flex; justify-content: flex-end;">';
-          html += '<div class="lifetime-indicator ' + lifetimeClass + '" style="text-align: center; word-wrap: break-word;">';
-          html += '⏳ ' + lifetimeText + ' remaining';
-          html += '</div>';
+          html += '<div class="product-detail-row">';
+          html += '<span class="product-detail-label">Price per customer</span>';
+          html += '<span class="product-detail-value">' + formatCurrency(product.monthlyPrice) + '</span>';
           html += '</div>';
           
-          html += '</div>';
-          
-          // Marketer assignment - collapsible marketing team
+          // Marketing Team section (non-collapsible)
           const mktCount = product.assignedMarketers.length;
-          const mktSectionId = 'mkt-' + product.id;
-          const isMktExpanded = expandedTeamSections[mktSectionId] === true;
           
-          html += '<div style="margin-top: 0.4rem; padding: 0.25rem; background: #e5e5e5; border-radius: 6px;">';
-          html += '<div class="team-section-header" onclick="toggleTeamSection(\'' + mktSectionId + '\')">';
-          html += '<div class="team-section-title">';
-          html += '<span>📢 Marketing Team</span>';
-          html += '<span class="team-count' + (mktCount === 0 ? ' warning' : '') + '">(' + mktCount + ')' + (mktCount === 0 ? ' ⚠️' : '') + '</span>';
-          html += '</div>';
-          html += '<span class="team-toggle' + (isMktExpanded ? ' expanded' : '') + '" id="toggle-' + mktSectionId + '">▼</span>';
+          html += '<div style="margin-top: 0.75rem;">';
+          html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
+          html += '📢 Marketing Team (' + mktCount + ')';
           html += '</div>';
           
-          html += '<div class="team-section-content' + (isMktExpanded ? ' expanded' : '') + '" id="' + mktSectionId + '">';
-          html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem; padding-top: 0.4rem;">';
+          html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
           
-          // Show assigned marketers only
           const founderAssignedAsMarketer = product.assignedMarketers.includes('founder');
           if (founderAssignedAsMarketer) {
             html += '<div class="assigned-person-card">';
@@ -4466,7 +4672,6 @@
             html += '</div>';
           }
           
-          // Assigned marketers
           product.assignedMarketers.forEach(mktId => {
             if (mktId !== 'founder') {
               const mkt = marketers.find(m => m.id === mktId);
@@ -4480,32 +4685,173 @@
             }
           });
           
-          // Add marketer button
           html += '<button class="add-person-btn" onclick="showAssignMarketerModal(' + product.id + ')">➕ Add Marketer</button>';
-          
-          html += '</div>';
-          html += '</div>';
-          html += '</div>';
+          html += '</div></div>';
         }
         
-        // Deprecated
         if (product.status === 'deprecated') {
-          const deprecatedRevenue = product.subscribers * product.monthlyPrice;
-          const deprecatedServerCost = product.subscribers * product.serverCostPerUser;
-          const deprecatedNetRevenue = deprecatedRevenue - deprecatedServerCost;
-          
-          html += '<div class="product-info">';
-          html += '<strong>⚠️ END OF LIFE</strong><br>';
-          html += 'Remaining subscribers: ' + product.subscribers + ' (declining fast)<br>';
-          html += 'Revenue: ' + formatCurrency(deprecatedNetRevenue) + '/mo <span style="font-size: 0.85rem; color: #6b7280;">(net)</span>';
+          html += '<div class="product-detail-row">';
+          html += '<span class="product-detail-label">Decline Rate</span>';
+          html += '<span class="product-detail-value" style="color: #dc2626;">declining fast</span>';
           html += '</div>';
         }
         
-        html += '</div>';
+        html += '</div>'; // Close details
+        html += '</div>'; // Close card
         return html;
       }).join('');
       
       // No need to restore states - they're applied directly in HTML generation above
+      
+      // Update filter counts
+      updateFilterCounts();
+    }
+    
+    // Product filtering system
+    let currentProductFilter = 'all';
+    let expandedProductCards = {}; // Track which product cards are expanded
+    
+    let currentEmployeeFilter = 'all';
+    let expandedEmployeeCards = {}; // Track which employee cards are expanded
+    
+    function filterProducts(filter) {
+      currentProductFilter = filter;
+      
+      // Update active state on filter pills
+      document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.classList.remove('active');
+        if (pill.dataset.filter === filter) {
+          pill.classList.add('active');
+        }
+      });
+      
+      // Filter product cards
+      const allCards = document.querySelectorAll('.product-card');
+      allCards.forEach(card => {
+        const status = card.dataset.status;
+        if (filter === 'all') {
+          card.style.display = '';
+        } else {
+          card.style.display = status === filter ? '' : 'none';
+        }
+      });
+    }
+    
+    function toggleProductCard(productId) {
+      const details = document.getElementById('product-details-' + productId);
+      const icon = document.getElementById('product-expand-icon-' + productId);
+      
+      if (details && icon) {
+        const isExpanded = details.classList.contains('expanded');
+        
+        if (isExpanded) {
+          details.classList.remove('expanded');
+          icon.textContent = '▼';
+          icon.style.transform = 'rotate(0deg)';
+          expandedProductCards[productId] = false;
+        } else {
+          details.classList.add('expanded');
+          icon.textContent = '▲';
+          icon.style.transform = 'rotate(180deg)';
+          expandedProductCards[productId] = true;
+        }
+      }
+    }
+    
+    // Employee filtering system
+    function filterEmployees(filter) {
+      currentEmployeeFilter = filter;
+      
+      // Update active state on filter pills (only in employee panel)
+      const employeePanel = document.querySelector('#employeesContainer');
+      if (employeePanel) {
+        employeePanel.querySelectorAll('.filter-pill').forEach(pill => {
+          pill.classList.remove('active');
+          if (pill.dataset.filter === filter) {
+            pill.classList.add('active');
+          }
+        });
+      }
+      
+      // Re-render employees with filter
+      updateEmployeesUI();
+    }
+    
+    function toggleEmployeeCard(employeeId) {
+      const details = document.getElementById('employee-details-' + employeeId);
+      const icon = document.getElementById('employee-expand-icon-' + employeeId);
+      
+      if (details && icon) {
+        const isExpanded = details.classList.contains('expanded');
+        
+        if (isExpanded) {
+          details.classList.remove('expanded');
+          icon.textContent = '▼';
+          icon.style.transform = 'rotate(0deg)';
+          expandedEmployeeCards[employeeId] = false;
+        } else {
+          details.classList.add('expanded');
+          icon.textContent = '▲';
+          icon.style.transform = 'rotate(180deg)';
+          expandedEmployeeCards[employeeId] = true;
+        }
+      }
+    }
+    
+    function updateEmployeeFilterCounts() {
+      const allEmployees = [founder, ...developers, ...marketers];
+      
+      // Count unassigned employees
+      const unassignedCount = allEmployees.filter(emp => {
+        const empId = emp.id === founder.id || emp.name === founder.name ? founder.id : emp.id;
+        
+        // Check if assigned to any product
+        const isAssignedToProduct = products.some(p => 
+          p.assignedDevelopers.includes(empId) || p.assignedMarketers.includes(empId)
+        );
+        
+        // Check if assigned to any R&D project
+        const isAssignedToRnd = rndProjects.some(p => p.assignedDevelopers.includes(empId));
+        
+        return !isAssignedToProduct && !isAssignedToRnd;
+      }).length;
+      
+      // Count by filter (founder only shown in "All" filter)
+      const counts = {
+        all: allEmployees.length,
+        developer: developers.length, // Founder excluded from developer count
+        marketer: marketers.length,
+        unassigned: unassignedCount,
+        promotion: allEmployees.filter(e => e.readyForPromotion).length
+      };
+      
+      // Update count displays
+      Object.keys(counts).forEach(filter => {
+        const countEl = document.getElementById('employee-count-' + filter);
+        if (countEl) {
+          countEl.textContent = counts[filter];
+        }
+      });
+    }
+    
+    function updateFilterCounts() {
+      // Filter out products with 0 subscribers that are deprecated
+      const visibleProducts = products.filter(p => {
+        return !(p.status === 'deprecated' && p.subscribers === 0);
+      });
+      
+      const counts = {
+        all: visibleProducts.length,
+        'in_development': visibleProducts.filter(p => p.status === 'in_development').length,
+        'published': visibleProducts.filter(p => p.status === 'published').length,
+        'deprecated': visibleProducts.filter(p => p.status === 'deprecated').length
+      };
+      
+      document.getElementById('productCount').textContent = counts.all;
+      document.getElementById('filterCountAll').textContent = counts.all;
+      document.getElementById('filterCountDev').textContent = counts['in_development'];
+      document.getElementById('filterCountLive').textContent = counts['published'];
+      document.getElementById('filterCountDeprecated').textContent = counts['deprecated'];
     }
     
     function showNewProductModal() {
@@ -4565,7 +4911,6 @@
                 <div class="template-detail">📅 ${template.developmentEffort} months dev</div>
                 <div class="template-detail">⏳ ${lifeDisplay} life</div>
                 <div class="template-detail">💰 ${price}</div>
-                <div class="template-detail">🖥️ ${template.serverCostPerUser}/user</div>
               </div>
               <div class="template-description">${template.description}</div>
               ${statusNote}
@@ -4596,6 +4941,13 @@
       if (isPlaying) return;
       isPlaying = true;
       updateSpeedButtons();
+      
+      // Hide pause border
+      const pauseBorder = document.getElementById('pauseBorderOverlay');
+      if (pauseBorder) {
+        pauseBorder.classList.remove('active');
+      }
+      
       gameTick();
     }
 
@@ -4603,6 +4955,12 @@
       isPlaying = false;
       if (tickTimer) clearTimeout(tickTimer);
       updateSpeedButtons();
+      
+      // Show pause border
+      const pauseBorder = document.getElementById('pauseBorderOverlay');
+      if (pauseBorder) {
+        pauseBorder.classList.add('active');
+      }
     }
 
     function setGameSpeed(speed) {
@@ -4871,19 +5229,16 @@
     
     function calculateMonthlyIncome() {
       let totalRevenue = 0;
-      let totalServerCost = 0;
       
       products.forEach(product => {
         if (product.status === 'published' || product.status === 'deprecated') {
           totalRevenue += product.subscribers * product.monthlyPrice;
-          totalServerCost += product.subscribers * product.serverCostPerUser;
         }
       });
       
       return {
         grossRevenue: totalRevenue,
-        serverCost: totalServerCost,
-        netIncome: totalRevenue - totalServerCost
+        netIncome: totalRevenue
       };
     }
     
@@ -5568,6 +5923,24 @@
     // ============================================
     
     function updateEmployeeExperience() {
+      // Update experience for founder
+      const founderIsWorking = products.some(p => 
+        (p.status === 'in_development' || p.status === 'published') && 
+        p.assignedDevelopers.includes(founder.id)
+      ) || rndProjects.some(p => p.assignedDevelopers.includes(founder.id));
+      
+      if (founderIsWorking) {
+        founder.experienceMonths = (founder.experienceMonths || 0) + (1/30); // 1 day = 1/30 month
+        
+        // Update founder's efficiency (100% to 200% cap)
+        const baseEfficiency = founder.baseEfficiency || 1.0;
+        const gainedEfficiency = founder.experienceMonths * EXPERIENCE_RATE;
+        const newEfficiency = Math.min(baseEfficiency + gainedEfficiency, founder.efficiencyCap);
+        founder.efficiency = newEfficiency;
+        
+        // Founder never needs "promotion" - just keeps gaining efficiency until 200% cap
+      }
+      
       // Update experience for developers
       developers.forEach(dev => {
         // Check if developer is assigned to any work
@@ -5779,122 +6152,246 @@
       // Update employee list
       const employeeList = document.getElementById('employeeList');
       
-      if (developers.length === 0 && marketers.length === 0) {
-        employeeList.innerHTML = '<div class="empty-state">No employees yet. Hire your first team member!</div>';
-        return;
+      // Filter employees based on currentEmployeeFilter
+      let employeesToDisplay = [founder, ...developers, ...marketers];
+      
+      if (currentEmployeeFilter === 'developer') {
+        employeesToDisplay = developers; // Founder excluded from developer filter
+      } else if (currentEmployeeFilter === 'marketer') {
+        employeesToDisplay = marketers;
+      } else if (currentEmployeeFilter === 'unassigned') {
+        // Filter to show only unassigned employees
+        employeesToDisplay = employeesToDisplay.filter(emp => {
+          const empId = emp.id === founder.id || emp.name === founder.name ? founder.id : emp.id;
+          
+          // Check if assigned to any product
+          const isAssignedToProduct = products.some(p => 
+            p.assignedDevelopers.includes(empId) || p.assignedMarketers.includes(empId)
+          );
+          
+          // Check if assigned to any R&D project
+          const isAssignedToRnd = rndProjects.some(p => p.assignedDevelopers.includes(empId));
+          
+          return !isAssignedToProduct && !isAssignedToRnd;
+        });
+      } else if (currentEmployeeFilter === 'promotion') {
+        employeesToDisplay = employeesToDisplay.filter(e => e.readyForPromotion);
       }
       
-      employeeList.innerHTML = [...developers, ...marketers].map(emp => {
-        // Find which product this employee is assigned to
+      // Sort employees by efficiency (descending) - highest efficiency at the top
+      employeesToDisplay.sort((a, b) => {
+        // Calculate current efficiency for employee A
+        let efficiencyA;
+        if (a.id === founder.id || a.name === founder.name) {
+          // Founder
+          const gainedEfficiencyA = (founder.experienceMonths || 0) * EXPERIENCE_RATE;
+          efficiencyA = Math.min(founder.baseEfficiency + gainedEfficiencyA, founder.efficiencyCap);
+        } else {
+          // Regular employee
+          const tiersA = a.role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+          const currentTierA = tiersA[a.tier];
+          const gainedEfficiencyA = (a.experienceMonths || 0) * EXPERIENCE_RATE;
+          const baseEfficiencyA = a.baseEfficiency || currentTierA.efficiency;
+          efficiencyA = Math.min(baseEfficiencyA + gainedEfficiencyA, currentTierA.efficiencyCap);
+        }
+        
+        // Calculate current efficiency for employee B
+        let efficiencyB;
+        if (b.id === founder.id || b.name === founder.name) {
+          // Founder
+          const gainedEfficiencyB = (founder.experienceMonths || 0) * EXPERIENCE_RATE;
+          efficiencyB = Math.min(founder.baseEfficiency + gainedEfficiencyB, founder.efficiencyCap);
+        } else {
+          // Regular employee
+          const tiersB = b.role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+          const currentTierB = tiersB[b.tier];
+          const gainedEfficiencyB = (b.experienceMonths || 0) * EXPERIENCE_RATE;
+          const baseEfficiencyB = b.baseEfficiency || currentTierB.efficiency;
+          efficiencyB = Math.min(baseEfficiencyB + gainedEfficiencyB, currentTierB.efficiencyCap);
+        }
+        
+        // Sort descending (highest efficiency first)
+        return efficiencyB - efficiencyA;
+      });
+      
+      // Helper function to render an employee card (collapsible design)
+      function renderEmployeeCard(emp, isFounder = false) {
+        const empId = isFounder ? 'founder' : emp.id;
+        const isExpanded = expandedEmployeeCards[empId] === true;
+        
+        // Find assignment
         let assignment = null;
         let assignmentType = '';
         
-        // Check products
-        const productAssignment = products.find(p => {
-          if (emp.role === 'developer') {
-            return p.assignedDevelopers.includes(emp.id);
-          } else {
-            return p.assignedMarketers.includes(emp.id);
-          }
-        });
+        const productAssignment = products.find(p => 
+          p.assignedDevelopers.includes(empId) || p.assignedMarketers.includes(empId)
+        );
         
         if (productAssignment) {
           assignment = productAssignment;
           assignmentType = 'Product';
-        } else if (emp.role === 'developer') {
-          // Check R&D projects (only developers can work on R&D)
-          const rndAssignment = rndProjects.find(p => p.assignedDevelopers.includes(emp.id));
+        } else if (isFounder || emp.role === 'developer') {
+          // Check R&D assignment (founder and developers only, not marketers)
+          const rndAssignment = rndProjects.find(p => p.assignedDevelopers.includes(empId));
           if (rndAssignment) {
             assignment = rndAssignment;
             assignmentType = 'R&D';
           }
         }
         
-        // Calculate experience progress
-        const tiers = emp.role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
-        const currentTier = tiers[emp.tier];
-        const experienceMonths = emp.experienceMonths || 0;
-        const gainedEfficiency = experienceMonths * EXPERIENCE_RATE;
-        const baseEfficiency = emp.baseEfficiency || currentTier.efficiency;
-        const currentEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
-        const progressToNextTier = (currentEfficiency - baseEfficiency) / (currentTier.efficiencyCap - baseEfficiency) * 100;
-        const isMaxTier = emp.tier >= tiers.length - 1 && currentEfficiency >= currentTier.efficiencyCap;
+        // Calculate efficiency and progress
+        let currentEfficiency, progressPercent, nextTierName, isMaxLevel;
         
-        let experienceBar = '';
-        if (emp.readyForPromotion) {
-          // Show "Ready for Promotion" badge
-          experienceBar = `
-            <div>
-              <div style="color: #10b981; padding: 0.2rem; border-radius: 6px; text-align: center; font-size: 0.7rem;">
-                🎓 Ready for Promotion
-              </div>
-            </div>
-          `;
-        } else if (!isMaxTier) {
-          const nextTierName = emp.tier < tiers.length - 1 ? tiers[emp.tier + 1].name : 'Max Level';
-          experienceBar = `
-            <div>
-              <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.2rem;">
-                <span>📈 Progress to ${nextTierName}</span>
-                <span>${Math.round(progressToNextTier)}%</span>
-              </div>
-              <div style="background: #e5e7eb; border-radius: 4px; height: 6px; overflow: hidden;">
-                <div style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: ${progressToNextTier}%; transition: width 0.3s ease;"></div>
-              </div>
-            </div>
-          `;
+        if (isFounder) {
+          const experienceMonths = founder.experienceMonths || 0;
+          const gainedEfficiency = experienceMonths * EXPERIENCE_RATE;
+          currentEfficiency = Math.min(founder.baseEfficiency + gainedEfficiency, founder.efficiencyCap);
+          progressPercent = ((currentEfficiency - 1.0) / (founder.efficiencyCap - 1.0)) * 100;
+          nextTierName = '400% Efficiency';
+          isMaxLevel = currentEfficiency >= founder.efficiencyCap;
         } else {
-          experienceBar = `
-            <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #10b981; text-align: center; font-weight: 600;">
-              ⭐ Maximum Level Reached
-            </div>
-          `;
+          const tiers = emp.role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+          const currentTier = tiers[emp.tier];
+          const experienceMonths = emp.experienceMonths || 0;
+          const gainedEfficiency = experienceMonths * EXPERIENCE_RATE;
+          const baseEfficiency = emp.baseEfficiency || currentTier.efficiency;
+          currentEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
+          progressPercent = (currentEfficiency - baseEfficiency) / (currentTier.efficiencyCap - baseEfficiency) * 100;
+          nextTierName = emp.tier < tiers.length - 1 ? tiers[emp.tier + 1].name : 'Max Level';
+          isMaxLevel = emp.tier >= tiers.length - 1 && currentEfficiency >= currentTier.efficiencyCap;
         }
         
-        return `
-          <div class="employee-card">
-            <div class="employee-header">
-              <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                <span class="employee-name">${emp.name}</span>
-                <span class="employee-role role-${emp.role}">
-                  ${emp.role === 'developer' ? '👨‍💻' : '📢'} ${emp.tierName}
-                </span>
-              </div>
-              <div style="display: flex; gap: 0.3rem;">
-                ${emp.readyForPromotion ? `
-                  <button 
-                    class="btn" 
-                    onclick="showPromotionModal(${emp.id}, '${emp.role}')"
-                    style="padding: 0.2rem 0.4rem; font-size: 0.7rem; background: #10b981; border-color: #059669; color: white;"
-                    title="Promote employee"
-                  >
-                    🎓 Promote
-                  </button>
-                ` : ''}
-                <button 
-                  class="btn" 
-                  onclick="fireEmployee(${emp.id})"
-                  style="padding: 0.2rem 0.4rem; font-size: 0.7rem; background: #ef4444; border-color: #dc2626;"
-                  title="Fire employee (1 month severance)"
-                >
-                  🔥 Fire
-                </button>
-              </div>
-            </div>
-            <div class="employee-stats">
-              <div class="employee-stat">⚡ Efficiency: ${currentEfficiency.toFixed(2)}x</div>
-              <div class="employee-stat">💰 Salary: ${formatCurrency(emp.monthlySalary)}/mo</div>
-            </div>
-            ${experienceBar}
-            <div class="employee-assignment ${assignment ? 'assignment-active' : ''}">
-              ${assignment ? 
-                `${assignmentType === 'R&D' ? '🔬' : '📌'} Working on: ${assignment.name}${assignmentType === 'R&D' ? ' (R&D)' : ''}` : 
-                '💤 Unassigned (assign to a product or R&D)'
-              }
-            </div>
-          </div>
-        `;
+        const positionName = isFounder ? 'Founder' : emp.tierName;
+        const salary = isFounder ? 'No salary' : formatCurrency(emp.monthlySalary) + '/mo';
+        
+        // Card HTML (matching product card structure)
+        let html = '<div class="product-card employee-card-collapsible"';
+        if (isFounder) {
+          html += ' style="border: 2px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);"';
+        }
+        html += '>';
+        
+        // Header (always visible) - clickable to expand/collapse
+        html += '<div class="product-card-header" onclick="toggleEmployeeCard(\'' + empId + '\')">';
+        html += '<div class="product-header">';
+        
+        // Left side: Name, position, and stats
+        html += '<div class="product-header-left">';
+        html += '<div class="product-title-row">';
+        html += '<div class="product-name">' + (isFounder ? '👤 ' : '') + emp.name + '</div>';
+        html += '<div class="product-status status-employee">';
+        html += (isFounder ? '👨‍💻 ' : (emp.role === 'developer' ? '👨‍💻 ' : '📢 ')) + positionName;
+        html += '</div>';
+        html += '</div>';
+        
+        // Stats (salary and assignment status)
+        html += '<div class="product-stats">';
+        
+        html += '<div class="product-stat">';
+        html += '<span class="product-stat-icon">💰</span>';
+        html += '<span class="product-stat-label">' + salary + '</span>';
+        html += '</div>';
+        
+        html += '<div class="product-stat">';
+        html += '<span class="product-stat-icon">' + (assignment ? '✅' : '❌') + '</span>';
+        html += '<span class="product-stat-label">' + (assignment ? 'Assigned' : 'Unassigned') + '</span>';
+        html += '</div>';
+        
+        html += '</div>'; // Close stats
+        html += '</div>'; // Close header-left
+        
+        // Promotion indicator (exclamation mark)
+        if (emp.readyForPromotion) {
+          html += '<div style="display: flex; align-items: center;">';
+          html += '<div style="width: 28px; height: 28px; border-radius: 50%; background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: bold; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);">';
+          html += '!';
+          html += '</div>';
+          html += '</div>';
+        }
+        
+        // Right side: Expand/collapse icon
+        html += '<div class="product-expand-icon" id="employee-expand-icon-' + empId + '" style="transform: rotate(' + (isExpanded ? '180deg' : '0deg') + ');">';
+        html += isExpanded ? '▲' : '▼';
+        html += '</div>';
+        
+        html += '</div>'; // Close header
+        html += '</div>'; // Close card-header
+        
+        // Details section (shown when expanded)
+        html += '<div class="product-details' + (isExpanded ? ' expanded' : '') + '" id="employee-details-' + empId + '">';
+        
+        // Efficiency
+        html += '<div class="product-detail-row">';
+        html += '<span class="product-detail-label">⚡ Efficiency</span>';
+        html += '<span class="product-detail-value">' + (currentEfficiency * 100).toFixed(0) + '%</span>';
+        html += '</div>';
+        
+        // Progress bar
+        if (!isMaxLevel && !emp.readyForPromotion) {
+          html += '<div style="margin: 0.75rem 0;">';
+          html += '<div style="display: flex; justify-content: space-between; font-size: 0.875rem; color: #6b7280; margin-bottom: 0.5rem;">';
+          html += '<span>📈 Progress to ' + nextTierName + '</span>';
+          html += '<span>' + Math.round(progressPercent) + '%</span>';
+          html += '</div>';
+          html += '<div style="position: relative; background: #e5e7eb; border-radius: 8px; height: 24px; overflow: hidden;">';
+          html += '<div style="background: linear-gradient(90deg, ' + (isFounder ? '#f59e0b, #f97316' : '#3b82f6, #8b5cf6') + '); height: 100%; width: ' + progressPercent + '%; transition: width 0.3s ease;"></div>';
+          html += '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; color: ' + (progressPercent > 50 ? '#ffffff' : '#374151') + ';">';
+          html += Math.round(progressPercent) + '%';
+          html += '</div></div></div>';
+        } else if (emp.readyForPromotion) {
+          html += '<div style="color: #10b981; padding: 0.5rem; background: #d1fae5; border-radius: 6px; text-align: center; font-size: 0.875rem; margin: 0.75rem 0; font-weight: 600;">';
+          html += '🎓 Ready for Promotion';
+          html += '</div>';
+        } else if (isMaxLevel) {
+          html += '<div style="color: #10b981; padding: 0.5rem; background: #d1fae5; border-radius: 6px; text-align: center; font-size: 0.875rem; margin: 0.75rem 0; font-weight: 600;">';
+          html += '⭐ Maximum Level Reached';
+          html += '</div>';
+        }
+        
+        // Assignment info
+        html += '<div class="product-detail-row">';
+        html += '<span class="product-detail-label">📌 Assigned to</span>';
+        html += '<span class="product-detail-value">';
+        if (assignment) {
+          html += assignment.name + (assignmentType === 'R&D' ? ' (R&D)' : '');
+        } else {
+          html += '<span style="color: #9ca3af;">Not assigned</span>';
+        }
+        html += '</span>';
+        html += '</div>';
+        
+        // Action buttons
+        html += '<div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">';
+        if (emp.readyForPromotion) {
+          html += '<button class="btn" onclick="event.stopPropagation(); showPromotionModal(' + (isFounder ? "'founder'" : emp.id) + ', \'' + (isFounder ? 'developer' : emp.role) + '\')" style="flex: 1; background: #10b981; border-color: #059669; color: white; padding: 0.5rem;">🎓 Promote</button>';
+        }
+        if (!isFounder) {
+          html += '<button class="btn" onclick="event.stopPropagation(); fireEmployee(' + emp.id + ')" style="flex: 1; background: #ef4444; border-color: #dc2626; padding: 0.5rem;">🔥 Fire</button>';
+        }
+        html += '</div>';
+        
+        html += '</div>'; // Close details
+        html += '</div>'; // Close card
+        
+        return html;
+      }
+      
+      // Generate all employee cards
+      const employeesHTML = employeesToDisplay.map(emp => {
+        const isFounder = emp.id === founder.id || emp.name === founder.name;
+        return renderEmployeeCard(emp, isFounder);
       }).join('');
+      
+      // Set employee list HTML
+      if (employeeList) {
+        employeeList.innerHTML = employeesHTML;
+      }
+      
+      // Update filter counts
+      updateEmployeeFilterCounts();
+      
+      // Update navigation notifications
+      updateNavigationNotifications();
     }
     
     function updateFinancesUI() {
@@ -6016,7 +6513,7 @@
             <span class="finance-value positive">${formatCurrency(income.netIncome)}</span>
           </div>
           <div class="finance-row-sub">
-            Revenue: ${formatCurrency(income.grossRevenue)} - Server Cost: ${formatCurrency(income.serverCost)}
+            Revenue: ${formatCurrency(income.grossRevenue)}
           </div>
           <div class="finance-row" style="margin-top: 0.5rem;">
             <span>📉 Expenses:</span>
@@ -6109,6 +6606,9 @@
           ${serverUpgradeSection}
         </div>
       `;
+      
+      // Update navigation notifications
+      updateNavigationNotifications();
     }
     
     function updateHireDeveloperModalContent() {
@@ -6158,6 +6658,62 @@
       }).join('');
       
       list.innerHTML = headerHTML + '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">' + candidatesHTML + '</div>';
+    }
+    
+    function updateNavigationNotifications() {
+      // Check for unassigned employees (Team panel notification)
+      const allEmployees = [founder, ...developers, ...marketers];
+      const hasUnassignedEmployees = allEmployees.some(emp => {
+        const empId = emp.id === founder.id || emp.name === founder.name ? founder.id : emp.id;
+        
+        // Check if assigned to any product
+        const isAssignedToProduct = products.some(p => 
+          p.assignedDevelopers.includes(empId) || p.assignedMarketers.includes(empId)
+        );
+        
+        // Check if assigned to any R&D project
+        const isAssignedToRnd = rndProjects.some(p => p.assignedDevelopers.includes(empId));
+        
+        return !isAssignedToProduct && !isAssignedToRnd;
+      });
+      
+      // Check for server capacity > 90% (Finance panel notification)
+      const capacityPercent = getServerCapacityPercentage();
+      const isServerCritical = capacityPercent >= 90;
+      
+      // Update Team tab notification
+      const teamNav = document.getElementById('nav-team');
+      if (teamNav) {
+        // Remove existing notification dot if present
+        const existingDot = teamNav.querySelector('.nav-notification-dot');
+        if (existingDot) {
+          existingDot.remove();
+        }
+        
+        // Add notification dot if there are unassigned employees
+        if (hasUnassignedEmployees) {
+          const dot = document.createElement('div');
+          dot.className = 'nav-notification-dot';
+          teamNav.appendChild(dot);
+        }
+      }
+      
+      // Update Finance tab notification
+      const financeNav = document.getElementById('nav-finance');
+      if (financeNav) {
+        // Remove existing notification dot if present
+        const existingDot = financeNav.querySelector('.nav-notification-dot');
+        if (existingDot) {
+          existingDot.remove();
+        }
+        
+        // Add notification dot if server capacity is critical
+        if (isServerCritical) {
+          const dot = document.createElement('div');
+          dot.className = 'nav-notification-dot';
+          financeNav.appendChild(dot);
+        }
+      }
     }
     
     function showHireDeveloperModal() {
@@ -6218,8 +6774,12 @@
         logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
       }
       
-      // Remove from pool (regenerate on next month)
-      // We don't remove from array, just mark as hired - pool will regenerate monthly anyway
+      // Remove candidate from pool immediately to prevent duplicate hiring
+      if (type === "developer") {
+        candidatePool.developers.splice(candidateIndex, 1);
+      } else {
+        candidatePool.marketers.splice(candidateIndex, 1);
+      }
       
       // Close modal and update UI
       if (type === "developer") {
@@ -6546,11 +7106,12 @@
       
       productNameEl.textContent = `Select a marketer to assign to "${product.name}"`;
       
-      // Get available marketers (not assigned to ANY product)
+      // Get available marketers (not assigned to ANY product or R&D)
       const availableMarketers = [];
       
-      // Founder (only show if not assigned to any product)
-      if (founder.assignedProduct === null) {
+      // Founder (only show if not assigned to any product or R&D project)
+      const founderAssignment = getFounderAssignment();
+      if (!founderAssignment) {
         availableMarketers.push({
           id: 'founder',
           name: founder.name,
@@ -6621,19 +7182,15 @@
       
       // Calculate monthly revenue from all products (published and deprecated)
       let totalRevenue = 0;
-      let totalServerCost = 0;
       
       products.forEach(product => {
         if (product.status === 'published' || product.status === 'deprecated') {
           const productRevenue = product.subscribers * product.monthlyPrice;
-          const productServerCost = product.subscribers * product.serverCostPerUser;
           totalRevenue += productRevenue;
-          totalServerCost += productServerCost;
         }
       });
       
-      const netRevenue = totalRevenue - totalServerCost;
-      cash += netRevenue;
+      cash += totalRevenue;
       
       // Track lifetime earnings and check for milestone achievements
       const previousLifetimeEarnings = lifetimeEarnings;
@@ -6678,11 +7235,7 @@
       
       // Log revenue (consolidated)
       if (totalRevenue > 0) {
-        const revenueBreakdown = [];
-        if (totalRevenue > 0) revenueBreakdown.push(`Revenue: ${formatCurrency(totalRevenue)}`);
-        if (totalServerCost > 0) revenueBreakdown.push(`Server Cost: ${formatCurrency(totalServerCost)}`);
-        
-        logEvent(`💵 Monthly Income: ${formatCurrency(netRevenue)} (${revenueBreakdown.join(', ')})`);
+        logEvent(`💵 Monthly Income: ${formatCurrency(totalRevenue)}`);
       }
       
       // Log expenses (consolidated)
@@ -6696,7 +7249,7 @@
       logEvent(`💰 Monthly Expenses: ${formatCurrency(totalCosts)} (${expenseBreakdown.join(', ')})`);
       
       // Log net result
-      const netResult = netRevenue - totalCosts;
+      const netResult = totalRevenue - totalCosts;
       if (netResult >= 0) {
         logEvent(`✅ Net Profit: ${formatCurrency(netResult)}`);
       } else {
@@ -6771,8 +7324,8 @@
           founder: {
             name: founder.name,
             efficiency: founder.efficiency,
-            skillLevel: founder.skillLevel,
-            experiencePoints: founder.experiencePoints,
+            baseEfficiency: founder.baseEfficiency,
+            experienceMonths: founder.experienceMonths,
             assignedProduct: founder.assignedProduct
           },
           
@@ -6797,6 +7350,10 @@
           
           // UI State
           expandedTeamSections: expandedTeamSections,
+          currentProductFilter: currentProductFilter,
+          expandedProductCards: expandedProductCards,
+          currentEmployeeFilter: currentEmployeeFilter,
+          expandedEmployeeCards: expandedEmployeeCards,
           
           // Candidate Pools (OLD SYSTEM)
           developerCandidates: developerCandidates,
@@ -6849,10 +7406,18 @@
         
         // Restore founder
         founder.name = save.gameState.founder.name;
-        founder.efficiency = save.gameState.founder.efficiency;
-        founder.skillLevel = save.gameState.founder.skillLevel;
-        founder.experiencePoints = save.gameState.founder.experiencePoints;
+        founder.efficiency = save.gameState.founder.efficiency || 1.0;
+        founder.baseEfficiency = save.gameState.founder.baseEfficiency || 1.0;
+        founder.experienceMonths = save.gameState.founder.experienceMonths || 0;
         founder.assignedProduct = save.gameState.founder.assignedProduct;
+        
+        // Migration: Convert old XP/level system to new experience system (if old save)
+        if (save.gameState.founder.skillLevel !== undefined && save.gameState.founder.experienceMonths === undefined) {
+          // Old save - estimate experience months based on old efficiency
+          // Old max was 1.5x, new max is 2.0x, so scale accordingly
+          founder.experienceMonths = 0; // Start fresh with new system
+          founder.baseEfficiency = 1.0;
+        }
         
         // Restore infrastructure
         currentOfficeTier = save.gameState.currentOfficeTier || 0;
@@ -6903,6 +7468,10 @@
         
         // Restore UI state
         expandedTeamSections = save.gameState.expandedTeamSections || {};
+        currentProductFilter = save.gameState.currentProductFilter || 'all';
+        expandedProductCards = save.gameState.expandedProductCards || {};
+        currentEmployeeFilter = save.gameState.currentEmployeeFilter || 'all';
+        expandedEmployeeCards = save.gameState.expandedEmployeeCards || {};
         
         // Restore candidate pools (OLD SYSTEM)
         developerCandidates = save.gameState.developerCandidates || {};
@@ -6941,6 +7510,17 @@
         updateFinancesUI();
         updateEventLog();
         updateSpeedButtons();
+        
+        // Sync employee filter button states with restored filter
+        const employeePanel = document.querySelector('#employeesContainer');
+        if (employeePanel) {
+          employeePanel.querySelectorAll('.filter-pill').forEach(pill => {
+            pill.classList.remove('active');
+            if (pill.dataset.filter === currentEmployeeFilter) {
+              pill.classList.add('active');
+            }
+          });
+        }
         
         // Pause state is shown by pause button color (yellowish)
         
@@ -6999,8 +7579,8 @@
       companyName = companyNameInput.value || "My Startup";
       founder.name = founderNameInput.value || "Founder";
       founder.efficiency = 1.0;
-      founder.skillLevel = 1;
-      founder.experiencePoints = 0;
+      founder.baseEfficiency = 1.0;
+      founder.experienceMonths = 0;
       founder.assignedProduct = null;
       currency = selectedCurrency;
       cash = selectedCapital;
@@ -7022,6 +7602,10 @@
       currentServerTier = 0; // Start with Shared Hosting (free)
       eventLog = [];
       expandedTeamSections = {}; // Reset UI state
+      currentProductFilter = 'all';
+      expandedProductCards = {};
+      currentEmployeeFilter = 'all';
+      expandedEmployeeCards = {};
       lifetimeEarnings = 0; // Reset lifetime earnings
       
       // Reset R&D system
@@ -7054,6 +7638,17 @@
       updateRndUI();
       updateEmployeesUI();
       updateFinancesUI();
+      
+      // Sync employee filter button states (should be 'all' for new game)
+      const employeePanel = document.querySelector('#employeesContainer');
+      if (employeePanel) {
+        employeePanel.querySelectorAll('.filter-pill').forEach(pill => {
+          pill.classList.remove('active');
+          if (pill.dataset.filter === currentEmployeeFilter) {
+            pill.classList.add('active');
+          }
+        });
+      }
 
       // Close modal
       document.getElementById('newGameModal').classList.remove('active');
@@ -7100,6 +7695,8 @@
     window.generateRandomCompanyName = generateRandomCompanyName;
     window.generateRandomFounderName = generateRandomFounderName;
     window.restartGame = restartGame;
+    window.filterEmployees = filterEmployees;
+    window.toggleEmployeeCard = toggleEmployeeCard;
 
     // ============================================
     // EVENT LISTENERS
@@ -7117,11 +7714,17 @@
         populateNewGameForm();
       }
       
+      // Show pause border since game starts paused
+      const pauseBorder = document.getElementById('pauseBorderOverlay');
+      if (pauseBorder && !isPlaying) {
+        pauseBorder.classList.add('active');
+      }
+      
       // Speed controls
       document.getElementById('pauseBtn').addEventListener('click', () => pauseGame());
       document.getElementById('playBtn').addEventListener('click', () => { setGameSpeed(1); startGame(); });
       document.getElementById('speed2xBtn').addEventListener('click', () => { setGameSpeed(2); startGame(); });
-      document.getElementById('speed5xBtn').addEventListener('click', () => { setGameSpeed(5); startGame(); });
+      //document.getElementById('speed5xBtn').addEventListener('click', () => { setGameSpeed(5); startGame(); });
 
       // Game controls
       document.getElementById('saveBtn').addEventListener('click', () => saveGame());
