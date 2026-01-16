@@ -238,6 +238,18 @@
       font-weight: bold;
     }
     
+    /* Yellowish highlight for pause button when game is paused */
+    #pauseBtn.active {
+      background: #fef3c7;
+      color: #78350f;
+      font-weight: bold;
+    }
+    
+    #pauseBtn.active:hover {
+      background: #fde68a;
+      border-color: #fbbf24;
+    }
+    
     .game-controls {
       display: flex;
       gap: 0.5rem;
@@ -383,7 +395,7 @@
       /* Swipeable panels */
       .main-container {
         display: flex;
-        overflow-x: auto;
+        overflow-x: hidden;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         gap: 0;
@@ -503,26 +515,9 @@
     }
     
     /* Pause Banner */
+    /* Pause banner removed - pause state now shown by pause button color */
     .pause-banner {
-      position: fixed;
-      top: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.4);
-      color: white;
-      padding: 1rem 2.5rem;
-      border-radius: 8px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      display: none;
-      z-index: 9999;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(4px);
-      animation: slideDown 0.3s ease-out;
-    }
-    
-    .pause-banner.active {
-      display: block;
+      display: none !important;
     }
     
     @keyframes slideDown {
@@ -595,6 +590,7 @@
       margin-bottom: 0.5rem;
       text-align: center;
       color: #2563eb;
+      border-radius: 8px;
     }
     
     .modal-body {
@@ -1115,7 +1111,6 @@
       gap: 0.3rem;
       font-size: 0.75rem;
       color: #6b7280;
-      margin-bottom: 0.3rem;
     }
     
     .employee-stat {
@@ -1229,19 +1224,42 @@
       margin-bottom: 0.5rem;
     }
     
+    .office-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    
+    .office-info-left {
+      flex: 1;
+    }
+    
+    .office-actions {
+      display: flex;
+      gap: 0.35rem;
+      margin-left: 0.5rem;
+    }
+    
     .office-name {
-      font-weight: bold;
-      font-size: 0.9rem;
-      margin-bottom: 0.4rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
       color: #111827;
     }
     
     .office-stats {
       display: flex;
       justify-content: space-between;
+      gap: 1rem;
       font-size: 0.75rem;
-      margin-bottom: 0.5rem;
       color: #6b7280;
+    }
+    
+    .office-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
     }
     
     .office-upgrade-section {
@@ -1249,34 +1267,53 @@
     }
     
     .office-upgrade-btn {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      background: #2563eb;
-      border: none;
+      padding: 0.35rem 0.6rem;
+      background: white;
+      border: 1px solid #e5e7eb;
       border-radius: 6px;
-      color: white;
+      color: #4b5563;
       font-weight: 600;
-      font-size: 0.8rem;
-      line-height: 1.3;
+      font-size: 0.75rem;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 0.75rem;
-      min-height: 2.5rem;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
+      white-space: nowrap;
     }
     
-    .office-upgrade-btn:hover:not(:disabled) {
-      background: #1d4ed8;
+    .office-upgrade-btn.upgrade {
+      background: #d1fae5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+    
+    .office-upgrade-btn.upgrade:hover:not(:disabled) {
+      background: #a7f3d0;
+      border-color: #6ee7b7;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    }
+    
+    .office-upgrade-btn.downgrade {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+    
+    .office-upgrade-btn.downgrade:hover:not(:disabled) {
+      background: #fecaca;
+      border-color: #fca5a5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
     }
     
     .office-upgrade-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
-      background: #9ca3af;
+      background: #f9fafb;
+      color: #9ca3af;
+      border-color: #e5e7eb;
     }
     
     .office-upgrade-details {
@@ -1451,6 +1488,311 @@
       background: linear-gradient(90deg, #10b981, #34d399);
       transition: width 0.3s;
     }
+    
+    /* Candidate Cards */
+    .candidate-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      animation: fadeInSlide 0.4s ease-out;
+    }
+    
+    @keyframes fadeInSlide {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .candidate-card:nth-child(1) { animation-delay: 0.05s; }
+    .candidate-card:nth-child(2) { animation-delay: 0.1s; }
+    .candidate-card:nth-child(3) { animation-delay: 0.15s; }
+    .candidate-card:nth-child(4) { animation-delay: 0.2s; }
+    
+    .candidate-card:hover:not(.hired) {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+      transform: translateY(-2px) scale(1.01);
+    }
+    
+    .candidate-card.selected {
+      border-color: #3b82f6;
+      background: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      animation: pulse 0.5s ease-out;
+    }
+    
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+    
+    .candidate-card.hired {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #f9fafb;
+    }
+    
+    .candidate-card.hired::after {
+      content: 'HIRED';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-15deg);
+      font-size: 2rem;
+      font-weight: bold;
+      color: #10b981;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    
+    .candidate-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 0.75rem;
+    }
+    
+    .candidate-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #111827;
+    }
+    
+    .candidate-tier-badge {
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    
+    .candidate-card:hover .candidate-tier-badge {
+      transform: scale(1.05);
+    }
+    
+    .candidate-description {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+    
+    .candidate-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .candidate-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    
+    .candidate-stat-label {
+      color: #6b7280;
+    }
+    
+    .candidate-stat-value {
+      font-weight: 600;
+      color: #111827;
+    }
+    
+    .candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Milestone Achievement Notification */
+    .milestone-notification {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      z-index: 10001;
+      animation: milestoneAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      text-align: center;
+      max-width: 400px;
+    }
+    
+    @keyframes milestoneAppear {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    .milestone-notification h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .milestone-notification p {
+      margin: 0;
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+    
+    /* Tooltip Styles */
+    .tooltip-container {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip-container .tooltip {
+      visibility: hidden;
+      opacity: 0;
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      z-index: 1000;
+      transition: opacity 0.2s, visibility 0.2s;
+      pointer-events: none;
+    }
+    
+    .tooltip-container .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #1f2937;
+    }
+    
+    .tooltip-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Pool Refresh Animation */
+    @keyframes poolRefresh {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.3;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .candidates-refreshing .candidate-card {
+      animation: poolRefresh 0.6s ease-in-out;
+    }
+    
+    /* Milestone Progress Bar in Finance Panel */
+    .milestone-progress-container {
+      margin-top: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .milestone-progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+    }
+    
+    .milestone-progress-current {
+      font-weight: 600;
+      color: #7c3aed;
+    }
+    
+    .milestone-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .milestone-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      transition: width 0.3s ease-out;
+      border-radius: 10px;
+    }
+    
+    /* Pool Quality Badge in Hiring Modal */
+    .pool-quality-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .pool-quality-icon {
+      font-size: 1.2rem;
+    }
+    
+    /* Pool Refresh Info */
+    .pool-refresh-info {
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      color: #92400e;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .pool-refresh-icon {
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -1508,10 +1850,7 @@
   </div>
   </div><!-- End Header Wrapper -->
 
-  <!-- Pause Banner -->
-  <div class="pause-banner" id="pauseBanner">
-    ⏸️ PAUSED
-  </div>
+  <!-- Pause Banner removed - pause state now shown by yellowish pause button -->
 
   <!-- Main Container -->
   <div class="main-container">
@@ -1827,6 +2166,121 @@
     </div>
   </div>
 
+  <!-- Promotion Negotiation Modal -->
+  <div class="modal-overlay" id="promotionModal">
+    <div class="modal">
+      <div class="modal-header" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 0.75rem 1rem;">
+        🎓 Promotion Negotiation
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 0.75rem 1rem;">
+        <div style="font-size: 0.95rem; font-weight: 600; color: #111827; margin-bottom: 0.25rem;" id="promotionEmployeeName">
+          Employee Name
+        </div>
+        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.5rem;" id="promotionEmployeeRole">
+          Junior Developer → Intermediate Developer
+        </div>
+        
+        <!-- Salary Info Side-by-Side -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <div style="background: #f9fafb; border-radius: 6px; padding: 0.5rem;">
+            <div style="font-size: 0.7rem; color: #6b7280; margin-bottom: 0.25rem;">💼 Expectation</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #111827;" id="promotionExpectation">$5,000/mo</div>
+          </div>
+          <div style="background: white; border: 2px solid #7c3aed; border-radius: 6px; padding: 0.5rem;">
+            <div style="font-size: 0.7rem; color: #6b7280; margin-bottom: 0.25rem;">💵 Your Offer</div>
+            <div style="font-size: 1rem; font-weight: 700; color: #7c3aed;" id="promotionOfferDisplay">$5,000/mo</div>
+          </div>
+        </div>
+        
+        <!-- Slider -->
+        <div style="margin-bottom: 0.5rem;">
+          <input 
+            type="range" 
+            id="promotionSalarySlider" 
+            min="0" 
+            max="100" 
+            value="100" 
+            step="1"
+            style="width: 100%; margin-bottom: 0.25rem;"
+          >
+          <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #9ca3af;">
+            <span id="promotionMinSalary">$4,000</span>
+            <span id="promotionMaxSalary">$6,000</span>
+          </div>
+        </div>
+        
+        <!-- Acceptance Chance -->
+        <div style="background: #fef3c7; border: 1px solid #fbbf24; border-radius: 4px; padding: 0.4rem 0.5rem; margin-bottom: 0.5rem;" id="promotionAcceptanceChance">
+          <span style="font-size: 0.8rem; color: #92400e;">
+            📊 <strong>Acceptance:</strong> <span id="promotionProbability">100%</span>
+          </span>
+        </div>
+        
+        <!-- Rejection History (hidden by default) -->
+        <div id="promotionRejectionInfo" style="display: none; background: #fee2e2; border: 1px solid #ef4444; border-radius: 4px; padding: 0.4rem 0.5rem; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; color: #991b1b; text-align: center; font-weight: 600;">
+            ⚠️ <span id="promotionRejectionText">Rejected 1/3</span> - After 3 rejections, they quit!
+          </div>
+        </div>
+        
+        <!-- Compact Tip -->
+        <div style="color: #6b7280; font-size: 0.7rem; text-align: center;">
+          💡 Higher offers = better acceptance. <strong>3 rejections = employee quits</strong>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 0.5rem; padding: 0.5rem 1rem;">
+        <button class="btn" onclick="hidePromotionModal()" style="flex: 1; padding: 0.4rem;">Cancel</button>
+        <button class="btn" onclick="makePromotionOffer()" style="flex: 1; padding: 0.4rem; background: #8b5cf6; border-color: #7c3aed; color: white;">
+          💰 Make Offer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Office Confirmation Modal -->
+  <div class="modal-overlay" id="upgradeOfficeModal">
+    <div class="modal">
+      <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+        ⬆️ Upgrade Office
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div style="font-size: 1.1rem; font-weight: 600; color: #111827; margin-bottom: 1rem;" id="upgradeOfficeName">
+          Home Office → Startup Space
+        </div>
+        <div style="background: #f9fafb; border-radius: 8px; padding: 1rem; margin: 1rem 0; text-align: left;">
+          <div style="display: grid; gap: 0.5rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">👥 Capacity:</span>
+              <span style="font-weight: 600;" id="upgradeOfficeCapacity">3 → 10 people</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">💰 Monthly Rent:</span>
+              <span style="font-weight: 600;" id="upgradeOfficeRent">$0 → $2,000/month</span>
+            </div>
+            <div style="border-top: 1px solid #e5e7eb; margin: 0.5rem 0; padding-top: 0.5rem;"></div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #dc2626; font-weight: 600;">🔨 Setup Cost:</span>
+              <span style="font-weight: 700; color: #dc2626;" id="upgradeOfficeSetupCost">$4,000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #dc2626; font-weight: 600;">Monthly Cost Increase:</span>
+              <span style="font-weight: 700; color: #dc2626;" id="upgradeOfficeCostIncrease">+$2,000/mo</span>
+            </div>
+          </div>
+        </div>
+        <div style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem;">
+          💡 The setup cost is paid immediately and covers moving expenses.
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
+        <button class="btn" onclick="hideUpgradeOfficeModal()" style="flex: 1;">Cancel</button>
+        <button class="btn" onclick="confirmUpgradeOffice()" style="flex: 1; background: #10b981; border-color: #059669; color: white;">
+          ⬆️ Confirm Upgrade
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Downgrade Office Confirmation Modal -->
   <div class="modal-overlay" id="downgradeOfficeModal">
     <div class="modal">
@@ -2034,7 +2488,14 @@
     
     let nextProductId = 1;
     
-    // Candidate pools - refreshed monthly
+    // NEW: Candidate pool system - refreshed monthly based on milestones
+    let candidatePool = {
+      developers: [],     // Array of 4 developer candidates
+      marketers: [],      // Array of 4 marketer candidates
+      lastRefreshDay: 0   // Day when pool was last refreshed
+    };
+    
+    // OLD: Legacy candidate system (will be replaced)
     let developerCandidates = {}; // { tierIndex: [candidate1, candidate2, candidate3, candidate4] }
     let marketerCandidates = {}; // { tierIndex: [candidate1, candidate2, candidate3, candidate4] }
     let lastCandidateRefresh = 0; // Track which month we last refreshed
@@ -2409,6 +2870,35 @@
     ];
 
     // ============================================
+    // HIRING MILESTONE SYSTEM
+    // ============================================
+    // Milestones based on lifetime earnings determine hiring pool quality
+    const HIRING_MILESTONES = [
+      { threshold: 0, name: "Startup", badge: "🌱", description: "Entry-Level Talent" },
+      { threshold: 100000, name: "Small Business", badge: "📈", description: "Growing Talent Pool" },
+      { threshold: 500000, name: "Growing Company", badge: "🚀", description: "Quality Candidates" },
+      { threshold: 2000000, name: "Established Company", badge: "🏢", description: "Senior Talent Available" },
+      { threshold: 10000000, name: "Major Player", badge: "⭐", description: "Elite Talent Pool" }
+    ];
+
+    // Probability tables: [Junior%, Intermediate%, Senior%, Lead%, Expert%]
+    const DEVELOPER_TIER_PROBABILITIES = {
+      0:        [100, 0,  0,  0,  0],  // Startup: 100% Junior
+      100000:   [70,  25, 5,  0,  0],  // Small Business: Mostly Junior, some Intermediate
+      500000:   [40,  40, 15, 5,  0],  // Growing Company: Balanced mix
+      2000000:  [20,  30, 30, 15, 5],  // Established: More Senior talent
+      10000000: [5,   20, 35, 25, 15]  // Major Player: Mostly Senior/Lead/Expert
+    };
+
+    const MARKETER_TIER_PROBABILITIES = {
+      0:        [100, 0,  0,  0,  0],  // Startup: 100% Junior
+      100000:   [70,  25, 5,  0,  0],  // Small Business: Mostly Junior, some Intermediate
+      500000:   [40,  40, 15, 5,  0],  // Growing Company: Balanced mix
+      2000000:  [20,  30, 30, 15, 5],  // Established: More Senior talent
+      10000000: [5,   20, 35, 25, 15]  // Major Player: Mostly Senior/Lead/Expert
+    };
+
+    // ============================================
     // EMPLOYEE & OFFICE TIERS (Phase 3)
     // ============================================
     // Employee progression: 100 months of work = 1.0x efficiency gain
@@ -2624,31 +3114,69 @@
     };
 
     const FIRST_NAMES = [
+      // English/Western names
       "Alex", "Jamie", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn", "Sage",
       "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason", "Isabella", "William",
       "Mia", "James", "Charlotte", "Benjamin", "Amelia", "Lucas", "Harper", "Henry", "Evelyn", "Alexander",
       "Abigail", "Michael", "Emily", "Daniel", "Elizabeth", "Matthew", "Sofia", "David", "Ella", "Joseph",
-      "Madison", "Samuel", "Scarlett", "Jackson", "Victoria", "Sebastian", "Aria", "Jack", "Grace", "Aiden"
+      "Madison", "Samuel", "Scarlett", "Jackson", "Victoria", "Sebastian", "Aria", "Jack", "Grace", "Aiden",
+      // Asian names (Chinese, Japanese, Korean, Indian, Vietnamese, Indonesian, Filipino)
+      "Wei", "Ming", "Lei", "Jing", "Yan", "Yuki", "Haruto", "Hana", "Kenji", "Akira",
+      "Sora", "Ji-ho", "Min-jun", "Seo-yeon", "Hye-jin", "Arjun", "Priya", "Rohan", "Ananya", "Aditya",
+      "Kavya", "Linh", "Minh", "Tuan", "Hoa", "Budi", "Siti", "Adi", "Dewi", "Jose",
+      // Turkish names
+      "Emre", "Elif", "Ahmet", "Ayşe", "Mehmet", "Zeynep", "Can", "Deniz",
+      // Middle Eastern/Arabic names
+      "Omar", "Fatima", "Hassan", "Layla", "Ali", "Noor", "Yusuf", "Zara", "Karim", "Amina",
+      // African names
+      "Kwame", "Amara", "Kofi", "Zuri", "Chidi", "Nia", "Jabari", "Aisha", "Kwesi", "Abeni"
     ];
 
     const LAST_NAMES = [
+      // English/Western surnames
       "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
       "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
-      "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
-      "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
-      "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts"
+      "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
+      "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Hill", "Flores",
+      "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts",
+      // Asian surnames (Chinese, Japanese, Korean, Indian, Vietnamese, Indonesian, Filipino)
+      "Wang", "Zhang", "Li", "Chen", "Liu", "Yang", "Huang", "Zhao", "Wu", "Zhou",
+      "Tanaka", "Suzuki", "Yamamoto", "Sato", "Takahashi", "Nakamura", "Kobayashi", "Kim", "Park", "Lee",
+      "Choi", "Jung", "Kang", "Shin", "Patel", "Kumar", "Singh", "Shah", "Sharma", "Reddy",
+      "Gupta", "Tran", "Le", "Pham", "Hoang", "Nguyen", "Santoso", "Putra", "Wibowo", "Kusuma",
+      "Santos", "Cruz", "Reyes", "Dela Cruz", "Aquino",
+      // Turkish surnames
+      "Yilmaz", "Kaya", "Demir", "Çelik", "Aydın", "Özdemir", "Arslan", "Koç", "Yildiz",
+      // Middle Eastern/Arabic surnames
+      "Al-Farsi", "Hassan", "Abbas", "Mansour", "Khalil", "Rahman", "Al-Rashid", "Bin Laden", "Al-Saud",
+      // African surnames
+      "Okafor", "Mensah", "Diallo", "Mwangi", "Nkosi", "Kamau", "Adeyemi", "Okoro", "Banda", "Mbatha"
     ];
 
     const COMPANY_PREFIXES = [
+      // Tech/Modern
       "Quantum", "Cyber", "Tech", "Digital", "Cloud", "Smart", "Innovative", "Next", "Future", "Apex",
       "Peak", "Prime", "Elite", "Stellar", "Zenith", "Nexus", "Vertex", "Pivot", "Spark", "Swift",
-      "Agile", "Bright", "Clear", "Dynamic", "Epic", "Flash", "Global", "Hyper", "Infinite", "Kinetic"
+      "Agile", "Bright", "Clear", "Dynamic", "Epic", "Flash", "Global", "Hyper", "Infinite", "Kinetic",
+      // Creative/Modern
+      "Nova", "Pulse", "Echo", "Vibe", "Flux", "Aura", "Prism", "Surge", "Lumina", "Catalyst",
+      "Horizon", "Velocity", "Momentum", "Aurora", "Cascade", "Fusion", "Helix", "Radiant", "Synapse", "Titanium",
+      // Abstract/Professional
+      "Alpha", "Beta", "Sigma", "Omega", "Zeta", "Vertex", "Vector", "Matrix", "Cipher", "Pixel",
+      "Byte", "Synth", "Forge", "Atlas", "Orbit", "Pulse", "Node", "Edge", "Core", "Axis"
     ];
 
     const COMPANY_SUFFIXES = [
+      // Classic Tech
       "Solutions", "Systems", "Technologies", "Software", "Labs", "Works", "Studios", "Ventures", "Innovations", "Digital",
       "Tech", "Apps", "Cloud", "Data", "AI", "Logic", "Dynamics", "Platform", "Services", "Group",
-      "Media", "Networks", "Interactive", "Designs", "Development", "Engineering", "Products", "Analytics", "Hub", "Core"
+      "Media", "Networks", "Interactive", "Designs", "Development", "Engineering", "Products", "Analytics", "Hub", "Core",
+      // Modern/Startup
+      "Labs", "Studio", "Forge", "Factory", "Agency", "Collective", "Nexus", "Hub", "Space", "Labs",
+      "Inc", "Corp", "Ltd", "Worldwide", "Partners", "Associates", "Consulting", "Strategies", "Intelligence", "Insights",
+      // Trendy/Creative
+      "House", "Club", "Guild", "Academy", "Institute", "Foundation", "Alliance", "Federation", "League", "Syndicate",
+      "Frameworks", "Architects", "Builders", "Creators", "Makers", "Innovators", "Pioneers", "Disruptors", "Visionaries", "Explorers"
     ];
 
     let nextEmployeeId = 1;
@@ -2821,6 +3349,7 @@
         developmentEffort: template.developmentEffort,
         currentProgress: 0,
         status: "in_development",
+        createdAt: Date.now(), // Timestamp for sorting
         publishDate: null,
         lifetimeMonths: template.lifetimeMonths,
         remainingLifetimeMonths: template.lifetimeMonths,
@@ -3158,28 +3687,31 @@
       const hasAnyBonus = effects.organicGrowth > 0 || effects.churnReduction > 0 || effects.employeeEfficiency > 0;
       
       if (hasAnyBonus) {
-        bonusHTML += '<div class="finance-card" style="margin-bottom: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">';
-        bonusHTML += '<h3 style="margin: 0 0 0.75rem 0; font-size: 1rem; font-weight: 600;">🎯 Accumulated R&D Bonuses</h3>';
-        bonusHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem;">';
+        bonusHTML += '<div style="margin-bottom: 0.75rem; padding: 0.5rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">';
+        bonusHTML += '<div style="font-size: 0.75rem; font-weight: 600; color: #6b7280; margin-bottom: 0.35rem;">🎯 R&D Bonuses</div>';
+        bonusHTML += '<div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">';
         
         if (effects.organicGrowth > 0) {
-          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
-          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">+' + (effects.organicGrowth * 100).toFixed(0) + '%</div>';
-          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">📈 Organic Growth</div>';
+          bonusHTML += '<div style="display: flex; align-items: center; gap: 0.1rem; padding: 0.15rem 0.3rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px;">';
+          bonusHTML += '<span style="font-size: 0.7rem;">📈</span>';
+          bonusHTML += '<span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">+' + (effects.organicGrowth * 100).toFixed(0) + '%</span>';
+          bonusHTML += '<span style="font-size: 0.7rem; color: #6b7280;">growth</span>';
           bonusHTML += '</div>';
         }
         
         if (effects.churnReduction > 0) {
-          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
-          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">-' + (effects.churnReduction * 100).toFixed(0) + '%</div>';
-          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">🛡️ Churn Rate</div>';
+          bonusHTML += '<div style="display: flex; align-items: center; gap: 0.1rem; padding: 0.15rem 0.3rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px;">';
+          bonusHTML += '<span style="font-size: 0.7rem;">🛡️</span>';
+          bonusHTML += '<span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">-' + (effects.churnReduction * 100).toFixed(0) + '%</span>';
+          bonusHTML += '<span style="font-size: 0.7rem; color: #6b7280;">churn</span>';
           bonusHTML += '</div>';
         }
         
         if (effects.employeeEfficiency > 0) {
-          bonusHTML += '<div style="background: rgba(255,255,255,0.15); padding: 0.5rem; border-radius: 6px; text-align: center;">';
-          bonusHTML += '<div style="font-size: 1.25rem; font-weight: 700;">+' + (effects.employeeEfficiency * 100).toFixed(0) + '%</div>';
-          bonusHTML += '<div style="font-size: 0.8rem; opacity: 0.9;">⚡ Employee Efficiency</div>';
+          bonusHTML += '<div style="display: flex; align-items: center; gap: 0.1rem; padding: 0.15rem 0.3rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px;">';
+          bonusHTML += '<span style="font-size: 0.7rem;">⚡</span>';
+          bonusHTML += '<span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">+' + (effects.employeeEfficiency * 100).toFixed(0) + '%</span>';
+          bonusHTML += '<span style="font-size: 0.7rem; color: #6b7280;">efficiency</span>';
           bonusHTML += '</div>';
         }
         
@@ -3189,8 +3721,26 @@
       
       if (rndProjects.length === 0) {
         container.innerHTML = bonusHTML + '<div class="empty-state">No active R&D projects. Start researching!</div>';
+        // Clear expanded states when no R&D projects
+        Object.keys(expandedTeamSections).forEach(sectionId => {
+          if (sectionId.startsWith('rnd-')) {
+            delete expandedTeamSections[sectionId];
+          }
+        });
         return;
       }
+      
+      // Clean up expanded states for R&D projects that no longer exist
+      const currentRndProjectIds = rndProjects.map(p => p.id);
+      Object.keys(expandedTeamSections).forEach(sectionId => {
+        // Only clean up R&D sections (format: 'rnd-X')
+        if (sectionId.startsWith('rnd-')) {
+          const projectId = parseInt(sectionId.split('-')[1]);
+          if (!currentRndProjectIds.includes(projectId)) {
+            delete expandedTeamSections[sectionId];
+          }
+        }
+      });
       
       const efficiencyMultiplier = 1 + effects.employeeEfficiency;
       
@@ -3246,19 +3796,8 @@
         html += '<div class="product-info">';
         html += '<strong>Progress:</strong> ' + project.currentProgress.toFixed(2) + ' / ' + project.developmentEffort + ' man-months<br>';
         
-        // Show assigned developers
+        // Show estimated completion or warning
         if (project.assignedDevelopers.length > 0) {
-          html += '<strong>Assigned:</strong> ';
-          const devNames = project.assignedDevelopers.map(id => {
-            if (id === 'founder') return founder.name + ' (Founder)';
-            const developer = developers.find(d => d.id === id);
-            if (developer) {
-              const skillLabel = developer.skill ? developer.skill.charAt(0).toUpperCase() + developer.skill.slice(1) : developer.tierName;
-              return developer.name + ' (' + skillLabel + ')';
-            }
-            return 'Developer #' + id;
-          });
-          html += devNames.join(', ') + '<br>';
           html += '<strong>Est. completion:</strong> ' + (daysLeft === '∞' ? 'Never (no developers assigned!)' : '~' + daysLeft + ' days');
         } else {
           html += '<strong>⚠️ No developers assigned!</strong> Assign developers to start research.';
@@ -3291,8 +3830,9 @@
           } else {
             const dev = developers.find(d => d.id === devId);
             if (dev) {
+              const skillLabel = dev.skill.charAt(0).toUpperCase() + dev.skill.slice(1);
               html += '<div class="assigned-person-card">';
-              html += '<span class="person-role">' + dev.name + ' (' + dev.role + ')</span>';
+              html += '<span class="person-role">' + dev.name + ' (' + skillLabel + ')</span>';
               html += '<button class="unassign-btn" onclick="unassignFromRnd(' + project.id + ', ' + devId + ')">✕</button>';
               html += '</div>';
             }
@@ -3319,7 +3859,7 @@
       const modal = document.getElementById('newRndModal');
       const list = document.getElementById('rndProjectsList');
       
-      // Group projects by category
+      // Group projects by category, excluding completed ones
       const grouped = {
         [RND_CATEGORIES.GROWTH]: [],
         [RND_CATEGORIES.RETENTION]: [],
@@ -3328,13 +3868,18 @@
       };
       
       RND_PROJECTS.forEach(project => {
-        grouped[project.category].push(project);
+        // Skip completed projects
+        const isCompleted = completedRndProjects.includes(project.id);
+        if (!isCompleted) {
+          grouped[project.category].push(project);
+        }
       });
       
       // Find first available project for default selection
       let firstAvailableId = null;
       for (const project of RND_PROJECTS) {
-        if (canStartRndProject(project.id)) {
+        const isCompleted = completedRndProjects.includes(project.id);
+        if (!isCompleted && canStartRndProject(project.id)) {
           firstAvailableId = project.id;
           break;
         }
@@ -3347,75 +3892,71 @@
         [RND_CATEGORIES.UNLOCK]: '🔓 Product Unlocks'
       };
       
-      list.innerHTML = Object.entries(grouped).map(([category, projects]) => {
-        const projectsHtml = projects.map(project => {
-          const canStart = canStartRndProject(project.id);
-          const isCompleted = completedRndProjects.includes(project.id);
-          const isInProgress = rndProjects.find(p => p.templateId === project.id);
-          
-          let statusNote = '';
-          let disabledClass = '';
-          let disabled = '';
-          
-          if (isCompleted) {
-            statusNote = '<div style="color: #10b981; font-size: 0.75rem; margin-top: 0.1rem;">✅ Completed</div>';
-            disabledClass = 'disabled';
-            disabled = 'disabled';
-          } else if (isInProgress) {
-            statusNote = '<div style="color: #3b82f6; font-size: 0.75rem; margin-top: 0.1rem;">🔄 In Progress</div>';
-            disabledClass = 'disabled';
-            disabled = 'disabled';
-          } else if (!canStart) {
-            const prereqs = project.prerequisites.map(id => {
-              const prereq = RND_PROJECTS.find(p => p.id === id);
-              return prereq ? prereq.name : id;
-            }).join(', ');
-            statusNote = `<div style="color: #f59e0b; font-size: 0.75rem; margin-top: 0.1rem;">🔒 Requires: ${prereqs}</div>`;
-            disabledClass = 'disabled';
-            disabled = 'disabled';
-          }
-          
-          let effectText = '';
-          if (project.effect.type === 'unlock_product') {
-            effectText = `🔓 Unlocks: ${project.effect.value}`;
-          } else if (project.effect.type === 'organic_growth') {
-            effectText = `+${(project.effect.value * 100).toFixed(0)}% growth`;
-          } else if (project.effect.type === 'churn_reduction') {
-            effectText = `-${(project.effect.value * 100).toFixed(0)}% churn`;
-          } else if (project.effect.type === 'employee_efficiency') {
-            effectText = `+${(project.effect.value * 100).toFixed(0)}% efficiency`;
-          }
+      list.innerHTML = Object.entries(grouped)
+        .filter(([category, projects]) => projects.length > 0) // Only show categories with remaining projects
+        .map(([category, projects]) => {
+          const projectsHtml = projects.map(project => {
+            const canStart = canStartRndProject(project.id);
+            const isInProgress = rndProjects.find(p => p.templateId === project.id);
+            
+            let statusNote = '';
+            let disabledClass = '';
+            let disabled = '';
+            
+            if (isInProgress) {
+              statusNote = '<div style="color: #3b82f6; font-size: 0.75rem; margin-top: 0.1rem;">🔄 In Progress</div>';
+              disabledClass = 'disabled';
+              disabled = 'disabled';
+            } else if (!canStart) {
+              const prereqs = project.prerequisites.map(id => {
+                const prereq = RND_PROJECTS.find(p => p.id === id);
+                return prereq ? prereq.name : id;
+              }).join(', ');
+              statusNote = `<div style="color: #f59e0b; font-size: 0.75rem; margin-top: 0.1rem;">🔒 Requires: ${prereqs}</div>`;
+              disabledClass = 'disabled';
+              disabled = 'disabled';
+            }
+            
+            let effectText = '';
+            if (project.effect.type === 'unlock_product') {
+              effectText = `🔓 Unlocks: ${project.effect.value}`;
+            } else if (project.effect.type === 'organic_growth') {
+              effectText = `+${(project.effect.value * 100).toFixed(0)}% growth`;
+            } else if (project.effect.type === 'churn_reduction') {
+              effectText = `-${(project.effect.value * 100).toFixed(0)}% churn`;
+            } else if (project.effect.type === 'employee_efficiency') {
+              effectText = `+${(project.effect.value * 100).toFixed(0)}% efficiency`;
+            }
+            
+            return `
+              <label class="product-template ${disabledClass}">
+                <input type="radio" name="rndTemplate" value="${project.id}" ${project.id === firstAvailableId ? 'checked' : ''} ${disabled}>
+                <div class="template-content">
+                  <div class="template-name">${project.name}</div>
+                  <div class="template-details">
+                    <div class="template-detail">📅 ${project.developmentEffort} months</div>
+                    <div class="template-detail">${effectText}</div>
+                  </div>
+                  <div class="template-description">${project.description}</div>
+                  ${statusNote}
+                </div>
+              </label>
+            `;
+          }).join('');
           
           return `
-            <label class="product-template ${disabledClass}">
-              <input type="radio" name="rndTemplate" value="${project.id}" ${project.id === firstAvailableId ? 'checked' : ''} ${disabled}>
-              <div class="template-content">
-                <div class="template-name">${project.name}</div>
-                <div class="template-details">
-                  <div class="template-detail">📅 ${project.developmentEffort} months</div>
-                  <div class="template-detail">${effectText}</div>
-                </div>
-                <div class="template-description">${project.description}</div>
-                ${statusNote}
-              </div>
-            </label>
+            <div style="margin-bottom: 1rem;">
+              <h3 style="margin-bottom: 0.5rem; font-size: 0.95rem; color: #374151;">${categoryNames[category]}</h3>
+              ${projectsHtml}
+            </div>
           `;
         }).join('');
-        
-        return `
-          <div style="margin-bottom: 1rem;">
-            <h3 style="margin-bottom: 0.5rem; font-size: 0.95rem; color: #374151;">${categoryNames[category]}</h3>
-            ${projectsHtml}
-          </div>
-        `;
-      }).join('');
       
       modal.classList.add('active');
     }
     
     function hideNewRndModal() {
       document.getElementById('newRndModal').classList.remove('active');
-      startGame(); // Auto-resume when closing modal
     }
     
     function handleCreateRndProject() {
@@ -3460,10 +4001,11 @@
       developers.forEach(dev => {
         const devAssignment = getDevAssignment(dev.id);
         if (!devAssignment) {
+          const skillLabel = dev.skill.charAt(0).toUpperCase() + dev.skill.slice(1);
           availableDevelopers.push({
             id: dev.id,
             name: dev.name,
-            role: dev.role,
+            role: skillLabel,
             efficiency: dev.efficiency,
             assignment: null
           });
@@ -3481,7 +4023,7 @@
                 <span class="employee-role">${dev.role}</span>
               </div>
               <div class="employee-stats">
-                <span>⚡ ${dev.efficiency}x efficiency</span>
+                <span>⚡ Efficiency: ${Math.round(dev.efficiency * 100)}%</span>
               </div>
             </div>
           `;
@@ -3493,7 +4035,6 @@
     
     function hideAssignToRndModal() {
       document.getElementById('assignToRndModal').classList.remove('active');
-      startGame(); // Auto-resume when closing modal
     }
     
     function assignToRnd(projectId, developerId) {
@@ -3715,9 +4256,20 @@
     function updateProductsUI() {
       const container = document.getElementById('productsContainer');
       
+      // Get R&D effects for efficiency calculations
+      const effects = getRndEffects();
+      const efficiencyMultiplier = 1 + effects.employeeEfficiency;
+      
       // Filter out deprecated products with 0 subscribers (they're done, hide them)
       const visibleProducts = products.filter(p => {
         return !(p.status === 'deprecated' && p.subscribers === 0);
+      });
+      
+      // Sort by creation date descending (newest first)
+      visibleProducts.sort((a, b) => {
+        const aCreated = a.createdAt || 0; // Fallback for old saves without createdAt
+        const bCreated = b.createdAt || 0;
+        return bCreated - aCreated; // Descending order
       });
       
       if (visibleProducts.length === 0) {
@@ -3730,10 +4282,13 @@
       // Clean up expanded states for products that no longer exist
       const currentProductIds = visibleProducts.map(p => p.id);
       Object.keys(expandedTeamSections).forEach(sectionId => {
-        // Extract product ID from section ID (format: 'dev-1' or 'mkt-1')
-        const productId = parseInt(sectionId.split('-')[1]);
-        if (!currentProductIds.includes(productId)) {
-          delete expandedTeamSections[sectionId];
+        // Only clean up product sections (dev- and mkt-), not R&D sections (rnd-)
+        if (sectionId.startsWith('dev-') || sectionId.startsWith('mkt-')) {
+          // Extract product ID from section ID (format: 'dev-1' or 'mkt-1')
+          const productId = parseInt(sectionId.split('-')[1]);
+          if (!currentProductIds.includes(productId)) {
+            delete expandedTeamSections[sectionId];
+          }
         }
       });
       
@@ -3772,17 +4327,17 @@
             });
             html += devNames.join(', ') + '<br>';
             
-            // Calculate estimated completion with current team
+            // Calculate estimated completion with current team (including R&D efficiency bonus)
             let totalEfficiency = 0;
             if (product.assignedDevelopers.includes('founder')) {
-              totalEfficiency += founder.efficiency;
+              totalEfficiency += founder.efficiency * efficiencyMultiplier;
             }
             // Add hired developers' efficiency
             product.assignedDevelopers.forEach(devId => {
               if (devId !== 'founder') {
                 const developer = developers.find(d => d.id === devId);
                 if (developer) {
-                  totalEfficiency += developer.efficiency;
+                  totalEfficiency += developer.efficiency * efficiencyMultiplier;
                 }
               }
             });
@@ -4024,7 +4579,6 @@
     
     function hideNewProductModal() {
       document.getElementById('newProductModal').classList.remove('active');
-      startGame(); // Auto-resume when closing modal
     }
     
     function handleCreateProduct() {
@@ -4043,18 +4597,12 @@
       isPlaying = true;
       updateSpeedButtons();
       gameTick();
-      
-      // Hide pause banner
-      document.getElementById('pauseBanner').classList.remove('active');
     }
 
     function pauseGame() {
       isPlaying = false;
       if (tickTimer) clearTimeout(tickTimer);
       updateSpeedButtons();
-      
-      // Show pause banner
-      document.getElementById('pauseBanner').classList.add('active');
     }
 
     function setGameSpeed(speed) {
@@ -4098,6 +4646,9 @@
       // Update employee experience and check for promotions
       updateEmployeeExperience();
       
+      // Check if candidate pool needs refresh (every 30 days)
+      refreshCandidatePoolIfNeeded();
+      
       // Phase 3: Monthly billing (every 30 days)
       if (currentDay % 30 === 0) {
         handleMonthlyBilling();
@@ -4109,6 +4660,9 @@
       updateRndUI();
       updateEmployeesUI();
       updateFinancesUI();
+      
+      // Update hiring modals if they're open
+      refreshOpenHiringModals();
       
       // Auto-save every 10 days
       if (currentDay % 10 === 0 && currentDay > 0) {
@@ -4148,6 +4702,167 @@
     
     function canHireMoreEmployees() {
       return getCurrentTeamSize() < getOfficeCapacity();
+    }
+    
+    // ============================================
+    // HIRING MILESTONE & CANDIDATE POOL SYSTEM
+    // ============================================
+    
+    function getCurrentMilestone() {
+      // Find the highest milestone threshold reached based on lifetime earnings
+      let currentMilestone = HIRING_MILESTONES[0];
+      for (const milestone of HIRING_MILESTONES) {
+        if (lifetimeEarnings >= milestone.threshold) {
+          currentMilestone = milestone;
+        } else {
+          break;
+        }
+      }
+      return currentMilestone;
+    }
+    
+    function getNextMilestone() {
+      const current = getCurrentMilestone();
+      const currentIndex = HIRING_MILESTONES.findIndex(m => m.threshold === current.threshold);
+      if (currentIndex < HIRING_MILESTONES.length - 1) {
+        return HIRING_MILESTONES[currentIndex + 1];
+      }
+      return null; // Already at max milestone
+    }
+    
+    function selectTierByProbability(probabilities) {
+      // probabilities = [70, 25, 5, 0, 0] for example
+      // Returns tier index (0-4 for Junior to Expert)
+      const random = Math.random() * 100;
+      let cumulative = 0;
+      
+      for (let i = 0; i < probabilities.length; i++) {
+        cumulative += probabilities[i];
+        if (random <= cumulative) {
+          return i; // Returns 0-4 (tier index in DEVELOPER_TIERS/MARKETER_TIERS)
+        }
+      }
+      
+      return 0; // Default to Junior (index 0) if something goes wrong
+    }
+    
+    function generateCandidate(type) {
+      // type: "developer" or "marketer"
+      
+      // Get current milestone
+      const milestone = getCurrentMilestone();
+      
+      // Get probability distribution for this milestone
+      const probabilities = type === "developer" 
+        ? DEVELOPER_TIER_PROBABILITIES[milestone.threshold]
+        : MARKETER_TIER_PROBABILITIES[milestone.threshold];
+      
+      // Randomly select tier based on probabilities
+      const tierIndex = selectTierByProbability(probabilities);
+      const tier = type === "developer" ? DEVELOPER_TIERS[tierIndex] : MARKETER_TIERS[tierIndex];
+      
+      // Apply ±20% fluctuation to efficiency
+      const baseEfficiency = tier.efficiency;
+      const efficiency = generateRandomEfficiency(baseEfficiency);
+      
+      // Apply ±20% fluctuation to salary
+      const baseSalary = currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR;
+      const salaryVariation = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2 (±20%)
+      const monthlySalary = Math.round(baseSalary * salaryVariation);
+      
+      // Generate candidate
+      return {
+        id: nextEmployeeId++,
+        name: generateEmployeeName(),
+        role: type,
+        tier: tierIndex,
+        tierName: tier.name,
+        skill: tier.skill,
+        efficiency: efficiency,
+        monthlySalary: monthlySalary,
+        assignedProduct: null
+      };
+    }
+    
+    function generateCandidatePool() {
+      // Generate 4 developers
+      candidatePool.developers = [];
+      for (let i = 0; i < 4; i++) {
+        candidatePool.developers.push(generateCandidate("developer"));
+      }
+      
+      // Generate 4 marketers
+      candidatePool.marketers = [];
+      for (let i = 0; i < 4; i++) {
+        candidatePool.marketers.push(generateCandidate("marketer"));
+      }
+      
+      candidatePool.lastRefreshDay = currentDay;
+      
+      const milestone = getCurrentMilestone();
+      logEvent(`🔄 Hiring pool refreshed! ${milestone.badge} ${milestone.description}`);
+    }
+    
+    function refreshCandidatePoolIfNeeded() {
+      // Refresh every 30 days (monthly)
+      if (currentDay % 30 === 0 && currentDay > 0) {
+        generateCandidatePool();
+        
+        // If hiring modals are open, refresh them with new candidates
+        refreshOpenHiringModals();
+      }
+    }
+    
+    function refreshOpenHiringModals() {
+      // Check if developer hiring modal is open and refresh it
+      const devModal = document.getElementById('hireDeveloperModal');
+      if (devModal && devModal.classList.contains('active')) {
+        updateHireDeveloperModalContent();
+      }
+      
+      // Check if marketer hiring modal is open and refresh it
+      const mktModal = document.getElementById('hireMarketerModal');
+      if (mktModal && mktModal.classList.contains('active')) {
+        updateHireMarketerModalContent();
+      }
+    }
+    
+    function checkMilestoneAchievement(previousEarnings, newEarnings) {
+      const previousMilestone = HIRING_MILESTONES.find(m => previousEarnings >= m.threshold && (HIRING_MILESTONES[HIRING_MILESTONES.indexOf(m) + 1]?.threshold > previousEarnings || HIRING_MILESTONES.indexOf(m) === HIRING_MILESTONES.length - 1));
+      const newMilestone = getCurrentMilestone();
+      
+      if (previousMilestone && newMilestone.threshold > previousMilestone.threshold) {
+        logEvent(`🎉 Milestone achieved: ${newMilestone.name}!`);
+        logEvent(`✨ Your company's reputation has improved - better talent will apply!`);
+        
+        // Show visual notification
+        showMilestoneNotification(newMilestone);
+        
+        // Immediately refresh candidate pool with new probabilities
+        generateCandidatePool();
+      }
+    }
+    
+    // Show milestone achievement notification
+    function showMilestoneNotification(milestone) {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = 'milestone-notification';
+      notification.innerHTML = `
+        <h3>🎉 Milestone Achieved!</h3>
+        <p><strong>${milestone.name}</strong></p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem;">Your company's reputation has improved!<br>Better talent will now apply for positions.</p>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remove notification after 4 seconds
+      setTimeout(() => {
+        notification.style.animation = 'milestoneAppear 0.3s ease-out reverse';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 4000);
     }
     
     // ============================================
@@ -4466,30 +5181,71 @@
       updateEmployeesUI();
     }
     
-    function upgradeOffice() {
+    function showUpgradeOfficeModal() {
+      pauseGame(); // Auto-pause when opening modal
+      
       if (currentOfficeTier >= OFFICE_TIERS.length - 1) {
         logEvent("❌ Already at maximum office tier!");
+        startGame();
         return;
       }
       
       const currentTier = OFFICE_TIERS[currentOfficeTier];
       const nextTier = OFFICE_TIERS[currentOfficeTier + 1];
-      const upgradeCost = currency === "USD" ? nextTier.monthlyRentUSD * 2 : nextTier.monthlyRentEUR * 2;
+      const setupCost = currency === "USD" ? nextTier.monthlyRentUSD * 2 : nextTier.monthlyRentEUR * 2;
+      const currentRent = currency === "USD" ? currentTier.monthlyRentUSD : currentTier.monthlyRentEUR;
+      const nextRent = currency === "USD" ? nextTier.monthlyRentUSD : nextTier.monthlyRentEUR;
+      const rentIncrease = nextRent - currentRent;
+      
+      // Show modal with details
+      document.getElementById('upgradeOfficeName').textContent = `${currentTier.name} → ${nextTier.name}`;
+      document.getElementById('upgradeOfficeCapacity').textContent = `${currentTier.capacity} → ${nextTier.capacity} people`;
+      document.getElementById('upgradeOfficeRent').textContent = `${formatCurrency(currentRent)} → ${formatCurrency(nextRent)}/month`;
+      document.getElementById('upgradeOfficeSetupCost').textContent = formatCurrency(setupCost);
+      document.getElementById('upgradeOfficeCostIncrease').textContent = `+${formatCurrency(rentIncrease)}/mo`;
+      
+      // Check if can afford
+      const upgradeBtn = document.querySelector('#upgradeOfficeModal .modal-footer button:last-child');
+      if (cash < setupCost) {
+        upgradeBtn.disabled = true;
+        upgradeBtn.style.opacity = '0.5';
+        upgradeBtn.style.cursor = 'not-allowed';
+      } else {
+        upgradeBtn.disabled = false;
+        upgradeBtn.style.opacity = '1';
+        upgradeBtn.style.cursor = 'pointer';
+      }
+      
+      document.getElementById('upgradeOfficeModal').classList.add('active');
+    }
+    
+    function hideUpgradeOfficeModal() {
+      document.getElementById('upgradeOfficeModal').classList.remove('active');
+      startGame(); // Auto-resume when closing modal
+    }
+    
+    function confirmUpgradeOffice() {
+      const currentTier = OFFICE_TIERS[currentOfficeTier];
+      const nextTier = OFFICE_TIERS[currentOfficeTier + 1];
+      const setupCost = currency === "USD" ? nextTier.monthlyRentUSD * 2 : nextTier.monthlyRentEUR * 2;
       const currentRent = currency === "USD" ? currentTier.monthlyRentUSD : currentTier.monthlyRentEUR;
       const nextRent = currency === "USD" ? nextTier.monthlyRentUSD : nextTier.monthlyRentEUR;
       
-      if (cash < upgradeCost) {
-        logEvent(`❌ Not enough cash to upgrade office. Need ${formatCurrency(upgradeCost)}`);
+      if (cash < setupCost) {
+        logEvent(`❌ Not enough cash to upgrade office. Need ${formatCurrency(setupCost)}`);
+        hideUpgradeOfficeModal();
         return;
       }
       
-      cash -= upgradeCost;
+      cash -= setupCost;
       currentOfficeTier++;
       
       logEvent(`🏢 Upgraded to ${nextTier.name}!`);
       logEvent(`  👥 Capacity: ${currentTier.capacity} → ${nextTier.capacity} people`);
       logEvent(`  💰 Monthly Rent: ${formatCurrency(currentRent)} → ${formatCurrency(nextRent)}/mo`);
-      logEvent(`  🔨 Setup Cost Paid: ${formatCurrency(upgradeCost)}`);
+      logEvent(`  🔨 Setup Cost Paid: ${formatCurrency(setupCost)}`);
+      
+      hideUpgradeOfficeModal();
       updateCashDisplay();
       updateEmployeesUI();
     }
@@ -4501,7 +5257,7 @@
       return teamSize <= prevTier.capacity;
     }
     
-    function downgradeOffice() {
+    function showDowngradeOfficeModal() {
       pauseGame(); // Auto-pause when opening modal
       if (!canDowngradeOffice()) {
         const prevTier = OFFICE_TIERS[currentOfficeTier - 1];
@@ -4517,7 +5273,7 @@
       const newRent = currency === "USD" ? prevTier.monthlyRentUSD : prevTier.monthlyRentEUR;
       const savings = oldRent - newRent;
       
-      // Show modal instead of confirm
+      // Show modal with details
       document.getElementById('downgradeOfficeName').textContent = `${currentTier.name} → ${prevTier.name}`;
       document.getElementById('downgradeOfficeCapacity').textContent = `${currentTier.capacity} → ${prevTier.capacity} people`;
       document.getElementById('downgradeOfficeRent').textContent = `${formatCurrency(oldRent)} → ${formatCurrency(newRent)}/month`;
@@ -4621,6 +5377,192 @@
       updateProductsUI();
     }
     
+    // Promotion modal variables
+    let employeeToPromote = null;
+    let promotionRole = null;
+    let promotionExpectation = 0;
+    let promotionMinSalary = 0;
+    let promotionMaxSalary = 0;
+    
+    function showPromotionModal(employeeId, role) {
+      pauseGame(); // Auto-pause when opening modal
+      
+      const employee = role === 'developer' 
+        ? developers.find(d => d.id === employeeId)
+        : marketers.find(m => m.id === employeeId);
+        
+      if (!employee || !employee.readyForPromotion) return;
+      
+      employeeToPromote = employeeId;
+      promotionRole = role;
+      promotionExpectation = employee.salaryExpectationForNextRank;
+      
+      // Set salary range: 50% below expectation to 20% above expectation
+      promotionMinSalary = Math.round(promotionExpectation * 0.5);
+      promotionMaxSalary = Math.round(promotionExpectation * 1.2);
+      
+      const tiers = role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+      const currentTierName = employee.tierName;
+      const nextTierName = tiers[employee.tier + 1].name;
+      
+      // Update modal content
+      document.getElementById('promotionEmployeeName').textContent = employee.name;
+      document.getElementById('promotionEmployeeRole').textContent = `${currentTierName} → ${nextTierName}`;
+      document.getElementById('promotionExpectation').textContent = `${formatCurrency(promotionExpectation)}/mo`;
+      document.getElementById('promotionMinSalary').textContent = formatCurrency(promotionMinSalary);
+      document.getElementById('promotionMaxSalary').textContent = formatCurrency(promotionMaxSalary);
+      
+      // Set up slider
+      const slider = document.getElementById('promotionSalarySlider');
+      slider.min = promotionMinSalary;
+      slider.max = promotionMaxSalary;
+      slider.value = promotionExpectation; // Start at expectation
+      
+      // Update display
+      updatePromotionOffer();
+      
+      // Add slider event listener
+      slider.oninput = updatePromotionOffer;
+      
+      // Handle rejection display
+      const rejectionCount = employee.promotionRejectionCount || 0;
+      if (rejectionCount > 0) {
+        updatePromotionRejectionDisplay(rejectionCount);
+      } else {
+        // Hide rejection info for fresh promotion attempt
+        document.getElementById('promotionRejectionInfo').style.display = 'none';
+      }
+      
+      // Show modal
+      document.getElementById('promotionModal').classList.add('active');
+    }
+    
+    function updatePromotionOffer() {
+      const slider = document.getElementById('promotionSalarySlider');
+      const offer = parseInt(slider.value);
+      
+      // Update offer display
+      document.getElementById('promotionOfferDisplay').textContent = `${formatCurrency(offer)}/mo`;
+      
+      // Calculate and display acceptance probability
+      const probability = calculatePromotionAcceptanceProbability(offer, promotionExpectation);
+      const percentDisplay = Math.round(probability * 100);
+      document.getElementById('promotionProbability').textContent = `${percentDisplay}%`;
+      
+      // Update acceptance chance box color based on probability
+      const chanceBox = document.getElementById('promotionAcceptanceChance');
+      if (probability >= 0.9) {
+        chanceBox.style.background = '#d1fae5';
+        chanceBox.style.borderColor = '#10b981';
+      } else if (probability >= 0.7) {
+        chanceBox.style.background = '#fef3c7';
+        chanceBox.style.borderColor = '#fbbf24';
+      } else if (probability >= 0.4) {
+        chanceBox.style.background = '#fed7aa';
+        chanceBox.style.borderColor = '#f97316';
+      } else {
+        chanceBox.style.background = '#fecaca';
+        chanceBox.style.borderColor = '#ef4444';
+      }
+    }
+    
+    function hidePromotionModal() {
+      document.getElementById('promotionModal').classList.remove('active');
+      employeeToPromote = null;
+      promotionRole = null;
+      // Keep game paused after closing modal
+    }
+    
+    function makePromotionOffer() {
+      if (employeeToPromote === null) return;
+      
+      const slider = document.getElementById('promotionSalarySlider');
+      const offer = parseInt(slider.value);
+      
+      const employee = promotionRole === 'developer' 
+        ? developers.find(d => d.id === employeeToPromote)
+        : marketers.find(m => m.id === employeeToPromote);
+        
+      if (!employee) {
+        hidePromotionModal();
+        return;
+      }
+      
+      // Calculate acceptance probability
+      const probability = calculatePromotionAcceptanceProbability(offer, promotionExpectation);
+      const accepted = Math.random() < probability;
+      
+      if (accepted) {
+        // Employee accepts!
+        promoteEmployee(employee, offer, promotionRole);
+        logEvent(`✅ ${employee.name} accepted the promotion offer of ${formatCurrency(offer)}/month!`);
+        showNotification(`✅ ${employee.name} accepted promotion!`, 'success');
+        hidePromotionModal();
+        updateEmployeesUI();
+      } else {
+        // Employee rejects - increment rejection count
+        employee.promotionRejectionCount = (employee.promotionRejectionCount || 0) + 1;
+        
+        const percentDiff = Math.round(((offer - promotionExpectation) / promotionExpectation) * 100);
+        logEvent(`❌ ${employee.name} rejected the offer of ${formatCurrency(offer)}/month (${percentDiff}% ${percentDiff >= 0 ? 'above' : 'below'} expectation) - Rejection ${employee.promotionRejectionCount}/3`);
+        showNotification(`❌ ${employee.name} rejected the offer (${employee.promotionRejectionCount}/3)`, 'error');
+        
+        // Check if this is the 3rd rejection
+        if (employee.promotionRejectionCount >= 3) {
+          // Employee quits!
+          logEvent(`💔 ${employee.name} has quit after 3 rejected promotion offers!`);
+          showNotification(`💔 ${employee.name} quit!`, 'error');
+          
+          // Unassign from all products
+          products.forEach(product => {
+            if (employee.role === 'developer') {
+              product.assignedDevelopers = product.assignedDevelopers.filter(id => id !== employee.id);
+            } else {
+              product.assignedMarketers = product.assignedMarketers.filter(id => id !== employee.id);
+            }
+          });
+          
+          // Unassign from R&D projects
+          if (employee.role === 'developer') {
+            rndProjects.forEach(project => {
+              project.assignedDevelopers = project.assignedDevelopers.filter(id => id !== employee.id);
+            });
+          }
+          
+          // Remove from team (no severance pay - they quit)
+          if (employee.role === 'developer') {
+            developers = developers.filter(d => d.id !== employee.id);
+          } else {
+            marketers = marketers.filter(m => m.id !== employee.id);
+          }
+          
+          hidePromotionModal();
+          updateEmployeesUI();
+          updateProductsUI();
+          updateRndUI();
+        } else {
+          // Show rejection count and keep modal open
+          updatePromotionRejectionDisplay(employee.promotionRejectionCount);
+        }
+      }
+    }
+    
+    function updatePromotionRejectionDisplay(rejectionCount) {
+      const rejectionInfo = document.getElementById('promotionRejectionInfo');
+      const rejectionText = document.getElementById('promotionRejectionText');
+      
+      rejectionInfo.style.display = 'block';
+      
+      // Compact format: "Rejected X/3"
+      rejectionText.textContent = `Rejected ${rejectionCount}/3`;
+      
+      // Update warning color based on rejection count
+      if (rejectionCount === 2) {
+        rejectionInfo.style.background = '#fca5a5';
+        rejectionInfo.style.borderColor = '#dc2626';
+      }
+    }
+    
     // ============================================
     // EMPLOYEE EXPERIENCE & PROGRESSION
     // ============================================
@@ -4667,33 +5609,103 @@
       // Use employee's base efficiency (what they were hired at) as the starting point
       const baseEfficiency = employee.baseEfficiency || currentTier.efficiency;
       const gainedEfficiency = employee.experienceMonths * EXPERIENCE_RATE;
-      const newEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
+      
+      // If employee is ready for promotion but not promoted, cap at current efficiency cap
+      let newEfficiency;
+      if (employee.readyForPromotion) {
+        // Employee is stuck at cap until promoted
+        newEfficiency = currentTier.efficiencyCap;
+      } else {
+        // Employee can still gain efficiency
+        newEfficiency = Math.min(baseEfficiency + gainedEfficiency, currentTier.efficiencyCap);
+      }
       
       // Update efficiency
       employee.efficiency = newEfficiency;
       
-      // Check if reached cap and can promote
-      if (newEfficiency >= currentTier.efficiencyCap && employee.tier < tiers.length - 1) {
-        // Promote to next tier
-        const oldTierName = employee.tierName;
-        const oldSalary = employee.monthlySalary;
-        employee.tier += 1;
-        const newTier = tiers[employee.tier];
+      // Check if reached cap and ready for promotion
+      if (newEfficiency >= currentTier.efficiencyCap && employee.tier < tiers.length - 1 && !employee.readyForPromotion) {
+        // Mark as ready for promotion (not auto-promote)
+        employee.readyForPromotion = true;
+        employee.promotionRejectionCount = 0; // Reset rejection count for this promotion
         
-        employee.tierName = newTier.name;
-        employee.skill = newTier.skill;
+        // Generate salary expectation for next rank with ±20% fluctuation (normal distribution)
+        const nextTier = tiers[employee.tier + 1];
+        const baseSalary = currency === 'USD' ? nextTier.monthlySalaryUSD : nextTier.monthlySalaryEUR;
+        employee.salaryExpectationForNextRank = generateSalaryExpectation(baseSalary);
         
-        // Reset to industry standard salary for new tier (regardless of efficiency-based hiring salary)
-        employee.monthlySalary = currency === 'USD' ? newTier.monthlySalaryUSD : newTier.monthlySalaryEUR;
-        employee.efficiency = newTier.efficiency; // Reset to new tier base
-        employee.baseEfficiency = newTier.efficiency; // Reset base efficiency for new tier
-        employee.experienceMonths = 0; // Reset experience for new tier
-        
-        // Log promotion with salary change
-        const salaryIncrease = employee.monthlySalary - oldSalary;
-        logEvent(`🎓 ${employee.name} promoted from ${oldTierName} to ${employee.tierName}! Salary: ${formatCurrency(oldSalary)} → ${formatCurrency(employee.monthlySalary)} (+${formatCurrency(salaryIncrease)})`);
-        showNotification(`🎓 ${employee.name} promoted to ${employee.tierName}!`, 'success');
+        logEvent(`🎯 ${employee.name} (${employee.tierName}) is ready for promotion!`);
+        showNotification(`🎯 ${employee.name} ready for promotion!`, 'info');
       }
+    }
+    
+    function generateSalaryExpectation(baseSalary) {
+      // Generate salary expectation with ±20% fluctuation using normal distribution
+      // Using Box-Muller transform to generate normally distributed random value
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+      
+      // z0 is now a standard normal (mean=0, stddev=1)
+      // We want mean=1.0 (base salary), stddev=0.1 (so ~95% within ±20%)
+      const multiplier = 1.0 + (z0 * 0.1);
+      
+      // Clamp to ±20% range
+      const clampedMultiplier = Math.max(0.8, Math.min(1.2, multiplier));
+      
+      return Math.round(baseSalary * clampedMultiplier);
+    }
+    
+    function calculatePromotionAcceptanceProbability(offer, expectation) {
+      // If offer >= expectation, 100% acceptance
+      if (offer >= expectation) {
+        return 1.0;
+      }
+      
+      // Calculate percentage difference (negative value)
+      const percentDiff = ((offer - expectation) / expectation) * 100;
+      
+      // Create acceptance probability curve:
+      // -5% or better: ~90% chance
+      // -10%: ~80% chance
+      // -15%: ~60% chance
+      // -20%: ~40% chance
+      // -25%: ~20% chance
+      // -30%: ~10% chance
+      // -35%: ~5% chance
+      // -40% or worse: ~1% chance
+      
+      // Using exponential decay formula: probability = e^(k * percentDiff)
+      // Where k controls the steepness of the curve
+      const k = 0.08; // Tuned for desired curve
+      const probability = Math.exp(k * percentDiff);
+      
+      // Ensure minimum 1% chance
+      return Math.max(0.01, Math.min(1.0, probability));
+    }
+    
+    function promoteEmployee(employee, offeredSalary, role) {
+      const tiers = role === 'developer' ? DEVELOPER_TIERS : MARKETER_TIERS;
+      const oldTierName = employee.tierName;
+      const oldSalary = employee.monthlySalary;
+      
+      employee.tier += 1;
+      const newTier = tiers[employee.tier];
+      
+      employee.tierName = newTier.name;
+      employee.skill = newTier.skill;
+      employee.monthlySalary = offeredSalary;
+      employee.efficiency = newTier.efficiency; // Reset to new tier base
+      employee.baseEfficiency = newTier.efficiency; // Reset base efficiency for new tier
+      employee.experienceMonths = 0; // Reset experience for new tier
+      employee.readyForPromotion = false; // Clear promotion flag
+      employee.salaryExpectationForNextRank = null; // Clear expectation
+      employee.promotionRejectionCount = 0; // Reset rejection count
+      
+      // Log promotion with salary change
+      const salaryIncrease = employee.monthlySalary - oldSalary;
+      logEvent(`🎓 ${employee.name} promoted from ${oldTierName} to ${employee.tierName}! Salary: ${formatCurrency(oldSalary)} → ${formatCurrency(employee.monthlySalary)} (+${formatCurrency(salaryIncrease)})`);
+      showNotification(`🎓 ${employee.name} promoted to ${employee.tierName}!`, 'success');
     }
     
     function updateEmployeesUI() {
@@ -4704,96 +5716,64 @@
       
       const rent = currency === "USD" ? office.monthlyRentUSD : office.monthlyRentEUR;
       
-      // Calculate upgrade/downgrade details
-      let upgradeSection = '';
+      // Action buttons for top-right (text with colored backgrounds)
+      let actionButtons = '';
       const canUpgradeOffice = currentOfficeTier < OFFICE_TIERS.length - 1;
       const canDowngrade = canDowngradeOffice();
       
       if (canUpgradeOffice || canDowngrade) {
-        upgradeSection = '<div class="office-upgrade-section"><div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">';
+        actionButtons = '<div class="office-actions">';
         
-        // Upgrade column
-        if (canUpgradeOffice) {
-          const nextTier = OFFICE_TIERS[currentOfficeTier + 1];
-          const setupCost = currency === "USD" ? nextTier.monthlyRentUSD * 2 : nextTier.monthlyRentEUR * 2;
-          const nextRent = currency === "USD" ? nextTier.monthlyRentUSD : nextTier.monthlyRentEUR;
-          const canAfford = canAffordOfficeUpgrade();
-          
-          upgradeSection += `
-            <div style="flex: 1; display: flex; flex-direction: column;">
-              <button 
-                class="office-upgrade-btn" 
-                onclick="upgradeOffice()"
-                ${!canAfford ? 'disabled' : ''}
-                style="margin-bottom: 0.35rem;"
-              >
-                ⬆️ ${nextTier.name}
-              </button>
-              <div class="office-upgrade-details" style="font-size: 0.75rem; padding: 0.5rem;">
-                <div style="font-weight: 600; margin-bottom: 0.25rem; font-size: 0.75rem;">⬆️ Upgrade:</div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>👥 ${office.capacity} →</span>
-                  <span><strong>${nextTier.capacity}</strong> people</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>💰 ${formatCurrency(rent)} →</span>
-                  <span><strong>${formatCurrency(nextRent)}</strong>/mo</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>🔨 Setup:</span>
-                  <span><strong>${formatCurrency(setupCost)}</strong></span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-        
-        // Downgrade column
+        // Downgrade button (left)
         if (canDowngrade) {
-          const prevTier = OFFICE_TIERS[currentOfficeTier - 1];
-          const prevRent = currency === "USD" ? prevTier.monthlyRentUSD : prevTier.monthlyRentEUR;
-          const savings = rent - prevRent;
-          
-          upgradeSection += `
-            <div style="flex: 1; display: flex; flex-direction: column;">
-              <button 
-                class="office-upgrade-btn" 
-                onclick="downgradeOffice()"
-                style="background: #6b7280; margin-bottom: 0.35rem;"
-              >
-                ⬇️ ${prevTier.name}
-              </button>
-              <div class="office-upgrade-details" style="background: #f3f4f6; font-size: 0.75rem; padding: 0.5rem;">
-                <div style="font-weight: 600; margin-bottom: 0.25rem; font-size: 0.75rem;">⬇️ Downgrade:</div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>👥 ${office.capacity} →</span>
-                  <span><strong>${prevTier.capacity}</strong> people</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>💰 Save:</span>
-                  <span><strong>${formatCurrency(savings)}</strong>/mo</span>
-                </div>
-                <div class="upgrade-detail" style="color: #10b981; font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>✅ No cost</span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
+          actionButtons += `
+            <button 
+              class="office-upgrade-btn downgrade" 
+              onclick="showDowngradeOfficeModal()"
+              title="Downgrade office"
+            >
+              Downgrade
+            </button>
           `;
         }
         
-        upgradeSection += '</div></div>';
-      } else if (currentOfficeTier >= OFFICE_TIERS.length - 1) {
-        upgradeSection = '<div style="text-align: center; color: #6b7280; font-size: 0.9rem;">🏆 Maximum office tier!</div>';
+        // Upgrade button (right)
+        if (canUpgradeOffice) {
+          actionButtons += `
+            <button 
+              class="office-upgrade-btn upgrade" 
+              onclick="showUpgradeOfficeModal()"
+              title="Upgrade office"
+            >
+              Upgrade
+            </button>
+          `;
+        }
+        
+        actionButtons += '</div>';
       }
       
+      // Max tier badge
+      const maxTierBadge = currentOfficeTier >= OFFICE_TIERS.length - 1 
+        ? '<span style="font-size: 0.7rem; color: #10b981; font-weight: 600;">🏆 Max Tier</span>' 
+        : '';
+      
       officeInfo.innerHTML = `
-        <div class="office-name">🏢 ${office.name}</div>
-        <div class="office-stats">
-          <span>👥 ${teamSize} / ${office.capacity} people</span>
-          ${rent > 0 ? `<span>💰 ${formatCurrency(rent)}/mo rent</span>` : '<span>🏠 No rent (working from home!)</span>'}
+        <div class="office-header">
+          <div class="office-info-left">
+            <div class="office-name">🏢 ${office.name} ${maxTierBadge}</div>
+            <div class="office-stats">
+              <div class="office-stat-item">
+                <span>👥</span>
+                <span>${teamSize} / ${office.capacity} people</span>
+              </div>
+              <div class="office-stat-item">
+                ${rent > 0 ? `<span>💰</span><span>${formatCurrency(rent)}/mo</span>` : '<span>🏠</span><span>No rent</span>'}
+              </div>
+            </div>
+          </div>
+          ${actionButtons}
         </div>
-        ${upgradeSection}
       `;
       
       // Update employee list
@@ -4841,10 +5821,19 @@
         const isMaxTier = emp.tier >= tiers.length - 1 && currentEfficiency >= currentTier.efficiencyCap;
         
         let experienceBar = '';
-        if (!isMaxTier) {
+        if (emp.readyForPromotion) {
+          // Show "Ready for Promotion" badge
+          experienceBar = `
+            <div>
+              <div style="color: #10b981; padding: 0.2rem; border-radius: 6px; text-align: center; font-size: 0.7rem;">
+                🎓 Ready for Promotion
+              </div>
+            </div>
+          `;
+        } else if (!isMaxTier) {
           const nextTierName = emp.tier < tiers.length - 1 ? tiers[emp.tier + 1].name : 'Max Level';
           experienceBar = `
-            <div style="margin-top: 0.5rem;">
+            <div>
               <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #6b7280; margin-bottom: 0.2rem;">
                 <span>📈 Progress to ${nextTierName}</span>
                 <span>${Math.round(progressToNextTier)}%</span>
@@ -4871,14 +5860,26 @@
                   ${emp.role === 'developer' ? '👨‍💻' : '📢'} ${emp.tierName}
                 </span>
               </div>
-              <button 
-                class="btn" 
-                onclick="fireEmployee(${emp.id})"
-                style="padding: 0.2rem 0.4rem; font-size: 0.7rem; background: #ef4444; border-color: #dc2626;"
-                title="Fire employee (1 month severance)"
-              >
-                🔥 Fire
-              </button>
+              <div style="display: flex; gap: 0.3rem;">
+                ${emp.readyForPromotion ? `
+                  <button 
+                    class="btn" 
+                    onclick="showPromotionModal(${emp.id}, '${emp.role}')"
+                    style="padding: 0.2rem 0.4rem; font-size: 0.7rem; background: #10b981; border-color: #059669; color: white;"
+                    title="Promote employee"
+                  >
+                    🎓 Promote
+                  </button>
+                ` : ''}
+                <button 
+                  class="btn" 
+                  onclick="fireEmployee(${emp.id})"
+                  style="padding: 0.2rem 0.4rem; font-size: 0.7rem; background: #ef4444; border-color: #dc2626;"
+                  title="Fire employee (1 month severance)"
+                >
+                  🔥 Fire
+                </button>
+              </div>
             </div>
             <div class="employee-stats">
               <div class="employee-stat">⚡ Efficiency: ${currentEfficiency.toFixed(2)}x</div>
@@ -5037,13 +6038,58 @@
           </div>
         </div>
         
-        <!-- Lifetime Earnings & Employee Unlocks -->
+        <!-- Lifetime Earnings & Hiring Reputation -->
         <div class="finance-card" style="margin-top: 0.75rem;">
-          <div class="finance-header">📊 Lifetime Earnings</div>
+          <div class="finance-header">📊 Lifetime Earnings & Reputation</div>
           <div class="finance-row">
             <span>Total Earned:</span>
             <span class="finance-value positive">${formatCurrency(lifetimeEarnings)}</span>
           </div>
+          ${(() => {
+            const milestone = getCurrentMilestone();
+            const nextMilestone = getNextMilestone();
+            
+            if (nextMilestone) {
+              const progress = ((lifetimeEarnings - milestone.threshold) / (nextMilestone.threshold - milestone.threshold)) * 100;
+              const progressClamped = Math.min(100, Math.max(0, progress));
+              
+              return `
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e5e7eb;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.8rem; font-weight: 600;">
+                      ${milestone.badge} ${milestone.name}
+                    </span>
+                    <span style="font-size: 0.75rem; color: #6b7280;">
+                      ${Math.round(progressClamped)}%
+                    </span>
+                  </div>
+                  <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="background: linear-gradient(90deg, #10b981, #059669); height: 100%; width: ${progressClamped}%; transition: width 0.3s;"></div>
+                  </div>
+                  <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">
+                    Next: ${nextMilestone.badge} ${nextMilestone.name} at ${formatCurrency(nextMilestone.threshold)}
+                  </div>
+                  <div style="font-size: 0.75rem; color: #059669; margin-top: 0.15rem;">
+                    💼 ${milestone.description}
+                  </div>
+                </div>
+              `;
+            } else {
+              return `
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e5e7eb;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.9rem;">${milestone.badge}</span>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: #f59e0b;">
+                      ${milestone.name}
+                    </span>
+                  </div>
+                  <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.25rem;">
+                    ⭐ Maximum reputation! You attract the best talent!
+                  </div>
+                </div>
+              `;
+            }
+          })()}
         </div>
         
         <!-- Server Tier -->
@@ -5065,69 +6111,126 @@
       `;
     }
     
-    function showHireDeveloperModal() {
-      pauseGame(); // Auto-pause when opening modal
-      checkAndRefreshCandidates(); // Ensure candidates are generated for current month
-      
-      const modal = document.getElementById('hireDeveloperModal');
+    function updateHireDeveloperModalContent() {
       const list = document.getElementById('hireDeveloperList');
+      const hasCapacity = canHireMoreEmployees();
+      const milestone = getCurrentMilestone();
+      const daysUntilRefresh = 30 - (currentDay % 30);
       
-      list.innerHTML = DEVELOPER_TIERS.map((tier, index) => {
-        const salary = currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR;
-        const hasCapacity = canHireMoreEmployees();
-        const unlockThreshold = EMPLOYEE_UNLOCK_THRESHOLDS[tier.skill];
-        const isUnlocked = lifetimeEarnings >= unlockThreshold;
+      // Header with simple company status
+      let headerHTML = `
+        <div style="background: white; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; color: #6b7280;">
+            <strong style="color: #111827;">Company Status:</strong> ${milestone.badge} ${milestone.name}
+          </div>
+        </div>
         
-        if (!isUnlocked) {
-          return `
-            <button 
-              class="hire-btn" 
-              disabled
-              style="width: 100%; margin-bottom: 0.5rem; opacity: 0.5; cursor: not-allowed;"
-            >
-              <div class="hire-btn-info">
-                <div class="hire-btn-title">
-                  <span class="skill-badge skill-${tier.skill}">🔒 ${tier.name}</span>
-                </div>
-                <div class="hire-btn-stats" style="color: #ef4444;">
-                  Unlock at ${formatCurrency(unlockThreshold)} lifetime earnings
-                </div>
-              </div>
-              <div class="hire-btn-cost">Locked</div>
-            </button>
-          `;
-        }
-        
-        const candidates = developerCandidates[index] || [];
-        const availableCount = candidates.length;
+        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+          <span>🔄</span>
+          <span>Pool refreshes in <strong>${daysUntilRefresh} day${daysUntilRefresh > 1 ? 's' : ''}</strong></span>
+        </div>
+      `;
+      
+      // Candidate cards in 2x2 grid
+      const candidatesHTML = candidatePool.developers.map((candidate, index) => {
+        const canAfford = cash >= candidate.monthlySalary;
+        const tier = DEVELOPER_TIERS[candidate.tier];
         
         return `
           <button 
             class="hire-btn" 
-            onclick="showDeveloperCandidates(${index});"
-            ${!hasCapacity || availableCount === 0 ? 'disabled' : ''}
-            style="width: 100%; margin-bottom: 0.5rem;"
+            onclick="showHireConfirmation('${candidate.id}', 'developer', ${index});"
+            ${!canAfford || !hasCapacity ? 'disabled' : ''}
+            style="padding: 0.6rem; min-height: auto;"
           >
-            <div class="hire-btn-info">
-              <div class="hire-btn-title">
-                <span class="skill-badge skill-${tier.skill}">${tier.name}</span>
-              </div>
-              <div class="hire-btn-stats">
-                ⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo
-                ${availableCount === 0 ? '<br><span style="color: #ef4444;">⚠️ No candidates available this month</span>' : `<br><span style="color: #10b981;">👥 ${availableCount} candidate${availableCount > 1 ? 's' : ''} available</span>`}
+            <div style="text-align: left;">
+              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.name}</div>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
+                <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
+                <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
+                <div style="color: ${!canAfford ? '#dc2626' : '#059669'}; font-weight: 600;">💼 ${formatCurrency(candidate.monthlySalary)}/mo</div>
+                ${!canAfford ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ Cannot afford</div>' : ''}
+                ${!hasCapacity ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ No office capacity</div>' : ''}
               </div>
             </div>
-            <div class="hire-btn-cost">${availableCount > 0 ? 'View' : 'Sold Out'}</div>
           </button>
         `;
       }).join('');
       
+      list.innerHTML = headerHTML + '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">' + candidatesHTML + '</div>';
+    }
+    
+    function showHireDeveloperModal() {
+      pauseGame(); // Auto-pause when opening modal
+      
+      // Ensure candidate pool is initialized
+      if (candidatePool.developers.length === 0) {
+        generateCandidatePool();
+      }
+      
+      const modal = document.getElementById('hireDeveloperModal');
+      updateHireDeveloperModalContent();
       modal.classList.add('active');
     }
     
     function hideHireDeveloperModal() {
       document.getElementById('hireDeveloperModal').classList.remove('active');
-      startGame(); // Auto-resume when closing modal
+      // Keep game paused after closing modal
+    }
+    
+    function hireFromPool(candidateIndex, type) {
+      // type: "developer" or "marketer"
+      
+      if (!canHireMoreEmployees()) {
+        logEvent("❌ Office at capacity! Upgrade your office to hire more people.");
+        return;
+      }
+      
+      // Get candidate from pool
+      const candidate = type === "developer" 
+        ? candidatePool.developers[candidateIndex]
+        : candidatePool.marketers[candidateIndex];
+      
+      if (!candidate) {
+        logEvent("❌ Candidate not found!");
+        return;
+      }
+      
+      // Check if can afford
+      if (cash < candidate.monthlySalary) {
+        logEvent(`❌ Not enough cash to hire ${candidate.name}. Need ${formatCurrency(candidate.monthlySalary)}`);
+        return;
+      }
+      
+      // Deduct first month's salary
+      cash -= candidate.monthlySalary;
+      
+      // Add experience tracking to candidate
+      candidate.experienceMonths = 0;
+      candidate.baseEfficiency = candidate.efficiency;
+      
+      // Add to team
+      if (type === "developer") {
+        developers.push(candidate);
+        logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+      } else {
+        marketers.push(candidate);
+        logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+      }
+      
+      // Remove from pool (regenerate on next month)
+      // We don't remove from array, just mark as hired - pool will regenerate monthly anyway
+      
+      // Close modal and update UI
+      if (type === "developer") {
+        hideHireDeveloperModal();
+      } else {
+        hideHireMarketerModal();
+      }
+      
+      updateCashDisplay();
+      updateEmployeesUI();
+      updateFinancesUI();
     }
     
     function showDeveloperCandidates(tierIndex) {
@@ -5166,7 +6269,7 @@
                   <strong>${candidate.name}</strong>
                 </div>
                 <div class="hire-btn-stats">
-                  ⚡ ${candidate.efficiency}x efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
+                  ⚡ ${Math.round(candidate.efficiency * 100)}% efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
                   ${!canAfford ? '<br><span style="color: #ef4444;">⚠️ Cannot afford</span>' : ''}
                   ${!hasCapacity ? '<br><span style="color: #ef4444;">⚠️ No office capacity</span>' : ''}
                 </div>
@@ -5179,69 +6282,71 @@
       `;
     }
     
-    function showHireMarketerModal() {
-      pauseGame(); // Auto-pause when opening modal
-      checkAndRefreshCandidates(); // Ensure candidates are generated for current month
-      
-      const modal = document.getElementById('hireMarketerModal');
+    function updateHireMarketerModalContent() {
       const list = document.getElementById('hireMarketerList');
+      const hasCapacity = canHireMoreEmployees();
+      const milestone = getCurrentMilestone();
+      const daysUntilRefresh = 30 - (currentDay % 30);
       
-      list.innerHTML = MARKETER_TIERS.map((tier, index) => {
-        const salary = currency === "USD" ? tier.monthlySalaryUSD : tier.monthlySalaryEUR;
-        const hasCapacity = canHireMoreEmployees();
-        const unlockThreshold = EMPLOYEE_UNLOCK_THRESHOLDS[tier.skill];
-        const isUnlocked = lifetimeEarnings >= unlockThreshold;
+      // Header with simple company status
+      let headerHTML = `
+        <div style="background: white; padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 4px; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; color: #6b7280;">
+            <strong style="color: #111827;">Company Status:</strong> ${milestone.badge} ${milestone.name}
+          </div>
+        </div>
         
-        if (!isUnlocked) {
-          return `
-            <button 
-              class="hire-btn" 
-              disabled
-              style="width: 100%; margin-bottom: 0.5rem; opacity: 0.5; cursor: not-allowed;"
-            >
-              <div class="hire-btn-info">
-                <div class="hire-btn-title">
-                  <span class="skill-badge skill-${tier.skill}">🔒 ${tier.name}</span>
-                </div>
-                <div class="hire-btn-stats" style="color: #ef4444;">
-                  Unlock at ${formatCurrency(unlockThreshold)} lifetime earnings
-                </div>
-              </div>
-              <div class="hire-btn-cost">Locked</div>
-            </button>
-          `;
-        }
-        
-        const candidates = marketerCandidates[index] || [];
-        const availableCount = candidates.length;
+        <div style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+          <span>🔄</span>
+          <span>Pool refreshes in <strong>${daysUntilRefresh} day${daysUntilRefresh > 1 ? 's' : ''}</strong></span>
+        </div>
+      `;
+      
+      // Candidate cards in 2x2 grid
+      const candidatesHTML = candidatePool.marketers.map((candidate, index) => {
+        const canAfford = cash >= candidate.monthlySalary;
+        const tier = MARKETER_TIERS[candidate.tier];
         
         return `
           <button 
             class="hire-btn" 
-            onclick="showMarketerCandidates(${index});"
-            ${!hasCapacity || availableCount === 0 ? 'disabled' : ''}
-            style="width: 100%; margin-bottom: 0.5rem;"
+            onclick="showHireConfirmation('${candidate.id}', 'marketer', ${index});"
+            ${!canAfford || !hasCapacity ? 'disabled' : ''}
+            style="padding: 0.6rem; min-height: auto;"
           >
-            <div class="hire-btn-info">
-              <div class="hire-btn-title">
-                <span class="skill-badge skill-${tier.skill}">${tier.name}</span>
-              </div>
-              <div class="hire-btn-stats">
-                ⚡ ${tier.efficiency}x efficiency • 💼 ${formatCurrency(salary)}/mo
-                ${availableCount === 0 ? '<br><span style="color: #ef4444;">⚠️ No candidates available this month</span>' : `<br><span style="color: #10b981;">👥 ${availableCount} candidate${availableCount > 1 ? 's' : ''} available</span>`}
+            <div style="text-align: left;">
+              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.name}</div>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
+                <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
+                <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
+                <div style="color: ${!canAfford ? '#dc2626' : '#059669'}; font-weight: 600;">💼 ${formatCurrency(candidate.monthlySalary)}/mo</div>
+                ${!canAfford ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ Cannot afford</div>' : ''}
+                ${!hasCapacity ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ No office capacity</div>' : ''}
               </div>
             </div>
-            <div class="hire-btn-cost">${availableCount > 0 ? 'View' : 'Sold Out'}</div>
           </button>
         `;
       }).join('');
       
+      list.innerHTML = headerHTML + '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">' + candidatesHTML + '</div>';
+    }
+    
+    function showHireMarketerModal() {
+      pauseGame(); // Auto-pause when opening modal
+      
+      // Ensure candidate pool is initialized
+      if (candidatePool.marketers.length === 0) {
+        generateCandidatePool();
+      }
+      
+      const modal = document.getElementById('hireMarketerModal');
+      updateHireMarketerModalContent();
       modal.classList.add('active');
     }
     
     function hideHireMarketerModal() {
       document.getElementById('hireMarketerModal').classList.remove('active');
-      startGame(); // Auto-resume when closing modal
+      // Keep game paused after closing modal
     }
     
     function showMarketerCandidates(tierIndex) {
@@ -5280,7 +6385,7 @@
                   <strong>${candidate.name}</strong>
                 </div>
                 <div class="hire-btn-stats">
-                  ⚡ ${candidate.efficiency}x efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
+                  ⚡ ${Math.round(candidate.efficiency * 100)}% efficiency • 💼 ${formatCurrency(candidate.monthlySalary)}/mo
                   ${!canAfford ? '<br><span style="color: #ef4444;">⚠️ Cannot afford</span>' : ''}
                   ${!hasCapacity ? '<br><span style="color: #ef4444;">⚠️ No office capacity</span>' : ''}
                 </div>
@@ -5297,19 +6402,23 @@
     // HIRE CONFIRMATION MODAL
     // ============================================
     
-    function showHireConfirmation(candidateId, role, tierIndex) {
-      const candidates = role === 'developer' ? developerCandidates[tierIndex] : marketerCandidates[tierIndex];
-      const candidate = candidates.find(c => c.id === candidateId);
+    function showHireConfirmation(candidateId, role, candidateIndex) {
+      // Use new candidate pool structure - directly access by index
+      const candidates = role === 'developer' ? candidatePool.developers : candidatePool.marketers;
+      const candidate = candidates[candidateIndex];
       
-      if (!candidate) return;
+      if (!candidate) {
+        console.error('Candidate not found at index:', candidateIndex, 'role:', role);
+        return;
+      }
       
-      candidateToHire = { ...candidate, tierIndex };
+      candidateToHire = { ...candidate, candidateIndex, role };
       
       const modal = document.getElementById('hireConfirmModal');
       
       document.getElementById('hireConfirmName').textContent = candidate.name;
       document.getElementById('hireConfirmRole').textContent = candidate.tierName;
-      document.getElementById('hireConfirmEfficiency').textContent = `${candidate.efficiency}x`;
+      document.getElementById('hireConfirmEfficiency').textContent = `${Math.round(candidate.efficiency * 100)}%`;
       document.getElementById('hireConfirmSalary').textContent = `${formatCurrency(candidate.monthlySalary)}/month`;
       
       modal.classList.add('active');
@@ -5325,54 +6434,11 @@
       
       const candidate = candidateToHire;
       
-      if (!canHireMoreEmployees()) {
-        logEvent("❌ Office at capacity! Upgrade your office to hire more people.");
-        hideHireConfirmModal();
-        return;
-      }
-      
-      if (cash < candidate.monthlySalary) {
-        logEvent(`❌ Not enough cash to hire ${candidate.name}. Need ${formatCurrency(candidate.monthlySalary)}`);
-        hideHireConfirmModal();
-        return;
-      }
-      
-      // Create employee from candidate
-      const employee = {
-        id: nextEmployeeId++,
-        name: candidate.name,
-        role: candidate.role,
-        tier: candidate.tier,
-        tierName: candidate.tierName,
-        skill: candidate.skill,
-        efficiency: candidate.efficiency,
-        baseEfficiency: candidate.efficiency, // Store hired efficiency as baseline
-        monthlySalary: candidate.monthlySalary,
-        experienceMonths: 0 // Track work experience for progression
-      };
-      
-      if (candidate.role === 'developer') {
-        developers.push(employee);
-        logEvent(`✅ Hired ${employee.name} (${employee.tierName}) at ${formatCurrency(employee.monthlySalary)}/mo (${employee.efficiency}x efficiency)`);
-      } else {
-        marketers.push(employee);
-        logEvent(`✅ Hired ${employee.name} (${employee.tierName}) at ${formatCurrency(employee.monthlySalary)}/mo (${employee.efficiency}x efficiency)`);
-      }
-      
-      // Remove candidate from pool
-      removeCandidateFromPool(candidate.id, candidate.role, candidate.tierIndex);
-      
+      // Hide confirmation modal
       hideHireConfirmModal();
       
-      // Close hiring modal and refresh
-      if (candidate.role === 'developer') {
-        hideHireDeveloperModal();
-      } else {
-        hideHireMarketerModal();
-      }
-      
-      updateCashDisplay();
-      updateEmployeesUI();
+      // Call hireFromPool with the stored candidateIndex and role
+      hireFromPool(candidate.candidateIndex, candidate.role);
     }
     
     // ============================================
@@ -5466,7 +6532,6 @@
     function hideAssignDeveloperModal() {
       document.getElementById('assignDeveloperModal').classList.remove('active');
       currentAssignProductId = null;
-      startGame(); // Auto-resume when closing modal
     }
     
     function showAssignMarketerModal(productId) {
@@ -5534,7 +6599,6 @@
     function hideAssignMarketerModal() {
       document.getElementById('assignMarketerModal').classList.remove('active');
       currentAssignProductId = null;
-      startGame(); // Auto-resume when closing modal
     }
     
     function canAffordOfficeUpgrade() {
@@ -5571,9 +6635,13 @@
       const netRevenue = totalRevenue - totalServerCost;
       cash += netRevenue;
       
-      // Track lifetime earnings (only positive revenue)
+      // Track lifetime earnings and check for milestone achievements
+      const previousLifetimeEarnings = lifetimeEarnings;
       if (totalRevenue > 0) {
         lifetimeEarnings += totalRevenue;
+        
+        // Check if we reached a new milestone
+        checkMilestoneAchievement(previousLifetimeEarnings, lifetimeEarnings);
       }
       
       // ============================================
@@ -5687,7 +6755,7 @@
     
     function saveGame() {
       const saveData = {
-        version: "2.0",
+        version: "3.0", // Updated to 3.0 for new candidate pool system
         timestamp: Date.now(),
         gameState: {
           // Game config
@@ -5730,10 +6798,13 @@
           // UI State
           expandedTeamSections: expandedTeamSections,
           
-          // Candidate Pools
+          // Candidate Pools (OLD SYSTEM)
           developerCandidates: developerCandidates,
           marketerCandidates: marketerCandidates,
           lastCandidateRefresh: lastCandidateRefresh,
+          
+          // NEW Candidate Pool System
+          candidatePool: candidatePool,
           
           // Event log (keep last 50 events)
           eventLog: eventLog.slice(-50)
@@ -5833,7 +6904,7 @@
         // Restore UI state
         expandedTeamSections = save.gameState.expandedTeamSections || {};
         
-        // Restore candidate pools
+        // Restore candidate pools (OLD SYSTEM)
         developerCandidates = save.gameState.developerCandidates || {};
         marketerCandidates = save.gameState.marketerCandidates || {};
         lastCandidateRefresh = save.gameState.lastCandidateRefresh || 0;
@@ -5841,6 +6912,19 @@
         // If no candidate pools exist, generate them
         if (Object.keys(developerCandidates).length === 0) {
           refreshCandidatePools();
+        }
+        
+        // Restore NEW candidate pool system
+        if (save.gameState.candidatePool) {
+          candidatePool = save.gameState.candidatePool;
+        } else {
+          // Old save without new system, initialize it
+          candidatePool = {
+            developers: [],
+            marketers: [],
+            lastRefreshDay: currentDay
+          };
+          generateCandidatePool();
         }
         
         // Restore event log
@@ -5858,10 +6942,7 @@
         updateEventLog();
         updateSpeedButtons();
         
-        // Show pause banner if game was paused
-        if (!isPlaying) {
-          document.getElementById('pauseBanner').classList.add('active');
-        }
+        // Pause state is shown by pause button color (yellowish)
         
         logEvent("📂 Game loaded successfully!");
         
@@ -5949,11 +7030,17 @@
       unlockedProducts = ['Task Manager']; // Only Task Manager unlocked at start
       nextRndProjectId = 1;
       
-      // Initialize candidate pools
+      // Initialize candidate pools (OLD SYSTEM - keeping for compatibility)
       developerCandidates = {};
       marketerCandidates = {};
       lastCandidateRefresh = 0;
       refreshCandidatePools();
+      
+      // Initialize NEW candidate pool system
+      candidatePool.developers = [];
+      candidatePool.marketers = [];
+      candidatePool.lastRefreshDay = 0;
+      generateCandidatePool(); // Generate initial pool based on startup milestone
       
       // Log start
       logEvent(`🎉 ${companyName} founded by ${founder.name}!`);
@@ -5971,10 +7058,9 @@
       // Close modal
       document.getElementById('newGameModal').classList.remove('active');
 
-      // Start game paused
+      // Start game paused (pause state shown by yellowish pause button)
       isPlaying = false;
       updateSpeedButtons();
-      document.getElementById('pauseBanner').classList.add('active');
       logEvent(`⏸️ Game paused. Press Space or click Play to start!`);
       
       // Save initial game state
@@ -5989,7 +7075,16 @@
     window.unassignEmployeeFromProduct = unassignEmployeeFromProduct;
     window.hireDeveloper = hireDeveloper;
     window.hireMarketer = hireMarketer;
-    window.upgradeOffice = upgradeOffice;
+    window.hireFromPool = hireFromPool; // NEW: Hire directly from candidate pool
+    window.showHireConfirmation = showHireConfirmation;
+    window.confirmHireCandidate = confirmHireCandidate;
+    window.hideHireConfirmModal = hideHireConfirmModal;
+    window.showUpgradeOfficeModal = showUpgradeOfficeModal;
+    window.hideUpgradeOfficeModal = hideUpgradeOfficeModal;
+    window.confirmUpgradeOffice = confirmUpgradeOffice;
+    window.showDowngradeOfficeModal = showDowngradeOfficeModal;
+    window.hideDowngradeOfficeModal = hideDowngradeOfficeModal;
+    window.confirmDowngradeOffice = confirmDowngradeOffice;
     window.upgradeServer = upgradeServer;
     window.showHireDeveloperModal = showHireDeveloperModal;
     window.hideHireDeveloperModal = hideHireDeveloperModal;
@@ -5997,6 +7092,9 @@
     window.hideHireMarketerModal = hideHireMarketerModal;
     window.showAssignDeveloperModal = showAssignDeveloperModal;
     window.hideAssignDeveloperModal = hideAssignDeveloperModal;
+    window.showPromotionModal = showPromotionModal;
+    window.hidePromotionModal = hidePromotionModal;
+    window.makePromotionOffer = makePromotionOffer;
     window.showAssignMarketerModal = showAssignMarketerModal;
     window.hideAssignMarketerModal = hideAssignMarketerModal;
     window.generateRandomCompanyName = generateRandomCompanyName;
@@ -6074,7 +7172,7 @@
       const panels = container.querySelectorAll('.panel');
       
       if (panels[index]) {
-        panels[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+        panels[index].scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
         updateMobileNavActive(index);
       }
     }
@@ -6094,7 +7192,9 @@
       const container = document.querySelector('.main-container');
       if (!container) return;
       
-      // Update active button on scroll (for swipe detection)
+      // Note: Swiping between panels is disabled (overflow-x: hidden)
+      // Users can only navigate using the bottom navigation buttons
+      // The scroll event listener below won't fire since scrolling is disabled
       let scrollTimeout;
       container.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
@@ -6106,6 +7206,127 @@
         }, 100);
       });
     }
+    
+    // ============================================
+    // TESTING & DEBUG UTILITIES (Phase 7)
+    // ============================================
+    
+    // Test save/load system with candidate pool
+    function testSaveLoad() {
+      console.log('=== Save/Load Test ===');
+      console.log('Before save:');
+      console.log('  Lifetime Earnings:', lifetimeEarnings);
+      console.log('  Candidate Pool Developers:', candidatePool.developers.length);
+      console.log('  Candidate Pool Marketers:', candidatePool.marketers.length);
+      console.log('  Last Refresh Day:', candidatePool.lastRefreshDay);
+      console.log('  Current Milestone:', getCurrentMilestone().name);
+      
+      const beforeSave = {
+        lifetimeEarnings: lifetimeEarnings,
+        devPoolSize: candidatePool.developers.length,
+        marketerPoolSize: candidatePool.marketers.length,
+        lastRefresh: candidatePool.lastRefreshDay,
+        milestone: getCurrentMilestone().name
+      };
+      
+      // Save
+      const saved = saveGame();
+      if (!saved) {
+        console.error('Save failed!');
+        return;
+      }
+      console.log('✅ Save successful');
+      
+      // Modify state
+      lifetimeEarnings += 50000;
+      candidatePool.developers = [];
+      console.log('Modified state (lifetime earnings +50000, cleared dev pool)');
+      
+      // Load
+      const loaded = loadGame();
+      if (!loaded) {
+        console.error('Load failed!');
+        return;
+      }
+      console.log('✅ Load successful');
+      
+      console.log('After load:');
+      console.log('  Lifetime Earnings:', lifetimeEarnings);
+      console.log('  Candidate Pool Developers:', candidatePool.developers.length);
+      console.log('  Candidate Pool Marketers:', candidatePool.marketers.length);
+      console.log('  Last Refresh Day:', candidatePool.lastRefreshDay);
+      console.log('  Current Milestone:', getCurrentMilestone().name);
+      
+      // Verify
+      const afterLoad = {
+        lifetimeEarnings: lifetimeEarnings,
+        devPoolSize: candidatePool.developers.length,
+        marketerPoolSize: candidatePool.marketers.length,
+        lastRefresh: candidatePool.lastRefreshDay,
+        milestone: getCurrentMilestone().name
+      };
+      
+      const passed = 
+        beforeSave.lifetimeEarnings === afterLoad.lifetimeEarnings &&
+        beforeSave.devPoolSize === afterLoad.devPoolSize &&
+        beforeSave.marketerPoolSize === afterLoad.marketerPoolSize &&
+        beforeSave.lastRefresh === afterLoad.lastRefresh;
+      
+      if (passed) {
+        console.log('✅ Save/Load test PASSED - all data preserved correctly!');
+      } else {
+        console.error('❌ Save/Load test FAILED - data mismatch!');
+        console.log('Before:', beforeSave);
+        console.log('After:', afterLoad);
+      }
+      
+      updateAllUI();
+    }
+    
+    // Test milestone progression
+    function testMilestoneProgression() {
+      console.log('=== Milestone Progression Test ===');
+      console.log('Current:', lifetimeEarnings, '-', getCurrentMilestone().name);
+      
+      HIRING_MILESTONES.forEach((milestone, index) => {
+        console.log(`${index + 1}. ${milestone.badge} ${milestone.name} (${formatCurrency(milestone.threshold)})`);
+        console.log(`   ${milestone.description}`);
+      });
+      
+      console.log('\nTo test milestone unlocks, run:');
+      console.log('lifetimeEarnings = 100000; checkMilestoneAchievement(0, lifetimeEarnings); updateFinancesUI();');
+    }
+    
+    // Test candidate pool generation
+    function testCandidatePool() {
+      console.log('=== Candidate Pool Test ===');
+      console.log('Generating new candidate pool...');
+      generateCandidatePool();
+      
+      console.log('\nDevelopers:');
+      candidatePool.developers.forEach((c, i) => {
+        console.log(`${i + 1}. ${c.name} (${c.tierName}) - ${Math.round(c.efficiency * 100)}% efficiency, ${formatCurrency(c.monthlySalary)}/mo`);
+      });
+      
+      console.log('\nMarketers:');
+      candidatePool.marketers.forEach((c, i) => {
+        console.log(`${i + 1}. ${c.name} (${c.tierName}) - ${Math.round(c.efficiency * 100)}% efficiency, ${formatCurrency(c.monthlySalary)}/mo`);
+      });
+      
+      console.log('\nLast refresh day:', candidatePool.lastRefreshDay);
+      console.log('Current milestone:', getCurrentMilestone().name);
+    }
+    
+    // Expose test functions globally for console access
+    window.testSaveLoad = testSaveLoad;
+    window.testMilestoneProgression = testMilestoneProgression;
+    window.testCandidatePool = testCandidatePool;
+    
+    console.log('🧪 Debug utilities loaded!');
+    console.log('Available test functions:');
+    console.log('  - testSaveLoad()');
+    console.log('  - testMilestoneProgression()');
+    console.log('  - testCandidatePool()');
   </script>
 </body>
 </html>
