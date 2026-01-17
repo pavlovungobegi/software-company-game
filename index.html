@@ -220,6 +220,22 @@
       color: white;
     }
     
+    /* Employee filter specific colors */
+    .filter-pill.active[data-filter="marketer"] {
+      background: #8b5cf6; /* Purple - matches marketer hire button */
+      color: white;
+    }
+    
+    .filter-pill.active[data-filter="unassigned"] {
+      background: #dc2626; /* Red - indicates action needed */
+      color: white;
+    }
+    
+    .filter-pill.active[data-filter="promotion"] {
+      background: #059669; /* Green - indicates ready/positive state */
+      color: white;
+    }
+    
     /* Notification System */
     .notification-container {
       position: fixed;
@@ -1464,11 +1480,12 @@
     
     /* Office Info */
     .office-info {
-      background: white;
+      /*background: white;
       border: 2px solid #e5e7eb;
       border-radius: 6px;
       padding: 0.5rem;
       margin-bottom: 0.5rem;
+      */
     }
     
     .office-header {
@@ -2070,16 +2087,6 @@
 
         <!-- Controls -->
         <div class="flex gap-2">
-          <button id="playPauseBtn" onclick="togglePlayPause()" 
-                  class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
-            <i data-lucide="play" class="w-4 h-4"></i>
-            <span id="playPauseText">Play</span>
-          </button>
-          <button id="speedBtn" onclick="cycleSpeed()" 
-                  class="px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
-            <span id="speedText">2x</span>
-          </button>
-          <div class="flex-1"></div>
           <button id="saveBtn" onclick="saveGame()" 
                   class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-white border border-white/30">
             <i data-lucide="save" class="w-4 h-4"></i>
@@ -2089,6 +2096,16 @@
                   class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-white border border-white/30">
             <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             <span>Reset</span>
+          </button>
+          <div class="flex-1"></div>
+          <button id="speedBtn" onclick="cycleSpeed()" 
+                  class="px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
+            <span id="speedText">2x</span>
+          </button>
+          <button id="playPauseBtn" onclick="togglePlayPause()" 
+                  class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
+            <i data-lucide="play" class="w-4 h-4"></i>
+            <span id="playPauseText">Play</span>
           </button>
         </div>
       </div>
@@ -2118,9 +2135,9 @@
           <button class="filter-pill live" data-filter="published" onclick="filterProducts('published')">
             Live (<span id="filterCountLive">0</span>)
           </button>
-          <button class="filter-pill deprecated" data-filter="deprecated" onclick="filterProducts('deprecated')">
+          <!--<button class="filter-pill deprecated" data-filter="deprecated" onclick="filterProducts('deprecated')">
             Deprecated (<span id="filterCountDeprecated">0</span>)
-          </button>
+          </button>-->
         </div>
       </div>
       
@@ -2149,23 +2166,13 @@
         <!-- Office Info -->
         <div class="office-info" id="officeInfo"></div>
         
-        <!-- Hire Buttons -->
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-          <button class="btn" onclick="showHireDeveloperModal()" style="flex: 1;">
-            👨‍💻 Hire Developer
-          </button>
-          <button class="btn" onclick="showHireMarketerModal()" style="flex: 1;">
-            📢 Hire Marketer
-          </button>
-        </div>
-        
         <!-- Employee Filter Pills -->
-        <div class="product-filter-pills" style="margin-bottom: 1rem;">
+        <div class="product-filter-pills" style="margin-bottom: 0.75rem; flex-wrap: wrap;">
           <button class="filter-pill active" data-filter="all" onclick="filterEmployees('all')">
             All (<span id="employee-count-all">0</span>)
           </button>
           <button class="filter-pill" data-filter="developer" onclick="filterEmployees('developer')">
-            Developers (<span id="employee-count-developer">0</span>)
+            Devs (<span id="employee-count-developer">0</span>)
           </button>
           <button class="filter-pill" data-filter="marketer" onclick="filterEmployees('marketer')">
             Marketers (<span id="employee-count-marketer">0</span>)
@@ -2285,6 +2292,41 @@
   </div>
 
   <!-- Hire Developer Modal -->
+  <!-- Select Employee Type Modal -->
+  <div class="modal-overlay" id="selectEmployeeTypeModal">
+    <div class="modal" style="max-width: 360px;">
+      <div class="modal-header">👥 Hire New Employee</div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <p style="text-align: center; color: #6b7280; margin-bottom: 1.5rem; font-size: 0.9rem;">
+          What type of employee do you want to hire?
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <button onclick="selectEmployeeType('developer')" 
+                  class="btn" 
+                  style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1rem; font-size: 1rem; background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; border-radius: 8px;">
+            <span style="font-size: 1.5rem;">👨‍💻</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 600;">Developer</div>
+              <div style="font-size: 0.75rem; opacity: 0.9;">Build products & R&D</div>
+            </div>
+          </button>
+          <button onclick="selectEmployeeType('marketer')" 
+                  class="btn" 
+                  style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1rem; font-size: 1rem; background: linear-gradient(135deg, #8b5cf6, #7c3aed); border: none; color: white; border-radius: 8px;">
+            <span style="font-size: 1.5rem;">📢</span>
+            <div style="text-align: left;">
+              <div style="font-weight: 600;">Marketer</div>
+              <div style="font-size: 0.75rem; opacity: 0.9;">Acquire customers</div>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="hideSelectEmployeeTypeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="hireDeveloperModal">
     <div class="modal">
       <div class="modal-header">👨‍💻 Hire Developer</div>
@@ -3544,45 +3586,504 @@
       expert: 5000000
     };
 
-    const FIRST_NAMES = [
-      // English/Western names
-      "Alex", "Jamie", "Jordan", "Taylor", "Morgan", "Casey", "Riley", "Avery", "Quinn", "Sage",
-      "Emma", "Liam", "Olivia", "Noah", "Ava", "Ethan", "Sophia", "Mason", "Isabella", "William",
-      "Mia", "James", "Charlotte", "Benjamin", "Amelia", "Lucas", "Harper", "Henry", "Evelyn", "Alexander",
-      "Abigail", "Michael", "Emily", "Daniel", "Elizabeth", "Matthew", "Sofia", "David", "Ella", "Joseph",
-      "Madison", "Samuel", "Scarlett", "Jackson", "Victoria", "Sebastian", "Aria", "Jack", "Grace", "Aiden",
-      // Asian names (Chinese, Japanese, Korean, Indian, Vietnamese, Indonesian, Filipino)
-      "Wei", "Ming", "Lei", "Jing", "Yan", "Yuki", "Haruto", "Hana", "Kenji", "Akira",
-      "Sora", "Ji-ho", "Min-jun", "Seo-yeon", "Hye-jin", "Arjun", "Priya", "Rohan", "Ananya", "Aditya",
-      "Kavya", "Linh", "Minh", "Tuan", "Hoa", "Budi", "Siti", "Adi", "Dewi", "Jose",
-      // Turkish names
-      "Emre", "Elif", "Ahmet", "Ayşe", "Mehmet", "Zeynep", "Can", "Deniz",
-      // Middle Eastern/Arabic names
-      "Omar", "Fatima", "Hassan", "Layla", "Ali", "Noor", "Yusuf", "Zara", "Karim", "Amina",
-      // African names
-      "Kwame", "Amara", "Kofi", "Zuri", "Chidi", "Nia", "Jabari", "Aisha", "Kwesi", "Abeni"
+    // Regional name database for realistic name combinations
+    const REGIONAL_NAMES = {
+      "US_Canada": {
+        firstNames: [
+          "James", "Mary", "John", "Patricia", "Robert", "Jennifer", "Michael", "Linda", "William", "Barbara",
+          "David", "Elizabeth", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Sarah", "Christopher", "Karen",
+          "Charles", "Lisa", "Daniel", "Nancy", "Matthew", "Betty", "Anthony", "Margaret", "Mark", "Sandra",
+          "Donald", "Ashley", "Steven", "Kimberly", "Andrew", "Emily", "Paul", "Donna", "Joshua", "Michelle",
+          "Kenneth", "Carol", "Kevin", "Amanda", "Brian", "Dorothy", "George", "Melissa", "Timothy", "Deborah",
+          "Ronald", "Stephanie", "Edward", "Rebecca", "Jason", "Sharon", "Jeffrey", "Laura", "Ryan", "Cynthia",
+          "Jacob", "Kathleen", "Gary", "Amy", "Nicholas", "Angela", "Eric", "Shirley", "Jonathan", "Anna",
+          "Stephen", "Brenda", "Larry", "Pamela", "Justin", "Emma", "Scott", "Nicole", "Brandon", "Helen",
+          "Benjamin", "Samantha", "Samuel", "Katherine", "Raymond", "Christine", "Gregory", "Debra", "Frank", "Rachel",
+          "Alexander", "Carolyn", "Patrick", "Janet", "Jack", "Catherine", "Dennis", "Maria", "Jerry", "Heather"
+        ],
+        lastNames: [
+          "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
+          "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
+          "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
+          "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores",
+          "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts",
+          "Gomez", "Phillips", "Evans", "Turner", "Diaz", "Parker", "Cruz", "Edwards", "Collins", "Reyes",
+          "Stewart", "Morris", "Morales", "Murphy", "Cook", "Rogers", "Gutierrez", "Ortiz", "Morgan", "Cooper",
+          "Peterson", "Bailey", "Reed", "Kelly", "Howard", "Ramos", "Kim", "Cox", "Ward", "Richardson",
+          "Watson", "Brooks", "Chavez", "Wood", "James", "Bennett", "Gray", "Mendoza", "Ruiz", "Hughes",
+          "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez"
+        ]
+      },
+      "Latin_Hispanic": {
+        firstNames: [
+          "José", "María", "Juan", "Ana", "Carlos", "Carmen", "Luis", "Rosa", "Miguel", "Isabel",
+          "Antonio", "Laura", "Francisco", "Patricia", "Javier", "Elena", "Manuel", "Marta", "Pedro", "Sofia",
+          "Diego", "Lucia", "Fernando", "Teresa", "Rafael", "Monica", "Jorge", "Claudia", "Ricardo", "Angela",
+          "Alejandro", "Beatriz", "Eduardo", "Silvia", "Roberto", "Gloria", "Daniel", "Adriana", "Raul", "Diana",
+          "Sergio", "Julia", "Pablo", "Paola", "Andres", "Gabriela", "Oscar", "Veronica", "Marco", "Cristina",
+          "Enrique", "Sandra", "Alberto", "Natalia", "Guillermo", "Mariana", "Gonzalo", "Daniela", "Rodrigo", "Carolina",
+          "Gabriel", "Valentina", "Arturo", "Andrea", "Victor", "Alejandra", "Ramon", "Lorena", "Alfredo", "Rocio",
+          "Felipe", "Cecilia", "Lorenzo", "Susana", "Emilio", "Blanca", "Hector", "Victoria", "Octavio", "Pilar",
+          "Salvador", "Alicia", "Julio", "Dolores", "Ruben", "Raquel", "Mateo", "Ines", "Leonardo", "Esperanza",
+          "Santiago", "Catalina", "Tomas", "Amparo", "Nicolas", "Concepcion", "Hugo", "Mercedes", "Adrian", "Soledad"
+        ],
+        lastNames: [
+          "Garcia", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzalez", "Perez", "Sanchez", "Ramirez", "Torres",
+          "Flores", "Rivera", "Gomez", "Diaz", "Cruz", "Morales", "Reyes", "Gutierrez", "Ortiz", "Mendoza",
+          "Ruiz", "Alvarez", "Castillo", "Jimenez", "Romero", "Vargas", "Herrera", "Medina", "Aguilar", "Castro",
+          "Ramos", "Moreno", "Vazquez", "Rojas", "Fernandez", "Delgado", "Silva", "Navarro", "Soto", "Mendez",
+          "Vega", "Nunez", "Guerrero", "Dominguez", "Campos", "Pena", "Santos", "Rios", "Cardenas", "Leon",
+          "Ayala", "Cabrera", "Sandoval", "Fuentes", "Calderon", "Figueroa", "Pacheco", "Carrillo", "Duran", "Cortez",
+          "Velazquez", "Salazar", "Maldonado", "Acosta", "Cervantes", "Garza", "Luna", "Sosa", "Suarez", "Lara",
+          "Molina", "Ochoa", "Ortega", "Peralta", "Estrada", "Contreras", "Ibarra", "Marin", "Bautista", "Orozco",
+          "Espinoza", "Murillo", "Valencia", "Rosales", "Aguirre", "Villarreal", "Franco", "Ponce", "Benitez", "Camacho",
+          "Mercado", "Salas", "Cuevas", "Barrera", "Zamora", "Escobar", "Miranda", "Montes", "Cordova", "Padilla"
+        ]
+      },
+      "UK": {
+        firstNames: [
+          "Oliver", "Amelia", "George", "Olivia", "Harry", "Emily", "Jack", "Isla", "Jacob", "Ava",
+          "Charlie", "Jessica", "Thomas", "Poppy", "Oscar", "Sophie", "William", "Isabella", "James", "Lily",
+          "Mohammed", "Grace", "Henry", "Ella", "Alfie", "Scarlett", "Leo", "Chloe", "Noah", "Mia",
+          "Arthur", "Freya", "Muhammad", "Florence", "Freddie", "Evie", "Archie", "Ruby", "Isaac", "Sienna",
+          "Albert", "Daisy", "Joshua", "Phoebe", "Alexander", "Alice", "Edward", "Charlotte", "Max", "Isabelle",
+          "Daniel", "Maya", "Samuel", "Eva", "Lucas", "Lucy", "Mason", "Elsie", "Harrison", "Rosie",
+          "Sebastian", "Sophia", "Theo", "Matilda", "Ethan", "Hannah", "Adam", "Millie", "Benjamin", "Layla",
+          "Logan", "Ivy", "Finley", "Violet", "Elijah", "Holly", "Muhammad", "Evelyn", "Jaxon", "Willow",
+          "Lewis", "Harriet", "Dylan", "Zara", "Jayden", "Esme", "Zachary", "Imogen", "Reuben", "Emma",
+          "Toby", "Maisie", "Luca", "Thea", "Hugo", "Georgina", "Nathan", "Molly", "Felix", "Abigail"
+        ],
+        lastNames: [
+          "Smith", "Jones", "Williams", "Taylor", "Brown", "Davies", "Evans", "Wilson", "Thomas", "Johnson",
+          "Roberts", "Walker", "Wright", "Robinson", "Thompson", "White", "Hughes", "Edwards", "Green", "Hall",
+          "Lewis", "Harris", "Clarke", "Patel", "Jackson", "Wood", "Turner", "Martin", "Cooper", "Hill",
+          "Ward", "Morris", "Moore", "Clark", "Lee", "King", "Baker", "Harrison", "Morgan", "Allen",
+          "James", "Scott", "Phillips", "Watson", "Davis", "Parker", "Price", "Bennett", "Wood", "Barnes",
+          "Ross", "Henderson", "Mills", "Gibson", "Graham", "Simpson", "Hunter", "Thomson", "Webb", "Fraser",
+          "Reid", "Murray", "Stevens", "Matthews", "Robertson", "Mason", "Hunt", "Shaw", "Russell", "Palmer",
+          "Mitchell", "Richardson", "Walsh", "Gray", "Cook", "Powell", "Kelly", "Cameron", "Butler", "Stewart",
+          "Bailey", "Young", "Foster", "Knight", "Chapman", "Fox", "Harvey", "Cole", "Barker", "Jenkins",
+          "Warren", "Marshall", "Pearson", "Ferguson", "Hamilton", "Bryant", "Reynolds", "Ellis", "Austin", "Payne"
+        ]
+      },
+      "Netherlands": {
+        firstNames: [
+          "Daan", "Emma", "Sem", "Julia", "Lucas", "Sophie", "Milan", "Anna", "Levi", "Tess",
+          "Luuk", "Lisa", "Lars", "Saar", "Finn", "Eva", "Thijs", "Mila", "Bram", "Noa",
+          "Jesse", "Isa", "Stijn", "Lotte", "Thomas", "Fleur", "Max", "Sara", "Tim", "Fenna",
+          "Sam", "Lynn", "Ruben", "Luna", "Tom", "Amy", "Gijs", "Zoey", "Jasper", "Evi",
+          "Jan", "Maria", "Pieter", "Anna", "Henk", "Karin", "Kees", "Sandra", "Willem", "Linda",
+          "Jeroen", "Marieke", "Bas", "Esther", "Niels", "Ingrid", "Sander", "Laura", "Joost", "Marloes",
+          "Martijn", "Charlotte", "Arjan", "Annemarie", "Remco", "Monique", "Wouter", "Nicole", "Dennis", "Suzanne",
+          "Mark", "Astrid", "Peter", "Bianca", "Erik", "Renee", "Bart", "Maaike", "Rob", "Judith",
+          "Patrick", "Sabine", "Ronald", "Yvonne", "Frank", "Patricia", "Marcel", "Wendy", "Hans", "Jeanette",
+          "Gerrit", "Anja", "Maarten", "Mirjam", "Vincent", "Pauline", "Michiel", "Anita", "Stefan", "Ilse"
+        ],
+        lastNames: [
+          "de Jong", "Jansen", "de Vries", "van den Berg", "van Dijk", "Bakker", "Janssen", "Visser", "Smit", "Meijer",
+          "de Boer", "Mulder", "de Groot", "Bos", "Vos", "Peters", "Hendriks", "van Leeuwen", "Dekker", "Brouwer",
+          "de Wit", "Dijkstra", "Smits", "de Graaf", "van der Meer", "van der Linden", "Kok", "Jacobs", "de Haan", "Vermeulen",
+          "van den Heuvel", "van der Veen", "van den Broek", "de Bruijn", "de Bruin", "van der Heijden", "Schouten", "van Beek", "Willems", "van Vliet",
+          "van de Ven", "Hoekstra", "Maas", "Verhoeven", "Koster", "van Dam", "van der Wal", "Prins", "Blom", "Huisman",
+          "Peeters", "de Lange", "Aarts", "Adriaansen", "Albers", "Baars", "Beek", "Bosch", "Claassen", "Damen",
+          "Driessen", "Evers", "Franssen", "Gerritsen", "Goossens", "Groen", "Groot", "Haan", "Hermans", "Hofs",
+          "Jans", "Jonker", "Kamp", "Klein", "Koning", "Kramer", "Kuiper", "Laan", "Martens", "Moll",
+          "Nijhuis", "Pol", "Post", "Prins", "Roos", "Sanders", "Scholten", "Schroder", "Steenber", "Stolk",
+          "Timmermans", "Vink", "Vogel", "de Vos", "Vrielink", "de Waal", "Wit", "Wolters", "Zwart", "van Beek"
+        ]
+      },
+      "Germany": {
+        firstNames: [
+          "Lukas", "Emma", "Leon", "Mia", "Ben", "Hannah", "Paul", "Sophia", "Jonas", "Anna",
+          "Felix", "Lena", "Noah", "Lea", "Elias", "Marie", "Finn", "Laura", "Luis", "Sophie",
+          "Maximilian", "Charlotte", "Alexander", "Maria", "David", "Emily", "Niklas", "Lisa", "Tim", "Johanna",
+          "Jan", "Lara", "Max", "Julia", "Moritz", "Sarah", "Philipp", "Katharina", "Simon", "Franziska",
+          "Tobias", "Luisa", "Sebastian", "Amelie", "Fabian", "Leonie", "Julian", "Clara", "Florian", "Elena",
+          "Michael", "Petra", "Thomas", "Monika", "Andreas", "Sabine", "Markus", "Susanne", "Stefan", "Claudia",
+          "Christian", "Birgit", "Martin", "Andrea", "Daniel", "Martina", "Frank", "Angelika", "Peter", "Christine",
+          "Wolfgang", "Karin", "Klaus", "Gabriele", "Jürgen", "Renate", "Dieter", "Ursula", "Hans", "Ingrid",
+          "Heinz", "Helga", "Manfred", "Brigitte", "Werner", "Erika", "Günter", "Heike", "Helmut", "Ute",
+          "Karl", "Gisela", "Horst", "Christa", "Rainer", "Elisabeth", "Walter", "Ilse", "Bernd", "Hildegard"
+        ],
+        lastNames: [
+          "Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann",
+          "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann",
+          "Braun", "Krüger", "Hofmann", "Hartmann", "Lange", "Schmitt", "Werner", "Schmitz", "Krause", "Meier",
+          "Lehmann", "Schmid", "Schulze", "Maier", "Köhler", "Herrmann", "König", "Walter", "Mayer", "Huber",
+          "Kaiser", "Fuchs", "Peters", "Lang", "Scholz", "Möller", "Weiß", "Jung", "Hahn", "Schubert",
+          "Vogel", "Friedrich", "Keller", "Günther", "Frank", "Berger", "Winkler", "Roth", "Beck", "Baumann",
+          "Kraus", "Böhm", "Simon", "Graf", "Sauer", "Heinrich", "Otto", "Seidel", "Wolff", "Brandt",
+          "Pfeiffer", "Vogt", "Ludwig", "Paul", "Horn", "Busch", "Arnold", "Thomas", "Sommer", "Martin",
+          "Engel", "Lorenz", "Pohl", "Groß", "Stein", "Haas", "Bergmann", "Schuster", "Kramer", "Böhme",
+          "Lindner", "Jäger", "Michel", "Krämer", "Voigt", "Winter", "Kuhn", "Nagel", "Ritter", "Franke"
+        ]
+      },
+      "France": {
+        firstNames: [
+          "Louis", "Emma", "Gabriel", "Jade", "Raphaël", "Louise", "Arthur", "Alice", "Jules", "Chloé",
+          "Adam", "Léa", "Lucas", "Manon", "Hugo", "Zoé", "Léo", "Lola", "Maël", "Camille",
+          "Tom", "Inès", "Nathan", "Sarah", "Ethan", "Lilou", "Noah", "Eva", "Théo", "Juliette",
+          "Antoine", "Marie", "Paul", "Claire", "Jean", "Sophie", "Pierre", "Anne", "François", "Julie",
+          "Nicolas", "Isabelle", "Julien", "Nathalie", "Alexandre", "Catherine", "Thomas", "Stephanie", "Maxime", "Sandrine",
+          "David", "Sylvie", "Laurent", "Valérie", "Sébastien", "Christine", "Guillaume", "Patricia", "Romain", "Martine",
+          "Vincent", "Monique", "Olivier", "Nicole", "Mathieu", "Françoise", "Eric", "Brigitte", "Michel", "Véronique",
+          "Philippe", "Annie", "Alain", "Jacqueline", "Bernard", "Danielle", "Patrick", "Dominique", "Christian", "Christiane",
+          "Jacques", "Denise", "Marcel", "Michelle", "René", "Paulette", "Henri", "Jeanne", "Robert", "Simone",
+          "André", "Colette", "Georges", "Yvette", "Charles", "Madeleine", "Claude", "Suzanne", "Roger", "Hélène"
+        ],
+        lastNames: [
+          "Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau",
+          "Simon", "Laurent", "Lefebvre", "Michel", "Garcia", "David", "Bertrand", "Roux", "Vincent", "Fournier",
+          "Morel", "Girard", "André", "Lefevre", "Mercier", "Dupont", "Lambert", "Bonnet", "François", "Martinez",
+          "Legrand", "Garnier", "Faure", "Rousseau", "Blanc", "Guerin", "Muller", "Henry", "Roussel", "Nicolas",
+          "Perrin", "Morin", "Mathieu", "Clement", "Gauthier", "Dumont", "Lopez", "Fontaine", "Chevalier", "Robin",
+          "Masson", "Sanchez", "Gerard", "Nguyen", "Boyer", "Denis", "Lemaire", "Duval", "Joly", "Gautier",
+          "Roger", "Roche", "Roy", "Noel", "Meyer", "Lucas", "Meunier", "Jean", "Perez", "Marchand",
+          "Dufour", "Blanchard", "Marie", "Barbier", "Brun", "Dumas", "Brunet", "Schmitt", "Lacroix", "Renard",
+          "Arnaud", "Ballard", "Fabre", "Olivier", "Toussaint", "Lemoine", "Menard", "Rolland", "Caron", "Riviere",
+          "Leclerc", "Benoit", "Vidal", "Picard", "Boucher", "Renaud", "Giraud", "Hubert", "Aubry", "Maillard"
+        ]
+      },
+      "Scandinavian": {
+        firstNames: [
+          "Lars", "Anna", "Erik", "Karin", "Per", "Maria", "Jan", "Kristina", "Anders", "Eva",
+          "Johan", "Marie", "Nils", "Ingrid", "Karl", "Margareta", "Mikael", "Elisabeth", "Fredrik", "Birgitta",
+          "Peter", "Sofia", "Magnus", "Emma", "Hans", "Helena", "Sven", "Inger", "Olof", "Annika",
+          "Gustav", "Linnea", "Oscar", "Maja", "Viktor", "Julia", "Emil", "Sara", "Axel", "Ebba",
+          "Björn", "Astrid", "Torbjörn", "Matilda", "Lennart", "Elin", "Bengt", "Johanna", "Kjell", "Katarina",
+          "Ole", "Hanne", "Stig", "Lise", "Thor", "Solveig", "Morten", "Ingeborg", "Henrik", "Grete",
+          "Leif", "Liv", "Arne", "Randi", "Knut", "Marit", "Geir", "Berit", "Tor", "Anne",
+          "Petter", "Astrid", "Jens", "Sigrid", "Andreas", "Kristin", "Christian", "Hilde", "Martin", "Nina",
+          "Thomas", "Mette", "Jonas", "Siri", "Daniel", "Else", "Tobias", "Agnes", "Felix", "Ida",
+          "Rasmus", "Frida", "Alexander", "Elsa", "William", "Alma", "Filip", "Saga", "Lukas", "Wilma"
+        ],
+        lastNames: [
+          "Andersson", "Johansson", "Karlsson", "Nilsson", "Eriksson", "Larsson", "Olsson", "Persson", "Svensson", "Gustafsson",
+          "Pettersson", "Jonsson", "Jansson", "Hansson", "Bengtsson", "Jönsson", "Lindberg", "Jakobsson", "Magnusson", "Olofsson",
+          "Lindström", "Lindqvist", "Lindgren", "Berg", "Axelsson", "Bergström", "Lundberg", "Lundgren", "Lind", "Lundqvist",
+          "Hansen", "Johansen", "Olsen", "Larsen", "Andersen", "Pedersen", "Nilsen", "Kristiansen", "Jensen", "Karlsen",
+          "Christiansen", "Pettersen", "Sørensen", "Rasmussen", "Andreassen", "Berg", "Haugen", "Hagen", "Johansen", "Mikkelsen",
+          "Nielsen", "Jensen", "Petersen", "Madsen", "Christensen", "Rasmussen", "Møller", "Larsen", "Sørensen", "Jørgensen",
+          "Virtanen", "Korhonen", "Mäkinen", "Nieminen", "Hämäläinen", "Laine", "Heikkinen", "Koskinen", "Järvinen", "Lehtonen",
+          "Björk", "Holm", "Ström", "Sandberg", "Forsberg", "Åberg", "Lundström", "Söderberg", "Fransson", "Sjöberg",
+          "Wallin", "Engström", "Eklund", "Danielsson", "Håkansson", "Lundin", "Björklund", "Bergman", "Gunnarsson", "Holmberg",
+          "Wikström", "Isaksson", "Samuelsson", "Nyström", "Hedlund", "Arvidsson", "Strand", "Hellström", "Nordin", "Blom"
+        ]
+      },
+      "Italian": {
+        firstNames: [
+          "Francesco", "Sofia", "Alessandro", "Giulia", "Lorenzo", "Martina", "Leonardo", "Chiara", "Andrea", "Aurora",
+          "Mattia", "Greta", "Gabriele", "Alice", "Riccardo", "Emma", "Tommaso", "Giorgia", "Davide", "Beatrice",
+          "Giuseppe", "Anna", "Antonio", "Maria", "Marco", "Sara", "Giovanni", "Francesca", "Roberto", "Laura",
+          "Luca", "Elena", "Paolo", "Valentina", "Stefano", "Alessandra", "Angelo", "Simona", "Salvatore", "Elisa",
+          "Pietro", "Claudia", "Vincenzo", "Federica", "Domenico", "Monica", "Claudio", "Paola", "Nicola", "Silvia",
+          "Michele", "Daniela", "Matteo", "Roberta", "Luigi", "Cristina", "Fabio", "Barbara", "Daniele", "Patrizia",
+          "Simone", "Antonella", "Carlo", "Sabrina", "Alberto", "Manuela", "Filippo", "Giovanna", "Massimo", "Carla",
+          "Enrico", "Lucia", "Emanuele", "Rossella", "Federico", "Serena", "Cristian", "Ilaria", "Diego", "Michela",
+          "Valerio", "Emanuela", "Edoardo", "Stefania", "Giacomo", "Angela", "Alessio", "Lorena", "Manuel", "Giuseppina",
+          "Samuele", "Valeria", "Raffaele", "Annalisa", "Gianluca", "Ivana", "Gianmarco", "Tiziana", "Dario", "Eleonora"
+        ],
+        lastNames: [
+          "Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano", "Colombo", "Ricci", "Marino", "Greco",
+          "Bruno", "Gallo", "Conti", "De Luca", "Costa", "Giordano", "Mancini", "Rizzo", "Lombardi", "Moretti",
+          "Barbieri", "Fontana", "Santoro", "Mariani", "Rinaldi", "Caruso", "Ferrara", "Galli", "Martini", "Leone",
+          "Longo", "Gentile", "Martinelli", "Vitale", "Lombardo", "Serra", "Coppola", "De Santis", "D'Angelo", "Marchetti",
+          "Parisi", "Villa", "Conte", "Ferraro", "Fabbri", "Bianco", "Sorrentino", "Grasso", "Valentini", "Benedetti",
+          "Caputo", "Barone", "Grassi", "Testa", "Cattaneo", "Monti", "Giuliani", "Guerra", "Palmieri", "Bernardi",
+          "Martino", "Fiore", "De Rosa", "Ferretti", "Bellini", "Basile", "Riva", "Donato", "Piras", "Vitali",
+          "Battaglia", "Sartori", "Neri", "Costantini", "Milani", "Pagano", "Ruggiero", "Sorrentino", "D'Amico", "Orlando",
+          "Damico", "Negri", "Sala", "Silvestri", "Pellegrini", "Palumbo", "Sanna", "Farina", "Rizzi", "Monti",
+          "Cattaneo", "Morelli", "Amato", "Carbone", "Giordano", "Rizzo", "Lombardo", "Ferraro", "Galli", "Fontana"
+        ]
+      },
+      "Turkish": {
+        firstNames: [
+          "Mehmet", "Ayşe", "Ahmet", "Fatma", "Mustafa", "Emine", "Ali", "Hatice", "Hüseyin", "Zeynep",
+          "Hasan", "Elif", "İbrahim", "Hacer", "Osman", "Sultan", "Yusuf", "Meryem", "İsmail", "Esma",
+          "Emre", "Selin", "Burak", "Derya", "Can", "Özge", "Murat", "Ebru", "Serkan", "Aylin",
+          "Kemal", "Gül", "Cem", "Deniz", "Volkan", "Canan", "Onur", "Burcu", "Berk", "Pınar",
+          "Koray", "Merve", "Baran", "Dilara", "Eren", "Aslı", "Ege", "İrem", "Tolga", "Yasemin",
+          "Kaan", "Tuğçe", "Barış", "Gamze", "Çağlar", "Şebnem", "Alper", "Melis", "Umut", "Belgin",
+          "Selim", "Nurcan", "Orkun", "Serpil", "Taner", "Filiz", "Erhan", "Gülay", "Hakan", "Serap",
+          "Yaşar", "Müge", "Engin", "Sibel", "Halil", "Sevda", "Recep", "Aysel", "Ömer", "Hanife",
+          "Süleyman", "Fadime", "Ramazan", "Gülsüm", "Mahmut", "Şerife", "Celal", "Güler", "Salih", "Havva",
+          "Veli", "Zeliha", "Orhan", "Neriman", "Kadir", "Sabiha", "Zeki", "Şeyma", "Adem", "Rukiye"
+        ],
+        lastNames: [
+          "Yılmaz", "Kaya", "Demir", "Şahin", "Çelik", "Yıldız", "Yıldırım", "Öztürk", "Aydın", "Özdemir",
+          "Arslan", "Doğan", "Kılıç", "Aslan", "Çetin", "Kara", "Koç", "Kurt", "Özkan", "Şimşek",
+          "Erdoğan", "Güneş", "Aksoy", "Avcı", "Türk", "Özer", "Eren", "Bulut", "Kaplan", "Bozkurt",
+          "Polat", "Taş", "Özgür", "Demirtaş", "Tunç", "Korkmaz", "Şen", "Öz", "Güler", "Acar",
+          "Çakır", "Aktaş", "Tekin", "Yavuz", "Bayram", "Keskin", "Ateş", "Sezer", "Parlak", "Yaman",
+          "Turan", "Soylu", "Bayar", "Karaca", "Özkan", "Sönmez", "Uysal", "Akyüz", "Özkaya", "Çiftçi",
+          "Toprak", "Şeker", "Duman", "Topal", "Kırmızı", "Sarı", "Beyaz", "Mavi", "Yeşil", "Ayhan",
+          "Gül", "Dağ", "Deniz", "Kök", "Dal", "Taşkın", "Erdem", "Ünlü", "Kaynak", "Savaş",
+          "Barış", "Bilgin", "Özmen", "Genç", "Akın", "Durmaz", "Eryılmaz", "Yalçın", "Güven", "Akgül",
+          "Özkan", "Çolak", "Güzel", "Tan", "Ay", "Öztürk", "Aydoğan", "Ergin", "Koçak", "Akbulut"
+        ]
+      },
+      "Japanese": {
+        firstNames: [
+          "Haruto", "Hina", "Yuto", "Yui", "Sota", "Sakura", "Ren", "Himari", "Yusei", "Koharu",
+          "Haruki", "Honoka", "Yuki", "Akari", "Riku", "Aoi", "Kaito", "Riko", "Yamato", "Mio",
+          "Hiroshi", "Yuki", "Takashi", "Keiko", "Taro", "Yoko", "Satoshi", "Naomi", "Masato", "Kazuko",
+          "Kenji", "Kumiko", "Yoshio", "Michiko", "Makoto", "Ayako", "Shinji", "Reiko", "Takeshi", "Junko",
+          "Kenichi", "Tomoko", "Koji", "Noriko", "Daisuke", "Mariko", "Masahiro", "Mitsuko", "Hiroyuki", "Akiko",
+          "Akira", "Sachiko", "Osamu", "Yumiko", "Minoru", "Kyoko", "Shigeru", "Hideko", "Tetsuya", "Yoshiko",
+          "Kazuo", "Chieko", "Nobuo", "Etsuko", "Hideo", "Kiyoko", "Masao", "Fumiko", "Yoshihiro", "Hisako",
+          "Takeshi", "Teruko", "Yukio", "Sadako", "Toshio", "Kazue", "Mitsuru", "Masako", "Isamu", "Setsuko",
+          "Kenta", "Megumi", "Shota", "Aya", "Daiki", "Mai", "Ryota", "Yuka", "Koki", "Rina",
+          "Hayato", "Nana", "Shun", "Ai", "Ryusei", "Miyu", "Taiga", "Kana", "Ryo", "Asuka"
+        ],
+        lastNames: [
+          "Sato", "Suzuki", "Takahashi", "Tanaka", "Watanabe", "Ito", "Yamamoto", "Nakamura", "Kobayashi", "Kato",
+          "Yoshida", "Yamada", "Sasaki", "Yamaguchi", "Saito", "Matsumoto", "Inoue", "Kimura", "Hayashi", "Shimizu",
+          "Yamazaki", "Mori", "Abe", "Ikeda", "Hashimoto", "Yamashita", "Ishikawa", "Nakajima", "Maeda", "Fujita",
+          "Ogawa", "Goto", "Okada", "Hasegawa", "Murakami", "Kondo", "Ishii", "Saito", "Sakamoto", "Endo",
+          "Aoki", "Fujii", "Nishimura", "Fukuda", "Ota", "Miura", "Okamoto", "Kawakami", "Hara", "Kaneko",
+          "Nakagawa", "Harada", "Matsuda", "Fujiwara", "Ueda", "Sugiyama", "Takeuchi", "Nomura", "Ono", "Kikuchi",
+          "Sawada", "Imai", "Nishikawa", "Maruyama", "Takada", "Morita", "Mizuno", "Murata", "Matsui", "Kubo",
+          "Tamura", "Kojima", "Nakano", "Sakurai", "Shibata", "Miyazaki", "Masuda", "Noguchi", "Ohno", "Tsuchiya",
+          "Hirata", "Arai", "Fukushima", "Inaba", "Nagai", "Wada", "Kuroda", "Miyamoto", "Horiuchi", "Ishida",
+          "Kawasaki", "Horikawa", "Minami", "Yoshikawa", "Ichikawa", "Nagano", "Yamanaka", "Tsuji", "Fujimoto", "Takagi"
+        ]
+      },
+      "Chinese": {
+        firstNames: [
+          "Wei", "Li", "Min", "Jing", "Ming", "Hui", "Yan", "Fang", "Lei", "Ying",
+          "Hao", "Na", "Tao", "Xia", "Qiang", "Juan", "Jun", "Hong", "Cheng", "Mei",
+          "Yong", "Lin", "Gang", "Xin", "Bo", "Xiong", "Peng", "Ling", "Feng", "Yu",
+          "Jie", "Qin", "Long", "Ping", "Hai", "Rong", "Bin", "Yun", "Kun", "Dan",
+          "Xiang", "Jian", "Wen", "Shu", "Dong", "Lan", "Yang", "Qing", "Hua", "Li",
+          "Zhi", "Xiu", "Kai", "Shan", "Liang", "Fei", "Chao", "Yuan", "Yi", "Xue",
+          "Xiaobo", "Xiaoli", "Xiaowei", "Xiaomei", "Xiaofeng", "Xiaoyu", "Xiaojun", "Xiaohui", "Xiaoyan", "Xiaojing",
+          "Zhiwei", "Zhiqiang", "Zhihao", "Zhiyuan", "Zhipeng", "Zhihong", "Zhixin", "Zhiming", "Zhigang", "Zhijian",
+          "Jiahui", "Jiaming", "Jiawei", "Jiahao", "Jiaxin", "Jiayun", "Jiaxiang", "Jiaying", "Jiaqiang", "Jiayu",
+          "Yifan", "Yiming", "Yihao", "Yichen", "Yitao", "Yilin", "Yijun", "Yibo", "Yixuan", "Yifeng"
+        ],
+        lastNames: [
+          "Wang", "Li", "Zhang", "Liu", "Chen", "Yang", "Huang", "Zhao", "Wu", "Zhou",
+          "Xu", "Sun", "Ma", "Zhu", "Hu", "Guo", "He", "Gao", "Lin", "Luo",
+          "Zheng", "Liang", "Song", "Tang", "Xu", "Han", "Feng", "Deng", "Cao", "Peng",
+          "Zeng", "Xiao", "Tian", "Dong", "Pan", "Yuan", "Cai", "Jiang", "Yu", "Du",
+          "Ye", "Cheng", "Su", "Wei", "Lu", "Ding", "Ren", "Shen", "Yao", "Lu",
+          "Jiang", "Cui", "Zhong", "Tan", "Zou", "Xiong", "Jin", "Lu", "Hao", "Kong",
+          "Bai", "Cui", "Kang", "Mao", "Qiu", "Qin", "Jiang", "Shi", "Gu", "Dai",
+          "Xia", "Fan", "Fang", "Shi", "Yao", "Tan", "Sheng", "Zou", "Xiong", "Lu",
+          "Mo", "Zhuang", "Yan", "Guan", "Meng", "Long", "Wan", "Duan", "Zhang", "Qian",
+          "Tang", "Yin", "Li", "Yi", "Chang", "Wu", "Qiao", "Xie", "Zou", "Yu"
+        ]
+      },
+      "African": {
+        firstNames: [
+          "Kwame", "Ama", "Kofi", "Akosua", "Kwesi", "Abena", "Yaw", "Yaa", "Kwabena", "Afia",
+          "Chidi", "Amara", "Emeka", "Ngozi", "Chinwe", "Nneka", "Obi", "Ada", "Ikenna", "Chioma",
+          "Tendai", "Rudo", "Tafadzwa", "Anesu", "Tinashe", "Rufaro", "Shamiso", "Tapiwa", "Munashe", "Rumbidzai",
+          "Thabo", "Nomsa", "Sipho", "Zanele", "Mandla", "Lindiwe", "Bongani", "Nokuthula", "Mpho", "Lerato",
+          "Kamau", "Wanjiru", "Mwangi", "Njeri", "Kariuki", "Wangari", "Kiptoo", "Cheruto", "Kipchoge", "Chepkoech",
+          "Sekou", "Aminata", "Mamadou", "Fatoumata", "Ibrahim", "Aissatou", "Ousmane", "Mariam", "Moussa", "Kadiatou",
+          "Kwame", "Akua", "Kofi", "Efua", "Yaw", "Adwoa", "Kwabena", "Abenaa", "Kwesi", "Akosua",
+          "Oluwaseun", "Adaeze", "Olufemi", "Ifunanya", "Babatunde", "Chiamaka", "Temitope", "Chidinma", "Adekunle", "Folake",
+          "Tunde", "Bisi", "Femi", "Funke", "Kunle", "Ronke", "Dele", "Yetunde", "Tunji", "Sade",
+          "Nkosi", "Thandi", "Sizwe", "Zinhle", "Jabu", "Nonhlanhla", "Lungile", "Zodwa", "Musa", "Bongi"
+        ],
+        lastNames: [
+          "Okafor", "Mensah", "Diallo", "Mwangi", "Nkosi", "Kamau", "Adeyemi", "Okoro", "Banda", "Mbatha",
+          "Nkrumah", "Asante", "Boateng", "Owusu", "Ofori", "Agyeman", "Appiah", "Acheampong", "Darko", "Osei",
+          "Okonkwo", "Eze", "Nwosu", "Obiora", "Chukwu", "Iheanacho", "Ugochukwu", "Chikezie", "Anyanwu", "Ekwueme",
+          "Moyo", "Ncube", "Dube", "Sibanda", "Mpofu", "Ndlovu", "Nyathi", "Mlilo", "Tshuma", "Nkomo",
+          "Dlamini", "Ngcobo", "Zulu", "Khoza", "Ndebele", "Mthembu", "Buthelezi", "Khumalo", "Sithole", "Mkhize",
+          "Kimani", "Njoroge", "Ochieng", "Otieno", "Nyambura", "Waithaka", "Kipkorir", "Kiprotich", "Rotich", "Koech",
+          "Traore", "Kone", "Toure", "Coulibaly", "Keita", "Sissoko", "Camara", "Diarra", "Cisse", "Dembele",
+          "Mensah", "Koffi", "Yeboah", "Amoah", "Asamoah", "Bonsu", "Essien", "Frimpong", "Gyasi", "Koranteng",
+          "Adebayo", "Ogunleye", "Akinyemi", "Oluwole", "Adeleke", "Afolabi", "Oladipo", "Ogundele", "Olaniyan", "Adewale",
+          "Mashaba", "Molefe", "Tshabalala", "Ngwenya", "Mahlangu", "Mokwena", "Maluleke", "Chauke", "Baloyi", "Mathebula"
+        ]
+      },
+      "Arab_MiddleEast": {
+        firstNames: [
+          "Mohammed", "Fatima", "Ahmed", "Aisha", "Ali", "Maryam", "Omar", "Khadija", "Hassan", "Zainab",
+          "Abdullah", "Noor", "Ibrahim", "Layla", "Youssef", "Sara", "Khalid", "Hana", "Hamza", "Amina",
+          "Mustafa", "Yasmin", "Mahmoud", "Zahra", "Kareem", "Nour", "Tariq", "Salma", "Rami", "Nadia",
+          "Faisal", "Amal", "Said", "Lina", "Rashid", "Dina", "Majid", "Reem", "Samir", "Leila",
+          "Jamal", "Huda", "Kamal", "Samira", "Adnan", "Hala", "Waleed", "Mona", "Basel", "Rana",
+          "Ziad", "Rania", "Nabil", "Sana", "Hadi", "Nada", "Mazen", "Lama", "Talal", "Maya",
+          "Sami", "Hind", "Rayan", "Dalia", "Marwan", "Jana", "Fadi", "Noura", "Bilal", "Heba",
+          "Khaled", "Laila", "Fahad", "Basma", "Sultan", "Nada", "Nawaf", "Ghada", "Mansour", "Arwa",
+          "Aziz", "Safaa", "Hakim", "Nisreen", "Jalal", "Suha", "Munir", "Samar", "Nasser", "Rasha",
+          "Qasim", "Marwa", "Saleh", "Sabah", "Tamer", "Rawan", "Usman", "Shireen", "Yahya", "Thuraya"
+        ],
+        lastNames: [
+          "Al-Farsi", "Hassan", "Abbas", "Mansour", "Khalil", "Rahman", "Al-Rashid", "Salem", "Al-Saud", "Hamdan",
+          "Al-Ali", "Al-Ahmad", "Al-Hassan", "Al-Hussein", "Al-Mahmoud", "Al-Said", "Al-Omar", "Al-Khalil", "Al-Nasser", "Al-Qadir",
+          "Abdullah", "Mohammed", "Ahmad", "Mahmoud", "Ibrahim", "Youssef", "Khalid", "Hamza", "Omar", "Ali",
+          "Hussain", "Haddad", "Mansour", "Nasser", "Qasim", "Rashid", "Saad", "Saleh", "Tariq", "Waleed",
+          "Amin", "Aziz", "Bashar", "Farid", "Habib", "Jamil", "Kamal", "Latif", "Majid", "Nadir",
+          "Radi", "Sami", "Tahir", "Umar", "Wasim", "Yasin", "Zaki", "Adel", "Faisal", "Jamal",
+          "Al-Masri", "Al-Shami", "Al-Misri", "Al-Maghribi", "Al-Tunisi", "Al-Jazairi", "Al-Libi", "Al-Sudani", "Al-Yamani", "Al-Iraqi",
+          "Al-Kuwaiti", "Al-Emirati", "Al-Qatari", "Al-Bahraini", "Al-Omani", "Al-Jordani", "Al-Lubnani", "Al-Falastini", "Al-Suri", "Al-Masri",
+          "Sheikh", "Emir", "Sharif", "Pasha", "Bey", "Khan", "Sultan", "Malik", "Amir", "Sayyid",
+          "Habib", "Karim", "Latif", "Majeed", "Nasir", "Qadir", "Rashid", "Sadiq", "Tahir", "Wali"
+        ]
+      },
+      "Indian": {
+        firstNames: [
+          "Aarav", "Aadhya", "Vivaan", "Ananya", "Aditya", "Diya", "Arjun", "Saanvi", "Sai", "Pari",
+          "Arnav", "Avni", "Ayaan", "Sara", "Krishna", "Anvi", "Dhruv", "Angel", "Aryan", "Pihu",
+          "Shaurya", "Navya", "Ishaan", "Ira", "Reyansh", "Prisha", "Atharv", "Shanaya", "Advait", "Kavya",
+          "Vihaan", "Kiara", "Aadhyan", "Myra", "Om", "Anika", "Shivansh", "Riya", "Rudra", "Tara",
+          "Raj", "Priya", "Rohan", "Pooja", "Amit", "Anjali", "Rahul", "Neha", "Vikram", "Shreya",
+          "Karan", "Megha", "Varun", "Divya", "Nikhil", "Deepika", "Manish", "Ritu", "Suresh", "Kavita",
+          "Rajesh", "Sunita", "Manoj", "Shweta", "Ashok", "Nisha", "Sanjay", "Rekha", "Rakesh", "Geeta",
+          "Ramesh", "Seema", "Prakash", "Meena", "Ravi", "Radha", "Sunil", "Usha", "Anil", "Kiran",
+          "Vijay", "Asha", "Ajay", "Poonam", "Vinod", "Lata", "Dinesh", "Suman", "Mukesh", "Sangeeta",
+          "Mohan", "Savita", "Kishore", "Renuka", "Praveen", "Vandana", "Ganesh", "Kamala", "Mahesh", "Indira"
+        ],
+        lastNames: [
+          "Kumar", "Sharma", "Singh", "Patel", "Gupta", "Shah", "Reddy", "Jain", "Agarwal", "Verma",
+          "Yadav", "Mehta", "Chopra", "Kapoor", "Malhotra", "Bhatia", "Nair", "Iyer", "Menon", "Pillai",
+          "Rao", "Desai", "Kulkarni", "Joshi", "Shukla", "Mishra", "Pandey", "Trivedi", "Dubey", "Tiwari",
+          "Sinha", "Roy", "Das", "Banerjee", "Mukherjee", "Chatterjee", "Ghosh", "Bose", "Sen", "Dutta",
+          "Choudhury", "Bhattacharya", "Chakraborty", "Mazumdar", "Sengupta", "Ganguly", "Biswas", "Dey", "Paul", "Sarkar",
+          "Khan", "Ahmed", "Ali", "Hussain", "Ansari", "Shaikh", "Siddiqui", "Qureshi", "Malik", "Rizvi",
+          "Rajan", "Krishnan", "Narayanan", "Raman", "Subramanian", "Venkatesh", "Ramesh", "Ganesh", "Suresh", "Mahesh",
+          "Saxena", "Srivastava", "Agnihotri", "Chaturvedi", "Upadhyay", "Dwivedi", "Tripathi", "Pathak", "Dixit", "Ojha",
+          "Jha", "Thakur", "Kaur", "Gill", "Dhillon", "Grewal", "Sandhu", "Bajwa", "Brar", "Randhawa",
+          "Modi", "Gandhi", "Nehru", "Ambedkar", "Bose", "Tagore", "Naidu", "Prasad", "Babu", "Chand"
+        ]
+      },
+      "Greek": {
+        firstNames: [
+          "Alexandros", "Maria", "Dimitris", "Eleni", "Georgios", "Katerina", "Ioannis", "Sofia", "Konstantinos", "Vasiliki",
+          "Nikos", "Anna", "Panagiotis", "Ioanna", "Andreas", "Dimitra", "Christos", "Anastasia", "Michalis", "Panagiota",
+          "Vasilis", "Christina", "Giannis", "Despina", "Kostas", "Stavroula", "Stelios", "Fotini", "Petros", "Evanthia",
+          "Spyros", "Athena", "Apostolos", "Georgia", "Manolis", "Paraskevi", "Thanasis", "Efthymia", "Antonis", "Angeliki",
+          "Yannis", "Nikoletta", "Giorgos", "Chrysoula", "Odysseas", "Zoe", "Ilias", "Irini", "Markos", "Kalliopi",
+          "Pavlos", "Theodora", "Stefanos", "Helen", "Dimitrios", "Alexandra", "Filippos", "Olympia", "Leonidas", "Electra",
+          "Achilles", "Aphrodite", "Theseus", "Artemis", "Perseus", "Hera", "Heracles", "Persephone", "Jason", "Daphne",
+          "Nikolas", "Sophia", "Theodoros", "Evangelina", "Marios", "Konstantina", "Stavros", "Eleftheria", "Fotios", "Antigone",
+          "Aristotelis", "Penelope", "Platon", "Iphigenia", "Sokrates", "Cassandra", "Pythagoras", "Melina", "Archimedes", "Demeter",
+          "Alexandros", "Danae", "Dionysios", "Lydia", "Odysseas", "Chloe", "Thanos", "Nefeli", "Grigoris", "Ariadne"
+        ],
+        lastNames: [
+          "Papadopoulos", "Pappas", "Georgiou", "Nikolaou", "Dimitriou", "Ioannou", "Konstantinou", "Christodoulou", "Petrou", "Oikonomou",
+          "Vasileiou", "Angelopoulos", "Karagiannis", "Antoniou", "Vlachos", "Andreou", "Michalopoulos", "Athanasiadis", "Stavropoulos", "Papadakis",
+          "Nikolaidis", "Makris", "Papanikolaou", "Karamanlis", "Koutsopoulos", "Economou", "Kokkinos", "Theodorou", "Alexandrou", "Doukas",
+          "Panagopoulos", "Sidiropoulos", "Antonopoulos", "Sotirou", "Roussos", "Solomos", "Diamantis", "Lambrou", "Karas", "Manolopoulos",
+          "Sotiropoulos", "Pantelis", "Demetriou", "Kostakis", "Samaras", "Papadimitriou", "Kontou", "Leontis", "Mavros", "Nikos",
+          "Pappas", "Christou", "Vassilios", "Theodosiou", "Anastasios", "Zacharopoulos", "Xenakis", "Yiannakis", "Tzavellas", "Vrettos",
+          "Sideris", "Rizos", "Psarros", "Orphanos", "Nikas", "Mitropoulos", "Loizou", "Kyriakou", "Kalogeropoulos", "Ifantis",
+          "Hadjis", "Giannakis", "Fotopoulos", "Elias", "Drakos", "Constantinou", "Ballas", "Apostolou", "Alexiou", "Vlassis",
+          "Tsipras", "Simitis", "Karamanlis", "Papandreou", "Venizelos", "Mitsotakis", "Samaras", "Rallis", "Mavromichalis", "Kanellopoulos",
+          "Zografos", "Xanthopoulos", "Voulgaris", "Sfakianakis", "Roussopoulos", "Papageorgiou", "Nikolopoulos", "Manousakis", "Lampros", "Kostis"
+        ]
+      },
+      "Russian_Slavic": {
+        firstNames: [
+          "Alexander", "Anastasia", "Dmitry", "Maria", "Ivan", "Ekaterina", "Mikhail", "Anna", "Sergey", "Olga",
+          "Andrey", "Elena", "Vladimir", "Natalia", "Alexey", "Tatiana", "Nikolay", "Irina", "Pavel", "Svetlana",
+          "Maxim", "Yulia", "Artem", "Oksana", "Denis", "Victoria", "Roman", "Ludmila", "Igor", "Nina",
+          "Oleg", "Vera", "Yuri", "Galina", "Viktor", "Inna", "Evgeny", "Larisa", "Konstantin", "Valentina",
+          "Anton", "Daria", "Stanislav", "Alina", "Kirill", "Sofia", "Ruslan", "Nadezhda", "Ilya", "Marina",
+          "Anatoly", "Raisa", "Boris", "Zinaida", "Grigory", "Lyubov", "Leonid", "Klavdiya", "Fyodor", "Polina",
+          "Petr", "Varvara", "Vasily", "Zlata", "Matvey", "Kira", "Yaroslav", "Milena", "Gleb", "Kristina",
+          "Danila", "Elizaveta", "Timofey", "Veronika", "Egor", "Ulyana", "Mark", "Karina", "Lev", "Diana",
+          "Bogdan", "Violetta", "Miroslav", "Angelina", "Vladislav", "Margarita", "Stepan", "Valeriya", "Rodion", "Zhanna",
+          "Arseny", "Tamara", "Makar", "Alla", "Savva", "Yana", "Platon", "Maya", "Zakhar", "Liliya"
+        ],
+        lastNames: [
+          "Ivanov", "Petrov", "Sidorov", "Smirnov", "Kuznetsov", "Popov", "Volkov", "Sokolov", "Lebedev", "Kozlov",
+          "Novikov", "Morozov", "Petrov", "Vasiliev", "Zaitsev", "Pavlov", "Semenov", "Golubev", "Vinogradov", "Bogdanov",
+          "Vorobiev", "Fedorov", "Mikhailov", "Belyaev", "Tarasov", "Belov", "Komarov", "Orlov", "Kiselev", "Makarov",
+          "Andreev", "Kovalev", "Ilyin", "Gusev", "Titov", "Kuzmin", "Kudryavtsev", "Baranov", "Kulikov", "Alexeev",
+          "Stepanov", "Yakovlev", "Sorokin", "Sergeev", "Romanov", "Zakharov", "Borisov", "Korolev", "Gerasimov", "Ponomarev",
+          "Grigoriev", "Lazarev", "Medvedev", "Ermolaev", "Nikitin", "Sobolev", "Ryabov", "Polyakov", "Tsvetkov", "Danilov",
+          "Zhukov", "Frolov", "Zhuravlev", "Nikolaev", "Krylov", "Maksimov", "Sidorov", "Osipov", "Belozerov", "Vladimirov",
+          "Savin", "Voronin", "Mironov", "Gavrilov", "Tikhonov", "Antonov", "Karpov", "Kalinin", "Nesterov", "Egorov",
+          "Matveev", "Bobrov", "Dmitriev", "Evstigneev", "Faddeev", "Filippov", "Fomin", "Glebov", "Markov", "Nosov",
+          "Putin", "Medvedev", "Yeltsin", "Gorbachev", "Brezhnev", "Khrushchev", "Stalin", "Lenin", "Tolstoy", "Dostoevsky"
+        ]
+      }
+    };
+    
+    // Helper function to convert Russian/Slavic male surname to female form
+    function convertSlavicSurnameToFemale(surname) {
+      // Surnames ending in -ov, -ev → add 'a' (-ova, -eva)
+      if (surname.endsWith('ov') || surname.endsWith('ev')) {
+        return surname + 'a';
+      }
+      // Surnames ending in -in → add 'a' (-ina)
+      if (surname.endsWith('in')) {
+        return surname + 'a';
+      }
+      // Surnames ending in -sky, -ski → change to -skaya
+      if (surname.endsWith('sky') || surname.endsWith('ski')) {
+        return surname.slice(0, -1) + 'aya';
+      }
+      // Surnames ending in -ich → don't change (uncommon for modern surnames)
+      // Surnames ending in -enko, -ko → don't change (Ukrainian surnames)
+      // Default: return as-is (for surnames that don't follow standard patterns)
+      return surname;
+    }
+    
+    // Female first names for Russian/Slavic region (to detect gender)
+    const slavicFemaleFirstNames = [
+      "Anastasia", "Maria", "Ekaterina", "Anna", "Olga", "Elena", "Natalia", "Tatiana", "Irina", "Svetlana",
+      "Yulia", "Oksana", "Victoria", "Ludmila", "Nina", "Vera", "Galina", "Inna", "Larisa", "Valentina",
+      "Daria", "Alina", "Sofia", "Nadezhda", "Marina", "Raisa", "Zinaida", "Lyubov", "Klavdiya", "Polina",
+      "Varvara", "Zlata", "Kira", "Milena", "Kristina", "Elizaveta", "Veronika", "Ulyana", "Karina", "Diana",
+      "Violetta", "Angelina", "Margarita", "Valeriya", "Zhanna", "Tamara", "Alla", "Yana", "Maya", "Liliya"
     ];
-
-    const LAST_NAMES = [
-      // English/Western surnames
-      "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
-      "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin",
-      "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", "Ramirez", "Lewis", "Robinson",
-      "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Hill", "Flores",
-      "Green", "Adams", "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts",
-      // Asian surnames (Chinese, Japanese, Korean, Indian, Vietnamese, Indonesian, Filipino)
-      "Wang", "Zhang", "Li", "Chen", "Liu", "Yang", "Huang", "Zhao", "Wu", "Zhou",
-      "Tanaka", "Suzuki", "Yamamoto", "Sato", "Takahashi", "Nakamura", "Kobayashi", "Kim", "Park", "Lee",
-      "Choi", "Jung", "Kang", "Shin", "Patel", "Kumar", "Singh", "Shah", "Sharma", "Reddy",
-      "Gupta", "Tran", "Le", "Pham", "Hoang", "Nguyen", "Santoso", "Putra", "Wibowo", "Kusuma",
-      "Santos", "Cruz", "Reyes", "Dela Cruz", "Aquino",
-      // Turkish surnames
-      "Yilmaz", "Kaya", "Demir", "Çelik", "Aydın", "Özdemir", "Arslan", "Koç", "Yildiz",
-      // Middle Eastern/Arabic surnames
-      "Al-Farsi", "Hassan", "Abbas", "Mansour", "Khalil", "Rahman", "Al-Rashid", "Bin Laden", "Al-Saud",
-      // African surnames
-      "Okafor", "Mensah", "Diallo", "Mwangi", "Nkosi", "Kamau", "Adeyemi", "Okoro", "Banda", "Mbatha"
-    ];
+    
+    // Flag mapping for regions
+    const REGION_FLAGS = {
+      "US_Canada": ["🇺🇸", "🇨🇦"],
+      "Latin_Hispanic": ["🇲🇽", "🇪🇸", "🇦🇷", "🇧🇷", "🇨🇴", "🇨🇱", "🇵🇪", "🇻🇪", "🇵🇹", "🇨🇺"],
+      "UK": ["🇬🇧"],
+      "Netherlands": ["🇳🇱"],
+      "Germany": ["🇩🇪"],
+      "France": ["🇫🇷"],
+      "Scandinavian": ["🇸🇪", "🇳🇴", "🇩🇰", "🇫🇮", "🇮🇸"],
+      "Italian": ["🇮🇹"],
+      "Turkish": ["🇹🇷"],
+      "Japanese": ["🇯🇵"],
+      "Chinese": ["🇨🇳"],
+      "African": ["🇳🇬", "🇿🇦", "🇰🇪", "🇪🇬", "🇬🇭", "🇪🇹", "🇹🇿", "🇺🇬", "🇲🇦", "🇩🇿"],
+      "Arab_MiddleEast": ["🇸🇦", "🇦🇪", "🇪🇬", "🇯🇴", "🇱🇧", "🇰🇼", "🇴🇲", "🇶🇦", "🇧🇭", "🇮🇶"],
+      "Indian": ["🇮🇳"],
+      "Greek": ["🇬🇷"],
+      "Russian_Slavic": ["🇷🇺", "🇺🇦", "🇧🇾", "🇵🇱", "🇨🇿", "🇸🇰", "🇧🇬", "🇷🇸", "🇭🇷", "🇲🇩"]
+    };
+    
+    // Helper function to get flag for a region
+    function getFlagForRegion(region) {
+      const flags = REGION_FLAGS[region];
+      if (!flags || flags.length === 0) return "🌍"; // Default flag
+      return flags[Math.floor(Math.random() * flags.length)];
+    }
+    
+    // Helper function to pick random region and generate name from that region
+    function generateNameFromRegion() {
+      const regions = Object.keys(REGIONAL_NAMES);
+      const randomRegion = regions[Math.floor(Math.random() * regions.length)];
+      const regionData = REGIONAL_NAMES[randomRegion];
+      
+      const firstName = regionData.firstNames[Math.floor(Math.random() * regionData.firstNames.length)];
+      let lastName = regionData.lastNames[Math.floor(Math.random() * regionData.lastNames.length)];
+      
+      // Special handling for Russian/Slavic surnames (female forms)
+      if (randomRegion === 'Russian_Slavic' && slavicFemaleFirstNames.includes(firstName)) {
+        lastName = convertSlavicSurnameToFemale(lastName);
+      }
+      
+      const flag = getFlagForRegion(randomRegion);
+      
+      return {
+        name: `${firstName} ${lastName}`,
+        region: randomRegion,
+        flag: flag
+      };
+    }
 
     const COMPANY_PREFIXES = [
       // Tech/Modern
@@ -4361,6 +4862,7 @@
     
     function hideNewRndModal() {
       document.getElementById('newRndModal').classList.remove('active');
+      startGame(); // Resume game when cancelled
     }
     
     function handleCreateRndProject() {
@@ -5046,7 +5548,7 @@
       document.getElementById('filterCountAll').textContent = counts.all;
       document.getElementById('filterCountDev').textContent = counts['in_development'];
       document.getElementById('filterCountLive').textContent = counts['published'];
-      document.getElementById('filterCountDeprecated').textContent = counts['deprecated'];
+      //document.getElementById('filterCountDeprecated').textContent = counts['deprecated'];
     }
     
     function showNewProductModal() {
@@ -5119,6 +5621,7 @@
     
     function hideNewProductModal() {
       document.getElementById('newProductModal').classList.remove('active');
+      startGame(); // Resume game when cancelled
     }
     
     function handleCreateProduct() {
@@ -5325,6 +5828,9 @@
             return true; // Close dialog
           }
           return false; // Keep dialog open
+        },
+        onCancel: () => {
+          startGame(); // Resume game when cancelled
         }
       });
       
@@ -5428,9 +5934,7 @@
     // ============================================
     
     function generateEmployeeName() {
-      const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
-      const lastName = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
-      return `${firstName} ${lastName}`;
+      return generateNameFromRegion(); // Returns {name, region, flag}
     }
     
     function getCurrentTeamSize() {
@@ -5511,10 +6015,13 @@
       const salaryVariation = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2 (±20%)
       const monthlySalary = Math.round(baseSalary * salaryVariation);
       
-      // Generate candidate
+      // Generate candidate with name data
+      const nameData = generateEmployeeName();
       return {
         id: nextEmployeeId++,
-        name: generateEmployeeName(),
+        name: nameData.name,
+        flag: nameData.flag,
+        region: nameData.region,
         role: type,
         tier: tierIndex,
         tierName: tier.name,
@@ -6514,21 +7021,50 @@
         ? '<span style="font-size: 0.7rem; color: #10b981; font-weight: 600;">🏆 Max Tier</span>' 
         : '';
       
+      const isFull = teamSize >= office.capacity;
+      
       officeInfo.innerHTML = `
-        <div class="office-header">
-          <div class="office-info-left">
-            <div class="office-name">🏢 ${office.name} ${maxTierBadge}</div>
-            <div class="office-stats">
-              <div class="office-stat-item">
-                <span>👥</span>
-                <span>${teamSize} / ${office.capacity} people</span>
-              </div>
-              <div class="office-stat-item">
-                ${rent > 0 ? `<span>💰</span><span>${formatCurrency(rent)}/mo</span>` : '<span>🏠</span><span>No rent</span>'}
-              </div>
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+          <!-- Top Row: Office Name + Action Buttons -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div class="office-name" style="font-weight: 600; font-size: 1rem; color: #1f2937;">
+              🏢 ${office.name} ${maxTierBadge}
+            </div>
+            ${actionButtons}
+          </div>
+          
+          <!-- Bottom Row: Employee Count + Hire + Rent -->
+          <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <!-- Employee Count + Hire Button -->
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1rem;">👥</span>
+              <span style="font-size: 1rem; font-weight: 500; color: ${isFull ? '#dc2626' : '#374151'};">
+                ${teamSize} / ${office.capacity}
+              </span>
+              <button 
+                onclick="showHireModal()" 
+                ${isFull ? 'disabled' : ''}
+                style="
+                  padding: 0.25rem 0.625rem;
+                  border-radius: 6px;
+                  border: none;
+                  background: ${isFull ? '#e5e7eb' : '#3b82f6'};
+                  color: ${isFull ? '#9ca3af' : 'white'};
+                  font-size: 0.75rem;
+                  font-weight: 600;
+                  cursor: ${isFull ? 'not-allowed' : 'pointer'};
+                  transition: background 0.2s;
+                "
+                ${!isFull ? 'onmouseover="this.style.background=\'#2563eb\'" onmouseout="this.style.background=\'#3b82f6\'"' : ''}
+                title="${isFull ? 'Office is full - upgrade to hire more' : 'Hire new employee'}"
+              >+ Hire</button>
+            </div>
+            
+            <!-- Rent -->
+            <div style="display: flex; align-items: center; gap: 0.35rem; color: #6b7280; font-size: 0.9rem;">
+              ${rent > 0 ? `<span>💰</span><span>${formatCurrency(rent)}/mo</span>` : '<span>🏠</span><span>No rent</span>'}
             </div>
           </div>
-          ${actionButtons}
         </div>
       `;
       
@@ -7118,7 +7654,7 @@
             style="padding: 0.6rem; min-height: auto;"
           >
             <div style="text-align: left;">
-              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.name}</div>
+              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.flag || '🌍'} ${candidate.name}</div>
               <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
                 <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
                 <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
@@ -7190,6 +7726,66 @@
       }
     }
     
+    // ============================================
+    // UNIFIED HIRING FLOW
+    // ============================================
+    
+    function showHireModal() {
+      pauseGame(); // Auto-pause when opening modal
+      
+      // Check if office is full
+      const office = OFFICE_TIERS[currentOfficeTier];
+      const teamSize = getCurrentTeamSize();
+      
+      if (teamSize >= office.capacity) {
+        showNotification('Office is full! Upgrade your office first.', 'warning');
+        startGame(); // Resume since we're not showing modal
+        return;
+      }
+      
+      document.getElementById('selectEmployeeTypeModal').classList.add('active');
+    }
+    
+    function hideSelectEmployeeTypeModal() {
+      document.getElementById('selectEmployeeTypeModal').classList.remove('active');
+      startGame(); // Resume game when cancelled
+    }
+    
+    function selectEmployeeType(type) {
+      // Hide the type selection modal
+      document.getElementById('selectEmployeeTypeModal').classList.remove('active');
+      
+      // Show the appropriate hiring modal (without starting game since we're going to another modal)
+      if (type === 'developer') {
+        showHireDeveloperModalDirect();
+      } else if (type === 'marketer') {
+        showHireMarketerModalDirect();
+      }
+    }
+    
+    // Direct show functions that don't pause again (since we're already paused)
+    function showHireDeveloperModalDirect() {
+      // Ensure candidate pool is initialized
+      if (candidatePool.developers.length === 0) {
+        generateCandidatePool();
+      }
+      
+      const modal = document.getElementById('hireDeveloperModal');
+      updateHireDeveloperModalContent();
+      modal.classList.add('active');
+    }
+    
+    function showHireMarketerModalDirect() {
+      // Ensure candidate pool is initialized
+      if (candidatePool.marketers.length === 0) {
+        generateCandidatePool();
+      }
+      
+      const modal = document.getElementById('hireMarketerModal');
+      updateHireMarketerModalContent();
+      modal.classList.add('active');
+    }
+    
     function showHireDeveloperModal() {
       pauseGame(); // Auto-pause when opening modal
       
@@ -7205,7 +7801,7 @@
     
     function hideHireDeveloperModal() {
       document.getElementById('hireDeveloperModal').classList.remove('active');
-      // Keep game paused after closing modal
+      startGame(); // Resume game when cancelled
     }
     
     function hireFromPool(candidateIndex, type) {
@@ -7349,7 +7945,7 @@
             style="padding: 0.6rem; min-height: auto;"
           >
             <div style="text-align: left;">
-              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.name}</div>
+              <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem;">${candidate.flag || '🌍'} ${candidate.name}</div>
               <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
                 <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
                 <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
@@ -7380,7 +7976,7 @@
     
     function hideHireMarketerModal() {
       document.getElementById('hireMarketerModal').classList.remove('active');
-      // Keep game paused after closing modal
+      startGame(); // Resume game when cancelled
     }
     
     function showMarketerCandidates(tierIndex) {
@@ -7450,7 +8046,7 @@
       
       const modal = document.getElementById('hireConfirmModal');
       
-      document.getElementById('hireConfirmName').textContent = candidate.name;
+      document.getElementById('hireConfirmName').textContent = `${candidate.flag || '🌍'} ${candidate.name}`;
       document.getElementById('hireConfirmRole').textContent = candidate.tierName;
       document.getElementById('hireConfirmEfficiency').textContent = `${Math.round(candidate.efficiency * 100)}%`;
       document.getElementById('hireConfirmSalary').textContent = `${formatCurrency(candidate.monthlySalary)}/month`;
@@ -7744,9 +8340,8 @@
     }
     
     function generateRandomFounderName() {
-      const firstName = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
-      const lastName = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
-      return `${firstName} ${lastName}`;
+      const nameData = generateNameFromRegion();
+      return nameData.name; // Return just the name string for the input field
     }
     
     function populateNewGameForm() {
@@ -8037,7 +8632,8 @@
         
         logEvent("🔄 Game reset. Starting fresh...");
       } else {
-        // User cancelled, resume if it was playing
+        // User cancelled, resume game
+        startGame();
         logEvent("❌ Reset cancelled");
       }
     }
@@ -8155,6 +8751,9 @@
     window.hideDowngradeOfficeModal = hideDowngradeOfficeModal;
     window.confirmDowngradeOffice = confirmDowngradeOffice;
     window.upgradeServer = upgradeServer;
+    window.showHireModal = showHireModal;
+    window.hideSelectEmployeeTypeModal = hideSelectEmployeeTypeModal;
+    window.selectEmployeeType = selectEmployeeType;
     window.showHireDeveloperModal = showHireDeveloperModal;
     window.hideHireDeveloperModal = hideHireDeveloperModal;
     window.showHireMarketerModal = showHireMarketerModal;
@@ -8315,7 +8914,8 @@
         
         if (i === index) {
           // Active state
-          btn.className = 'flex flex-col items-center gap-1 px-4 py-2 rounded-lg bg-blue-600 transition-colors';
+          // Add 'relative' for Team (2) and Finance (3) buttons for notification dots
+          btn.className = 'flex flex-col items-center gap-1 px-4 py-2 rounded-lg bg-blue-600 transition-colors' + (i === 2 || i === 3 ? ' relative' : '');
           if (iconElement) {
             iconElement.className = 'w-6 h-6 text-white';
           }
@@ -8329,7 +8929,8 @@
           }
         } else {
           // Inactive state
-          btn.className = 'flex flex-col items-center gap-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors' + (i === 2 ? ' relative' : '');
+          // Add 'relative' for Team (2) and Finance (3) buttons for notification dots
+          btn.className = 'flex flex-col items-center gap-1 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors' + (i === 2 || i === 3 ? ' relative' : '');
           if (iconElement) {
             iconElement.className = 'w-6 h-6 text-gray-600';
           }
