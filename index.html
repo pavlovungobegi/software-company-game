@@ -262,7 +262,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      animation: slideDown 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
+      animation: slideDown 0.3s ease-out, slideUp 0.3s ease-in 2.7s forwards;
       pointer-events: auto;
     }
     
@@ -287,23 +287,7 @@
       flex: 1;
     }
     
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-100px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-    }
+    /* Removed duplicate slideDown - using the one below that accounts for centering */
     
     @media (max-width: 1024px) {
       .notification {
@@ -700,11 +684,22 @@
     @keyframes slideDown {
       from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: translateY(-100%);
       }
       to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(-100%);
       }
     }
     
@@ -7313,8 +7308,164 @@
       updateNavigationNotifications();
     }
     
-    function updateFinancesUI() {
+    // Initialize finance UI structure (called once)
+    let financeUIInitialized = false;
+    
+    function initFinanceUI() {
+      if (financeUIInitialized) return;
+      
       const financesContent = document.getElementById('financesContent');
+      financesContent.innerHTML = `
+        <!-- Content with Tailwind styling -->
+        <div class="max-w-lg mx-auto px-2 py-6 pb-24 space-y-3">
+          
+          <!-- Monthly Finances Card -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="pb-2 pt-4 px-4">
+              <div class="flex items-center gap-2">
+                <div class="bg-blue-100 p-1.5 rounded-lg">
+                  <i data-lucide="dollar-sign" class="w-4 h-4 text-blue-600"></i>
+                </div>
+                <h2 class="font-semibold">Monthly Finances</h2>
+              </div>
+            </div>
+            <div class="space-y-3 px-4 pb-4">
+              <!-- Next Billing Cycle -->
+              <div class="bg-gray-50 rounded-lg p-2.5">
+                <div class="flex items-center justify-center gap-2 mb-0.5">
+                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-500"></i>
+                  <span class="text-xs text-gray-600">Next Billing Cycle</span>
+                </div>
+                <div class="text-center font-semibold text-gray-900" id="finance-billing-days"></div>
+              </div>
+
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Income -->
+              <div class="flex items-start justify-between">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="trending-up" class="w-4 h-4 text-green-600 mt-0.5"></i>
+                  <div>
+                    <div class="font-medium text-gray-900 text-sm">Income:</div>
+                    <div class="text-xs text-gray-500" id="finance-income-breakdown"></div>
+                  </div>
+                </div>
+                <div class="font-semibold text-green-600" id="finance-income-total"></div>
+              </div>
+
+              <!-- Expenses -->
+              <div class="flex items-start justify-between">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="trending-down" class="w-4 h-4 text-red-600 mt-0.5"></i>
+                  <div>
+                    <div class="font-medium text-gray-900 text-sm">Expenses:</div>
+                    <div class="text-xs text-gray-500" id="finance-expenses-breakdown"></div>
+                  </div>
+                </div>
+                <div class="font-semibold text-red-600" id="finance-expenses-total"></div>
+              </div>
+
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Net Cash Flow -->
+              <div class="flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-2.5">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-700"></i>
+                  <span class="font-semibold text-gray-900 text-sm">Net Cash Flow:</span>
+                </div>
+                <div class="font-bold" id="finance-cashflow"></div>
+              </div>
+
+              <!-- Burn Rate -->
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i>
+                  <span class="font-medium text-gray-900 text-sm">Burn Rate:</span>
+                </div>
+                <div class="font-semibold text-gray-700" id="finance-burnrate"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lifetime Earnings & Reputation Card -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="pb-2 pt-4 px-4">
+              <div class="flex items-center gap-2">
+                <div class="bg-purple-100 p-1.5 rounded-lg">
+                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-purple-600"></i>
+                </div>
+                <h2 class="font-semibold">Lifetime Earnings & Reputation</h2>
+              </div>
+            </div>
+            <div class="space-y-3 px-4 pb-4">
+              <!-- Total Earned -->
+              <div class="flex items-center justify-between">
+                <span class="font-medium text-gray-900 text-sm">Total Earned:</span>
+                <span class="font-bold text-green-600" id="finance-lifetime"></span>
+              </div>
+
+              <div class="border-t border-gray-200"></div>
+
+              <!-- Reputation -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-600"></i>
+                    <span class="font-medium text-gray-900 text-sm" id="finance-milestone-name"></span>
+                  </div>
+                  <span class="text-xs text-gray-500" id="finance-milestone-percent"></span>
+                </div>
+                <div class="h-1.5 mb-1.5 rounded-full overflow-hidden" style="background-color: #e5e7eb;">
+                  <div class="h-full bg-green-600 transition-all duration-300" id="finance-milestone-bar" style="width: 0%"></div>
+                </div>
+                <div id="finance-milestone-next"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Server Capacity Card -->
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="pb-2 pt-4 px-4">
+              <div class="flex items-center gap-2">
+                <div class="bg-indigo-100 p-1.5 rounded-lg">
+                  <i data-lucide="server" class="w-4 h-4 text-indigo-600"></i>
+                </div>
+                <h2 class="font-semibold" id="finance-server-name"></h2>
+              </div>
+            </div>
+            <div class="space-y-3 px-4 pb-4">
+              <!-- Capacity -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-xs text-gray-600" id="finance-server-subs"></span>
+                  <span class="text-xs font-medium text-gray-600" id="finance-server-percent"></span>
+                </div>
+                <div class="h-1.5 rounded-full overflow-hidden" style="background-color: #e5e7eb;">
+                  <div class="h-full transition-all duration-300" id="finance-server-bar" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <div id="finance-server-action"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Initialize Lucide icons
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+      
+      financeUIInitialized = true;
+    }
+    
+    // Update finance UI (only updates values, no HTML regeneration)
+    function updateFinancesUI() {
+      // Initialize UI if not already done
+      if (!financeUIInitialized) {
+        initFinanceUI();
+        return;
+      }
       
       const income = calculateMonthlyIncome();
       const costs = calculateMonthlyCosts();
@@ -7337,285 +7488,132 @@
         reputationProgress = Math.min(100, Math.max(0, reputationProgress));
       }
       
-      // Server upgrade/downgrade section
-      let serverUpgradeSection = '';
-      const canUpgrade = currentServerTier < SERVER_TIERS.length - 1;
-      const canDowngrade = canDowngradeServer();
+      // Update billing days
+      const billingEl = document.getElementById('finance-billing-days');
+      if (billingEl) {
+        billingEl.textContent = `In ${daysUntilBilling} ${daysUntilBilling === 1 ? 'day' : 'days'}`;
+      }
       
-      if (canUpgrade || canDowngrade) {
-        serverUpgradeSection = '<div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">';
-        
-        // Upgrade column
+      // Update income
+      const incomeBreakdownEl = document.getElementById('finance-income-breakdown');
+      if (incomeBreakdownEl) {
+        incomeBreakdownEl.textContent = `Revenue: ${formatCurrency(income.grossRevenue)}`;
+      }
+      const incomeTotalEl = document.getElementById('finance-income-total');
+      if (incomeTotalEl) {
+        incomeTotalEl.textContent = formatCurrency(income.netIncome);
+      }
+      
+      // Update expenses
+      const expensesBreakdownEl = document.getElementById('finance-expenses-breakdown');
+      if (expensesBreakdownEl) {
+        let breakdown = ``;
+        if (costs.rent > 0) breakdown += `Rent: ${formatCurrency(costs.rent)}, `;
+        breakdown += `Utilities: ${formatCurrency(costs.utilities)}, Insurance: ${formatCurrency(costs.insurance)}`;
+        if (costs.salaries > 0) breakdown += `, Salaries: ${formatCurrency(costs.salaries)}`;
+        if (costs.serverFee > 0) breakdown += `, Server: ${formatCurrency(costs.serverFee)}`;
+        expensesBreakdownEl.textContent = breakdown;
+      }
+      const expensesTotalEl = document.getElementById('finance-expenses-total');
+      if (expensesTotalEl) {
+        expensesTotalEl.textContent = formatCurrency(costs.total);
+      }
+      
+      // Update cash flow
+      const cashFlowEl = document.getElementById('finance-cashflow');
+      if (cashFlowEl) {
+        cashFlowEl.textContent = formatCurrency(cashFlow);
+        cashFlowEl.className = `font-bold ${cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`;
+      }
+      
+      // Update burn rate
+      const burnRateEl = document.getElementById('finance-burnrate');
+      if (burnRateEl) {
+        burnRateEl.textContent = burnRate === Infinity ? '∞ (Profitable!)' : `${burnRate} ${burnRate === 1 ? 'month' : 'months'}`;
+      }
+      
+      // Update lifetime earnings
+      const lifetimeEl = document.getElementById('finance-lifetime');
+      if (lifetimeEl) {
+        lifetimeEl.textContent = formatCurrency(lifetimeEarnings);
+      }
+      
+      // Update milestone
+      const milestoneNameEl = document.getElementById('finance-milestone-name');
+      if (milestoneNameEl) {
+        milestoneNameEl.textContent = milestone.name;
+      }
+      const milestonePercentEl = document.getElementById('finance-milestone-percent');
+      if (milestonePercentEl) {
+        milestonePercentEl.textContent = `${Math.round(reputationProgress)}%`;
+      }
+      const milestoneBarEl = document.getElementById('finance-milestone-bar');
+      if (milestoneBarEl) {
+        milestoneBarEl.style.width = `${reputationProgress}%`;
+      }
+      const milestoneNextEl = document.getElementById('finance-milestone-next');
+      if (milestoneNextEl) {
+        if (nextMilestone) {
+          milestoneNextEl.innerHTML = `
+            <div class="flex items-center gap-1 text-xs text-gray-600">
+              <span>Next:</span>
+              <span class="font-medium">${nextMilestone.name}</span>
+              <span>at</span>
+              <span class="font-medium text-green-600">${formatCurrency(nextMilestone.threshold)}</span>
+            </div>
+          `;
+        } else {
+          milestoneNextEl.innerHTML = `
+            <div class="text-xs text-orange-600">
+              ⭐ Maximum reputation! You attract the best talent!
+            </div>
+          `;
+        }
+      }
+      
+      // Update server
+      const serverNameEl = document.getElementById('finance-server-name');
+      if (serverNameEl) {
+        serverNameEl.textContent = server.name;
+      }
+      const serverSubsEl = document.getElementById('finance-server-subs');
+      if (serverSubsEl) {
+        serverSubsEl.textContent = `${totalSubs.toLocaleString()} / ${server.maxSubscribers.toLocaleString()} subscribers`;
+      }
+      const serverPercentEl = document.getElementById('finance-server-percent');
+      if (serverPercentEl) {
+        serverPercentEl.textContent = `${Math.round(capacityPercent)}%`;
+      }
+      const serverBarEl = document.getElementById('finance-server-bar');
+      if (serverBarEl) {
+        serverBarEl.style.width = `${capacityPercent}%`;
+        // Update color based on capacity
+        serverBarEl.className = `h-full transition-all duration-300 ${
+          capacityPercent >= 90 ? 'bg-red-600' : 
+          capacityPercent >= 75 ? 'bg-orange-500' : 
+          'bg-indigo-600'
+        }`;
+      }
+      
+      // Update server action button
+      const serverActionEl = document.getElementById('finance-server-action');
+      if (serverActionEl) {
+        const canUpgrade = currentServerTier < SERVER_TIERS.length - 1;
         if (canUpgrade) {
-          const nextTier = SERVER_TIERS[currentServerTier + 1];
-          const upgradeCost = currency === "USD" ? nextTier.upgradeCostUSD : nextTier.upgradeCostEUR;
-          const nextFee = currency === "USD" ? nextTier.monthlyFeeUSD : nextTier.monthlyFeeEUR;
-          const canAfford = canUpgradeServer();
-          
-          serverUpgradeSection += `
-            <div style="flex: 1; display: flex; flex-direction: column;">
-              <button 
-                class="office-upgrade-btn" 
-                onclick="upgradeServer()"
-                ${!canAfford ? 'disabled' : ''}
-                style="margin-bottom: 0.35rem;"
-              >
-                ⬆️ ${nextTier.name}
-              </button>
-              <div class="office-upgrade-details" style="padding: 0.5rem; font-size: 0.75rem;">
-                <div style="font-weight: 600; margin-bottom: 0.25rem; font-size: 0.75rem;">⬆️ Upgrade:</div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>📊 ${server.maxSubscribers.toLocaleString()} →</span>
-                  <span><strong>${nextTier.maxSubscribers.toLocaleString()}</strong> subs</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>💰 ${formatCurrency(costs.serverFee)} →</span>
-                  <span><strong>${formatCurrency(nextFee)}</strong>/mo</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>🔨 Setup:</span>
-                  <span><strong>${formatCurrency(upgradeCost)}</strong></span>
-                </div>
-              </div>
+          serverActionEl.innerHTML = `
+            <button onclick="showServerUpgradeDialog()" 
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-2 rounded-lg font-medium transition-colors">
+              Upgrade Server
+            </button>
+          `;
+        } else {
+          serverActionEl.innerHTML = `
+            <div class="text-center text-xs text-gray-500 py-2">
+              🏆 Maximum server tier!
             </div>
           `;
         }
-        
-        // Downgrade column
-        if (canDowngrade) {
-          const prevTier = SERVER_TIERS[currentServerTier - 1];
-          const prevFee = currency === "USD" ? prevTier.monthlyFeeUSD : prevTier.monthlyFeeEUR;
-          const savings = costs.serverFee - prevFee;
-          
-          serverUpgradeSection += `
-            <div style="flex: 1; display: flex; flex-direction: column;">
-              <button 
-                class="office-upgrade-btn" 
-                onclick="downgradeServer()"
-                style="background: #6b7280; margin-bottom: 0.35rem;"
-              >
-                ⬇️ ${prevTier.name}
-              </button>
-              <div class="office-upgrade-details" style="padding: 0.5rem; font-size: 0.75rem; background: #f3f4f6;">
-                <div style="font-weight: 600; margin-bottom: 0.25rem; font-size: 0.75rem;">⬇️ Downgrade:</div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>📊 ${server.maxSubscribers.toLocaleString()} →</span>
-                  <span><strong>${prevTier.maxSubscribers.toLocaleString()}</strong> subs</span>
-                </div>
-                <div class="upgrade-detail" style="font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>💰 Save:</span>
-                  <span><strong>${formatCurrency(savings)}</strong>/mo</span>
-                </div>
-                <div class="upgrade-detail" style="color: #10b981; font-size: 0.7rem; padding: 0.15rem 0;">
-                  <span>✅ No cost</span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-          `;
-        }
-        
-        serverUpgradeSection += '</div>';
-      } else if (currentServerTier >= SERVER_TIERS.length - 1) {
-        serverUpgradeSection = '<div style="text-align: center; color: #6b7280; font-size: 0.75rem; margin-top: 0.35rem;">🏆 Maximum server tier!</div>';
       }
-      
-      // Capacity warning
-      let capacityWarning = '';
-      if (capacityPercent >= 90) {
-        capacityWarning = '<div style="color: #ef4444; font-size: 0.75rem; margin-top: 0.35rem;">⚠️ Server capacity critical! Upgrade soon!</div>';
-      } else if (capacityPercent >= 75) {
-        capacityWarning = '<div style="color: #f59e0b; font-size: 0.75rem; margin-top: 0.35rem;">⚠️ Server capacity high. Consider upgrading.</div>';
-      }
-      
-      financesContent.innerHTML = `
-        <!-- Content with Tailwind styling -->
-        <div class="max-w-lg mx-auto px-2 py-6 pb-24 space-y-3">
-          
-          <!-- Monthly Finances Card -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="pb-2 pt-4 px-4">
-              <div class="flex items-center gap-2">
-                <div class="bg-blue-100 p-1.5 rounded-lg">
-                  <i data-lucide="dollar-sign" class="w-4 h-4 text-blue-600"></i>
-                </div>
-                <h2 class="font-semibold">Monthly Finances</h2>
-              </div>
-            </div>
-            <div class="space-y-3 px-4 pb-4">
-              <!-- Next Billing Cycle -->
-              <div class="bg-gray-50 rounded-lg p-2.5">
-                <div class="flex items-center justify-center gap-2 mb-0.5">
-                  <i data-lucide="calendar" class="w-3.5 h-3.5 text-gray-500"></i>
-                  <span class="text-xs text-gray-600">Next Billing Cycle</span>
-                </div>
-                <div class="text-center font-semibold text-gray-900">
-                  In ${daysUntilBilling} ${daysUntilBilling === 1 ? 'day' : 'days'}
-                </div>
-              </div>
-
-              <div class="border-t border-gray-200"></div>
-
-              <!-- Income -->
-              <div class="flex items-start justify-between">
-                <div class="flex items-start gap-2">
-                  <i data-lucide="trending-up" class="w-4 h-4 text-green-600 mt-0.5"></i>
-                  <div>
-                    <div class="font-medium text-gray-900 text-sm">Income:</div>
-                    <div class="text-xs text-gray-500">
-                      Revenue: ${formatCurrency(income.grossRevenue)}
-                    </div>
-                  </div>
-                </div>
-                <div class="font-semibold text-green-600">
-                  ${formatCurrency(income.netIncome)}
-                </div>
-              </div>
-
-              <!-- Expenses -->
-              <div class="flex items-start justify-between">
-                <div class="flex items-start gap-2">
-                  <i data-lucide="trending-down" class="w-4 h-4 text-red-600 mt-0.5"></i>
-                  <div>
-                    <div class="font-medium text-gray-900 text-sm">Expenses:</div>
-                    <div class="text-xs text-gray-500">
-                      ${costs.rent > 0 ? `Rent: ${formatCurrency(costs.rent)}, ` : ''}Utilities: ${formatCurrency(costs.utilities)}, Insurance: ${formatCurrency(costs.insurance)}${costs.salaries > 0 ? `, Salaries: ${formatCurrency(costs.salaries)}` : ''}${costs.serverFee > 0 ? `, Server: ${formatCurrency(costs.serverFee)}` : ''}
-                    </div>
-                  </div>
-                </div>
-                <div class="font-semibold text-red-600">
-                  ${formatCurrency(costs.total)}
-                </div>
-              </div>
-
-              <div class="border-t border-gray-200"></div>
-
-              <!-- Net Cash Flow -->
-              <div class="flex items-center justify-between bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-2.5">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-700"></i>
-                  <span class="font-semibold text-gray-900 text-sm">Net Cash Flow:</span>
-                </div>
-                <div class="font-bold ${cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}">
-                  ${formatCurrency(cashFlow)}
-                </div>
-              </div>
-
-              <!-- Burn Rate -->
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <i data-lucide="zap" class="w-4 h-4 text-orange-500"></i>
-                  <span class="font-medium text-gray-900 text-sm">Burn Rate:</span>
-                </div>
-                <div class="font-semibold text-gray-700">
-                  ${burnRate === Infinity ? '∞ (Profitable!)' : `${burnRate} ${burnRate === 1 ? 'month' : 'months'}`}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Lifetime Earnings & Reputation Card -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="pb-2 pt-4 px-4">
-              <div class="flex items-center gap-2">
-                <div class="bg-purple-100 p-1.5 rounded-lg">
-                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-purple-600"></i>
-                </div>
-                <h2 class="font-semibold">Lifetime Earnings & Reputation</h2>
-              </div>
-            </div>
-            <div class="space-y-3 px-4 pb-4">
-              <!-- Total Earned -->
-              <div class="flex items-center justify-between">
-                <span class="font-medium text-gray-900 text-sm">Total Earned:</span>
-                <span class="font-bold text-green-600">
-                  ${formatCurrency(lifetimeEarnings)}
-                </span>
-              </div>
-
-              <div class="border-t border-gray-200"></div>
-
-              <!-- Reputation -->
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-green-600"></i>
-                    <span class="font-medium text-gray-900 text-sm">
-                      ${milestone.name}
-                    </span>
-                  </div>
-                  <span class="text-xs text-gray-500">
-                    ${Math.round(reputationProgress)}%
-                  </span>
-                </div>
-                <div class="h-1.5 mb-1.5 rounded-full overflow-hidden" style="background-color: #e5e7eb;">
-                  <div class="h-full bg-green-600 transition-all duration-300" style="width: ${reputationProgress}%"></div>
-                </div>
-                ${nextMilestone ? `
-                  <div class="flex items-center gap-1 text-xs text-gray-600">
-                    <span>Next:</span>
-                    <span class="font-medium">${nextMilestone.name}</span>
-                    <span>at</span>
-                    <span class="font-medium text-green-600">
-                      ${formatCurrency(nextMilestone.threshold)}
-                    </span>
-                  </div>
-                ` : `
-                  <div class="text-xs text-orange-600">
-                    ⭐ Maximum reputation! You attract the best talent!
-                  </div>
-                `}
-              </div>
-            </div>
-          </div>
-
-          <!-- Server Capacity Card -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-            <div class="pb-2 pt-4 px-4">
-              <div class="flex items-center gap-2">
-                <div class="bg-indigo-100 p-1.5 rounded-lg">
-                  <i data-lucide="server" class="w-4 h-4 text-indigo-600"></i>
-                </div>
-                <h2 class="font-semibold">${server.name}</h2>
-              </div>
-            </div>
-            <div class="space-y-3 px-4 pb-4">
-              <!-- Capacity -->
-              <div>
-                <div class="flex items-center justify-between mb-1.5">
-                  <span class="text-xs text-gray-600">
-                    ${totalSubs.toLocaleString()} / ${server.maxSubscribers.toLocaleString()} subscribers
-                  </span>
-                  <span class="text-xs font-medium text-gray-600">
-                    ${Math.round(capacityPercent)}%
-                  </span>
-                </div>
-                <div class="h-1.5 rounded-full overflow-hidden" style="background-color: #e5e7eb;">
-                  <div class="h-full ${capacityPercent >= 90 ? 'bg-red-600' : capacityPercent >= 75 ? 'bg-orange-500' : 'bg-indigo-600'} transition-all duration-300" style="width: ${capacityPercent}%"></div>
-                </div>
-              </div>
-
-              ${canUpgrade ? `
-                <button onclick="showServerUpgradeDialog()" 
-                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-2 rounded-lg font-medium transition-colors">
-                  Upgrade Server
-                </button>
-              ` : `
-                <div class="text-center text-xs text-gray-500 py-2">
-                  🏆 Maximum server tier!
-                </div>
-              `}
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Initialize Lucide icons after DOM update
-      setTimeout(() => {
-        if (window.lucide) {
-          window.lucide.createIcons();
-        }
-      }, 0);
       
       // Update navigation notifications
       updateNavigationNotifications();
