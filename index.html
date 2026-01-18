@@ -2069,7 +2069,7 @@
   <div class="header-wrapper">
     <!-- Header -->
     <!-- New Redesigned Header with Tailwind -->
-    <div id="gameHeader" class="bg-gradient-to-br from-blue-600 to-blue-700 text-white px-4 pt-4 pb-5 shadow-lg">
+    <div id="gameHeader" class="bg-gradient-to-br from-blue-600 to-blue-700 text-white px-4 pt-4 pb-4 shadow-lg">
       <div class="max-w-md mx-auto">
         <div class="flex items-start justify-between mb-3">
           <div>
@@ -2102,7 +2102,7 @@
             <span id="speedText">2x</span>
           </button>
           <button id="playPauseBtn" onclick="togglePlayPause()" 
-                  class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
+                  class="flex items-center gap-1 px-3 py-3 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
             <i data-lucide="play" class="w-4 h-4"></i>
             <span id="playPauseText">Play</span>
           </button>
@@ -5658,9 +5658,11 @@
       modal.classList.add('active');
     }
     
-    function hideNewProductModal() {
+    function hideNewProductModal(resumeGame = true) {
       document.getElementById('newProductModal').classList.remove('active');
-      startGame(); // Resume game when cancelled
+      if (resumeGame) {
+        startGame(); // Resume game when cancelled
+      }
     }
     
     function handleCreateProduct() {
@@ -5668,7 +5670,7 @@
       const template = PRODUCT_TEMPLATES[selectedIndex];
       
       createProduct(template);
-      hideNewProductModal();
+      hideNewProductModal(false); // Don't resume game when cancelled
     }
 
     // ============================================
@@ -5718,11 +5720,11 @@
       
       if (playPauseBtn) {
         if (isPlaying) {
-          playPauseBtn.className = 'flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/20 hover:bg-white/30 text-white border border-white/30';
+          playPauseBtn.className = 'flex items-center gap-1 px-3 py-3 text-sm font-medium rounded-lg transition-colors bg-white/20 hover:bg-white/30 text-white border border-white/30';
           if (playPauseText) playPauseText.textContent = 'Pause';
           if (playPauseIcon) playPauseIcon.setAttribute('data-lucide', 'pause');
         } else {
-          playPauseBtn.className = 'flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500';
+          playPauseBtn.className = 'flex items-center gap-1 px-3 py-3 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500';
           if (playPauseText) playPauseText.textContent = 'Play';
           if (playPauseIcon) playPauseIcon.setAttribute('data-lucide', 'play');
         }
