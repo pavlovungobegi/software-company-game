@@ -1072,15 +1072,15 @@
     .product-template {
       border: 2px solid #e5e7eb;
       border-radius: 6px;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      padding: 0.35rem 0.5rem;
+      margin-bottom: 0.35rem;
       cursor: pointer;
       transition: all 0.2s;
       background: white;
       position: relative;
       display: flex;
       align-items: flex-start;
-      gap: 0.6rem;
+      gap: 0.5rem;
     }
     
     .product-template:hover {
@@ -1090,9 +1090,9 @@
     }
     
     .product-template input[type="radio"] {
-      margin-top: 0.15rem;
-      width: 16px;
-      height: 16px;
+      margin-top: 0.1rem;
+      width: 14px;
+      height: 14px;
       cursor: pointer;
       accent-color: #2563eb;
       flex-shrink: 0;
@@ -1130,32 +1130,34 @@
     }
     
     .template-name {
-      font-weight: bold;
-      font-size: 0.95rem;
+      font-weight: 600;
+      font-size: 0.875rem;
       color: #111827;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.2rem;
+      line-height: 1.2;
     }
     
     .template-details {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #6b7280;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.3rem;
-      margin-bottom: 0.3rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.2rem;
     }
     
     .template-detail {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.2rem;
+      white-space: nowrap;
     }
     
     .template-description {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #9ca3af;
       font-style: italic;
-      margin-top: 0.1rem;
+      margin-top: 0;
       line-height: 1.2;
     }
     
@@ -3126,7 +3128,7 @@
         id: 'growth_1',
         name: "SEO & Content Marketing",
         category: RND_CATEGORIES.GROWTH,
-        developmentEffort: 6, // 3 months * 2
+        developmentEffort: 9,
         effect: { type: 'organic_growth', value: 0.05 },
         description: "Optimize for search engines and create valuable content",
         prerequisites: []
@@ -3135,7 +3137,7 @@
         id: 'growth_2',
         name: "Viral Referral System",
         category: RND_CATEGORIES.GROWTH,
-        developmentEffort: 12, // 6 months * 2
+        developmentEffort: 24, // 6 months * 2
         effect: { type: 'organic_growth', value: 0.10 },
         description: "Implement gamified referrals and social sharing",
         prerequisites: ['growth_1']
@@ -3144,18 +3146,38 @@
         id: 'growth_3',
         name: "AI Growth Engine",
         category: RND_CATEGORIES.GROWTH,
-        developmentEffort: 24, // 12 months * 2
+        developmentEffort: 36, // 12 months * 2
         effect: { type: 'organic_growth', value: 0.15 },
         description: "Predictive algorithms and automated personalization",
         prerequisites: ['growth_2']
       },
+      // ORGANIC GROWTH STREET (Sequential)
+      {
+        id: 'growth_4',
+        name: "Community & Ecosystem Platform",
+        category: RND_CATEGORIES.GROWTH,
+        developmentEffort: 60, // 18 months * 2
+        effect: { type: 'organic_growth', value: 0.20 },
+        description: "Build user communities, integrations, and creator ecosystems that drive sustained engagement",
+        prerequisites: ['growth_3']
+      },
+      {
+        id: 'growth_5',
+        name: "Global Brand Authority",
+        category: RND_CATEGORIES.GROWTH,
+        developmentEffort: 4120, // 24 months * 2
+        effect: { type: 'organic_growth', value: 0.30 },
+        description: "Achieve category leadership through brand trust, thought leadership, and network effects",
+        prerequisites: ['growth_4']
+      },
+
       
       // CHURN REDUCTION STREET (Sequential)
       {
         id: 'retention_1',
         name: "Customer Success Portal",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 8, // 4 months * 2
+        developmentEffort: 12, // 4 months * 2
         effect: { type: 'churn_reduction', value: 0.10 },
         description: "Self-service help center and onboarding guides",
         prerequisites: []
@@ -3164,7 +3186,7 @@
         id: 'retention_2',
         name: "Predictive Retention Analytics",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 16, // 8 months * 2
+        developmentEffort: 24, // 8 months * 2
         effect: { type: 'churn_reduction', value: 0.15 },
         description: "Identify at-risk customers before they leave",
         prerequisites: ['retention_1']
@@ -3173,7 +3195,7 @@
         id: 'retention_3',
         name: "Hyper-Personalization Engine",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 24, // 12 months * 2
+        developmentEffort: 48, // 12 months * 2
         effect: { type: 'churn_reduction', value: 0.20 },
         description: "AI-driven personalized experiences and proactive support",
         prerequisites: ['retention_2']
@@ -3184,7 +3206,7 @@
         id: 'efficiency_1',
         name: "Modern Dev Tools & CI/CD",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 6, // 3 months * 2
+        developmentEffort: 24, // 3 months * 2
         effect: { type: 'employee_efficiency', value: 0.10 },
         description: "Automated testing, deployment pipelines, and modern IDEs",
         prerequisites: []
@@ -3193,7 +3215,7 @@
         id: 'efficiency_2',
         name: "Knowledge Management Platform",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 12, // 6 months * 2
+        developmentEffort: 36, // 6 months * 2
         effect: { type: 'employee_efficiency', value: 0.15 },
         description: "Internal wiki, training resources, and best practices library",
         prerequisites: ['efficiency_1']
@@ -3202,7 +3224,7 @@
         id: 'efficiency_3',
         name: "AI Coding Assistant",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 20, // 10 months * 2
+        developmentEffort: 60, // 10 months * 2
         effect: { type: 'employee_efficiency', value: 0.20 },
         description: "AI-powered code completion, debugging, and refactoring",
         prerequisites: ['efficiency_2']
@@ -4721,6 +4743,9 @@
         
         html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
         
+        // Add developer button (moved to top)
+        html += '<button class="add-person-btn" onclick="showAssignToRndModal(' + project.id + ')">➕ Add Developer</button>';
+        
         // Show assigned developers
         project.assignedDevelopers.forEach(devId => {
           if (devId === 'founder') {
@@ -4740,9 +4765,6 @@
           }
         });
         
-        // Add developer button
-        html += '<button class="add-person-btn" onclick="showAssignToRndModal(' + project.id + ')">➕ Add Developer</button>';
-        
         html += '</div></div>'; // Close team cards and team section
         html += '</div>'; // Close details section
         html += '</div>'; // Close card
@@ -4759,7 +4781,7 @@
       const modal = document.getElementById('newRndModal');
       const list = document.getElementById('rndProjectsList');
       
-      // Group projects by category, excluding completed ones
+      // Group projects by category, only showing available or in-progress projects
       const grouped = {
         [RND_CATEGORIES.GROWTH]: [],
         [RND_CATEGORIES.RETENTION]: [],
@@ -4770,7 +4792,14 @@
       RND_PROJECTS.forEach(project => {
         // Skip completed projects
         const isCompleted = completedRndProjects.includes(project.id);
-        if (!isCompleted) {
+        if (isCompleted) return;
+        
+        // Check if project is in progress or can be started
+        const isInProgress = rndProjects.find(p => p.templateId === project.id);
+        const canStart = canStartRndProject(project.id);
+        
+        // Only show available or in-progress projects (hide locked ones)
+        if (isInProgress || canStart) {
           grouped[project.category].push(project);
         }
       });
@@ -4792,11 +4821,19 @@
         [RND_CATEGORIES.UNLOCK]: '🔓 Product Unlocks'
       };
       
-      list.innerHTML = Object.entries(grouped)
-        .filter(([category, projects]) => projects.length > 0) // Only show categories with remaining projects
+      // Check if any projects are available
+      const availableCategories = Object.entries(grouped)
+        .filter(([category, projects]) => projects.length > 0); // Only show categories with available projects
+      
+      if (availableCategories.length === 0) {
+        list.innerHTML = '<div class="empty-state">No R&D projects available. All projects are either completed or in progress!</div>';
+        modal.classList.add('active');
+        return;
+      }
+      
+      list.innerHTML = availableCategories
         .map(([category, projects]) => {
           const projectsHtml = projects.map(project => {
-            const canStart = canStartRndProject(project.id);
             const isInProgress = rndProjects.find(p => p.templateId === project.id);
             
             let statusNote = '';
@@ -4804,15 +4841,7 @@
             let disabled = '';
             
             if (isInProgress) {
-              statusNote = '<div style="color: #3b82f6; font-size: 0.75rem; margin-top: 0.1rem;">🔄 In Progress</div>';
-              disabledClass = 'disabled';
-              disabled = 'disabled';
-            } else if (!canStart) {
-              const prereqs = project.prerequisites.map(id => {
-                const prereq = RND_PROJECTS.find(p => p.id === id);
-                return prereq ? prereq.name : id;
-              }).join(', ');
-              statusNote = `<div style="color: #f59e0b; font-size: 0.75rem; margin-top: 0.1rem;">🔒 Requires: ${prereqs}</div>`;
+              statusNote = '<div style="color: #3b82f6; font-size: 0.7rem; margin-top: 0.15rem; line-height: 1.2;">🔄 In Progress</div>';
               disabledClass = 'disabled';
               disabled = 'disabled';
             }
@@ -4936,6 +4965,7 @@
     
     function hideAssignToRndModal() {
       document.getElementById('assignToRndModal').classList.remove('active');
+      startGame(); // Resume game when cancelled
     }
     
     function assignToRnd(projectId, developerId) {
@@ -5114,7 +5144,7 @@
         // Deprecated products lose subscribers over time
         if (product.status === 'deprecated' && product.subscribers > 0) {
           // Churn rate: 10-15% of subscribers leave per day
-          const churnRate = 0.10 + (Math.random() * 0.05); // 10-15% daily churn
+          const churnRate = 0.05 + (Math.random() * 0.05); // 5-10% daily churn
           const subscribersLost = Math.max(1, Math.ceil(product.subscribers * churnRate));
           const previousSubscribers = product.subscribers;
           product.subscribers = Math.max(0, product.subscribers - subscribersLost);
@@ -5310,6 +5340,9 @@
           
           html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
           
+          // Add developer button (moved to top)
+          html += '<button class="add-person-btn" onclick="showAssignDeveloperModal(' + product.id + ')">➕ Add Developer</button>';
+          
           const founderAssigned = product.assignedDevelopers.includes('founder');
           if (founderAssigned) {
             html += '<div class="assigned-person-card">';
@@ -5330,8 +5363,6 @@
               }
             }
           });
-          
-          html += '<button class="add-person-btn" onclick="showAssignDeveloperModal(' + product.id + ')">➕ Add Developer</button>';
           html += '</div></div>';
         }
         
@@ -5356,6 +5387,9 @@
           
           html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
           
+          // Add marketer button (moved to top)
+          html += '<button class="add-person-btn" onclick="showAssignMarketerModal(' + product.id + ')">➕ Add Marketer</button>';
+          
           const founderAssignedAsMarketer = product.assignedMarketers.includes('founder');
           if (founderAssignedAsMarketer) {
             html += '<div class="assigned-person-card">';
@@ -5376,8 +5410,6 @@
               }
             }
           });
-          
-          html += '<button class="add-person-btn" onclick="showAssignMarketerModal(' + product.id + ')">➕ Add Marketer</button>';
           html += '</div></div>';
         }
         
@@ -5397,6 +5429,9 @@
       
       // Update filter counts
       updateFilterCounts();
+      
+      // Reapply current filter after UI update
+      filterProducts(currentProductFilter);
     }
     
     // Product filtering system
@@ -5557,20 +5592,31 @@
         originalIndex
       })).sort((a, b) => a.template.developmentEffort - b.template.developmentEffort);
       
+      // Filter to only show unlocked products
+      const unlockedTemplates = sortedTemplates.filter(({template}) => {
+        return isProductUnlocked(template.name);
+      });
+      
+      // Check if there are any unlocked products
+      if (unlockedTemplates.length === 0) {
+        list.innerHTML = '<div class="empty-state">No products unlocked yet. Complete R&D projects to unlock new products!</div>';
+        modal.classList.add('active');
+        return;
+      }
+      
       // Find first available template index for default selection
       let firstAvailableIndex = -1;
-      for (let i = 0; i < sortedTemplates.length; i++) {
-        const template = sortedTemplates[i].template;
+      for (let i = 0; i < unlockedTemplates.length; i++) {
+        const template = unlockedTemplates[i].template;
         const existing = products.find(p => p.name === template.name && p.status !== "deprecated");
-        const unlocked = isProductUnlocked(template.name);
-        if (!existing && unlocked) {
-          firstAvailableIndex = sortedTemplates[i].originalIndex;
+        if (!existing) {
+          firstAvailableIndex = unlockedTemplates[i].originalIndex;
           break;
         }
       }
       
-      // Render product templates (sorted by development effort)
-      list.innerHTML = sortedTemplates.map(({template, originalIndex}) => {
+      // Render product templates (sorted by development effort, only unlocked)
+      list.innerHTML = unlockedTemplates.map(({template, originalIndex}) => {
         const price = currency === "USD" ? 
           `$${template.monthlyPriceUSD}/mo` : 
           `€${template.monthlyPriceEUR}/mo`;
@@ -5583,15 +5629,12 @@
         
         // Check if this product already exists and is not deprecated
         const existingProduct = products.find(p => p.name === template.name && p.status !== "deprecated");
-        const unlocked = isProductUnlocked(template.name);
-        const isDisabled = existingProduct !== undefined || !unlocked;
+        const isDisabled = existingProduct !== undefined;
         const disabledClass = isDisabled ? 'disabled' : '';
         
         let statusNote = '';
         if (existingProduct) {
-          statusNote = `<div style="color: #ef4444; font-size: 0.8rem; margin-top: 0.1rem;">⚠️ Already exists (${existingProduct.status === "in_development" ? "in development" : "active"})</div>`;
-        } else if (!unlocked) {
-          statusNote = `<div style="color: #f59e0b; font-size: 0.8rem; margin-top: 0.1rem;">🔒 Locked - Complete R&D project to unlock</div>`;
+          statusNote = `<div style="color: #ef4444; font-size: 0.7rem; margin-top: 0.15rem; line-height: 1.2;">⚠️ Already exists (${existingProduct.status === "in_development" ? "in development" : "active"})</div>`;
         }
         
         return `
@@ -6736,7 +6779,7 @@
         // Employee accepts!
         promoteEmployee(employee, offer, promotionRole);
         logEvent(`✅ ${employee.name} accepted the promotion offer of ${formatCurrency(offer)}/month!`);
-        showNotification(`✅ ${employee.name} accepted promotion!`, 'success');
+        //showNotification(`✅ ${employee.name} accepted promotion!`, 'success');
         hidePromotionModal();
         updateEmployeesUI();
       } else {
@@ -6811,7 +6854,7 @@
       // Update experience for founder
       const founderIsWorking = products.some(p => 
         (p.status === 'in_development' || p.status === 'published') && 
-        p.assignedDevelopers.includes(founder.id)
+        (p.assignedDevelopers.includes(founder.id) || p.assignedMarketers.includes(founder.id))
       ) || rndProjects.some(p => p.assignedDevelopers.includes(founder.id));
       
       if (founderIsWorking) {
@@ -6823,7 +6866,7 @@
         const newEfficiency = Math.min(baseEfficiency + gainedEfficiency, founder.efficiencyCap);
         founder.efficiency = newEfficiency;
         
-        // Founder never needs "promotion" - just keeps gaining efficiency until 200% cap
+        // Founder never needs "promotion" - just keeps gaining efficiency until 400% cap
       }
       
       // Update experience for developers
@@ -7849,16 +7892,17 @@
         candidatePool.marketers.splice(candidateIndex, 1);
       }
       
-      // Close modal and update UI
+      // Close modal without resuming game (so user can assign the new hire)
       if (type === "developer") {
-        hideHireDeveloperModal();
+        document.getElementById('hireDeveloperModal').classList.remove('active');
       } else {
-        hideHireMarketerModal();
+        document.getElementById('hireMarketerModal').classList.remove('active');
       }
       
       updateCashDisplay();
       updateEmployeesUI();
       updateFinancesUI();
+      // Game stays paused so user can assign the new employee
     }
     
     function showDeveloperCandidates(tierIndex) {
@@ -8160,6 +8204,7 @@
     function hideAssignDeveloperModal() {
       document.getElementById('assignDeveloperModal').classList.remove('active');
       currentAssignProductId = null;
+      startGame(); // Resume game when cancelled
     }
     
     function showAssignMarketerModal(productId) {
@@ -8228,6 +8273,7 @@
     function hideAssignMarketerModal() {
       document.getElementById('assignMarketerModal').classList.remove('active');
       currentAssignProductId = null;
+      startGame(); // Resume game when cancelled
     }
     
     function canAffordOfficeUpgrade() {
