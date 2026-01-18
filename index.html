@@ -3178,7 +3178,7 @@
         id: 'retention_1',
         name: "Customer Success Portal",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 12, // 4 months * 2
+        developmentEffort: 24, // 4 months * 2
         effect: { type: 'churn_reduction', value: 0.10 },
         description: "Self-service help center and onboarding guides",
         prerequisites: []
@@ -3187,8 +3187,8 @@
         id: 'retention_2',
         name: "Predictive Retention Analytics",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 24, // 8 months * 2
-        effect: { type: 'churn_reduction', value: 0.15 },
+        developmentEffort: 36, // 8 months * 2
+        effect: { type: 'churn_reduction', value: 0.10 },
         description: "Identify at-risk customers before they leave",
         prerequisites: ['retention_1']
       },
@@ -3196,8 +3196,8 @@
         id: 'retention_3',
         name: "Hyper-Personalization Engine",
         category: RND_CATEGORIES.RETENTION,
-        developmentEffort: 48, // 12 months * 2
-        effect: { type: 'churn_reduction', value: 0.20 },
+        developmentEffort: 72, // 12 months * 2
+        effect: { type: 'churn_reduction', value: 0.15 },
         description: "AI-driven personalized experiences and proactive support",
         prerequisites: ['retention_2']
       },
@@ -3207,7 +3207,7 @@
         id: 'efficiency_1',
         name: "Modern Dev Tools & CI/CD",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 24, // 3 months * 2
+        developmentEffort: 48, // 3 months * 2
         effect: { type: 'employee_efficiency', value: 0.10 },
         description: "Automated testing, deployment pipelines, and modern IDEs",
         prerequisites: []
@@ -3216,8 +3216,8 @@
         id: 'efficiency_2',
         name: "Knowledge Management Platform",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 36, // 6 months * 2
-        effect: { type: 'employee_efficiency', value: 0.15 },
+        developmentEffort: 60, // 6 months * 2
+        effect: { type: 'employee_efficiency', value: 0.10 },
         description: "Internal wiki, training resources, and best practices library",
         prerequisites: ['efficiency_1']
       },
@@ -3225,8 +3225,8 @@
         id: 'efficiency_3',
         name: "AI Coding Assistant",
         category: RND_CATEGORIES.EFFICIENCY,
-        developmentEffort: 60, // 10 months * 2
-        effect: { type: 'employee_efficiency', value: 0.20 },
+        developmentEffort: 180, // 10 months * 2
+        effect: { type: 'employee_efficiency', value: 0.15 },
         description: "AI-powered code completion, debugging, and refactoring",
         prerequisites: ['efficiency_2']
       },
@@ -3236,7 +3236,7 @@
         id: 'unlock_time_tracking',
         name: "Advanced Task Scheduling Research",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 4, // 2 months * 2
+        developmentEffort: 6, // 2 months * 2
         effect: { type: 'unlock_product', value: 'Time Tracking App' },
         description: "Research advanced time tracking algorithms",
         prerequisites: []
@@ -3245,7 +3245,7 @@
         id: 'unlock_form_builder',
         name: "Dynamic Form Generation",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 4, // 2 months * 2
+        developmentEffort: 8, // 2 months * 2
         effect: { type: 'unlock_product', value: 'Form Builder' },
         description: "Develop dynamic form rendering technology",
         prerequisites: ['unlock_time_tracking']
@@ -3254,7 +3254,7 @@
         id: 'unlock_invoicing',
         name: "Automated Billing Systems",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 6, // 3 months * 2
+        developmentEffort: 8, // 3 months * 2
         effect: { type: 'unlock_product', value: 'Invoicing Software' },
         description: "Create automated billing and invoice generation",
         prerequisites: ['unlock_form_builder']
@@ -3263,7 +3263,7 @@
         id: 'unlock_crm',
         name: "Customer Relationship Modeling",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 8, // 4 months * 2
+        developmentEffort: 12, // 4 months * 2
         effect: { type: 'unlock_product', value: 'CRM Lite' },
         description: "Design customer relationship database architecture",
         prerequisites: ['unlock_invoicing']
@@ -3272,7 +3272,7 @@
         id: 'unlock_password',
         name: "Encryption & Secure Storage",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 6, // 3 months * 2
+        developmentEffort: 12, // 3 months * 2
         effect: { type: 'unlock_product', value: 'Password Manager' },
         description: "Research encryption and secure credential storage",
         prerequisites: ['unlock_crm']
@@ -3281,7 +3281,7 @@
         id: 'unlock_email_marketing',
         name: "Campaign Automation Engine",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 10, // 5 months * 2
+        developmentEffort: 12, // 5 months * 2
         effect: { type: 'unlock_product', value: 'Email Marketing Tool' },
         description: "Build campaign automation and email delivery systems",
         prerequisites: ['unlock_password']
@@ -3290,7 +3290,7 @@
         id: 'unlock_analytics',
         name: "Data Visualization Framework",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 12, // 6 months * 2
+        developmentEffort: 24, // 6 months * 2
         effect: { type: 'unlock_product', value: 'Analytics Dashboard' },
         description: "Create advanced data visualization libraries",
         prerequisites: ['unlock_email_marketing']
@@ -3299,7 +3299,7 @@
         id: 'unlock_social_media',
         name: "Social Media API Integration",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 12, // 6 months * 2
+        developmentEffort: 24, // 6 months * 2
         effect: { type: 'unlock_product', value: 'Social Media Manager' },
         description: "Integrate with major social media platforms",
         prerequisites: ['unlock_analytics']
@@ -3308,7 +3308,7 @@
         id: 'unlock_project_mgmt',
         name: "Agile Workflow Architecture",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 16, // 8 months * 2
+        developmentEffort: 36, // 8 months * 2
         effect: { type: 'unlock_product', value: 'Project Management Suite' },
         description: "Design agile project management workflows",
         prerequisites: ['unlock_social_media']
@@ -3317,7 +3317,7 @@
         id: 'unlock_hr',
         name: "Enterprise HR Systems",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 20, // 10 months * 2
+        developmentEffort: 36, // 10 months * 2
         effect: { type: 'unlock_product', value: 'HR Management System' },
         description: "Build enterprise-grade HR management infrastructure",
         prerequisites: ['unlock_project_mgmt']
@@ -3326,7 +3326,7 @@
         id: 'unlock_ecommerce',
         name: "Payment Gateway & Shopping Cart",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 24, // 12 months * 2
+        developmentEffort: 36, // 12 months * 2
         effect: { type: 'unlock_product', value: 'E-commerce Platform' },
         description: "Integrate payment processing and shopping cart",
         prerequisites: ['unlock_hr']
@@ -3335,7 +3335,7 @@
         id: 'unlock_video',
         name: "Real-time Video Streaming",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 30, // 15 months * 2
+        developmentEffort: 48, // 15 months * 2
         effect: { type: 'unlock_product', value: 'Video Conferencing Tool' },
         description: "Develop real-time video and audio streaming technology",
         prerequisites: ['unlock_ecommerce']
@@ -3344,7 +3344,7 @@
         id: 'unlock_ai_chatbot',
         name: "Natural Language Processing",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 40, // 20 months * 2
+        developmentEffort: 48, // 20 months * 2
         effect: { type: 'unlock_product', value: 'AI Chatbot' },
         description: "Research NLP and conversational AI",
         prerequisites: ['unlock_video']
@@ -3353,7 +3353,7 @@
         id: 'unlock_erp',
         name: "Enterprise Integration Framework",
         category: RND_CATEGORIES.UNLOCK,
-        developmentEffort: 48, // 24 months * 2
+        developmentEffort: 60, // 24 months * 2
         effect: { type: 'unlock_product', value: 'ERP System' },
         description: "Build enterprise resource planning integration framework",
         prerequisites: ['unlock_ai_chatbot']
@@ -3495,42 +3495,42 @@
       {
         name: "Small Office",
         capacity: 8,
-        monthlyRentUSD: 1500,
-        monthlyRentEUR: 1350,
-        utilitiesBaseUSD: 500,
-        utilitiesBaseEUR: 450,
-        utilitiesPerPersonUSD: 60,
-        utilitiesPerPersonEUR: 54
+        monthlyRentUSD: 2500,
+        monthlyRentEUR: 2250,
+        utilitiesBaseUSD: 800,
+        utilitiesBaseEUR: 720,
+        utilitiesPerPersonUSD: 120,
+        utilitiesPerPersonEUR: 108
       },
       {
         name: "Medium Office",
         capacity: 15,
-        monthlyRentUSD: 4500,
-        monthlyRentEUR: 4050,
-        utilitiesBaseUSD: 1200,
-        utilitiesBaseEUR: 1080,
-        utilitiesPerPersonUSD: 50,
-        utilitiesPerPersonEUR: 45
+        monthlyRentUSD: 8000,
+        monthlyRentEUR: 7200,
+        utilitiesBaseUSD: 2000,
+        utilitiesBaseEUR: 1800,
+        utilitiesPerPersonUSD: 100,
+        utilitiesPerPersonEUR: 90
       },
       {
         name: "Large Office",
         capacity: 30,
-        monthlyRentUSD: 15000,
-        monthlyRentEUR: 13500,
-        utilitiesBaseUSD: 2500,
-        utilitiesBaseEUR: 2250,
-        utilitiesPerPersonUSD: 40,
-        utilitiesPerPersonEUR: 36
+        monthlyRentUSD: 30000,
+        monthlyRentEUR: 27000,
+        utilitiesBaseUSD: 5500,
+        utilitiesBaseEUR: 5000,
+        utilitiesPerPersonUSD: 80,
+        utilitiesPerPersonEUR: 72
       },
       {
         name: "Enterprise HQ",
         capacity: 100,
-        monthlyRentUSD: 60000,
-        monthlyRentEUR: 54000,
-        utilitiesBaseUSD: 10000,
-        utilitiesBaseEUR: 9000,
-        utilitiesPerPersonUSD: 30,
-        utilitiesPerPersonEUR: 27
+        monthlyRentUSD: 250000,
+        monthlyRentEUR: 225000,
+        utilitiesBaseUSD: 20000,
+        utilitiesBaseEUR: 18000,
+        utilitiesPerPersonUSD: 70,
+        utilitiesPerPersonEUR: 63
       }
     ];
 
@@ -3546,48 +3546,48 @@
       {
         name: "VPS Basic",
         maxSubscribers: 500,
-        monthlyFeeUSD: 100,
-        monthlyFeeEUR: 90,
+        monthlyFeeUSD: 200,
+        monthlyFeeEUR: 180,
         upgradeCostUSD: 200,
         upgradeCostEUR: 180
       },
       {
         name: "VPS Standard",
         maxSubscribers: 2000,
-        monthlyFeeUSD: 500,
-        monthlyFeeEUR: 450,
+        monthlyFeeUSD: 800,
+        monthlyFeeEUR: 720,
         upgradeCostUSD: 800,
         upgradeCostEUR: 720
       },
       {
         name: "VPS Premium",
         maxSubscribers: 5000,
-        monthlyFeeUSD: 1500,
-        monthlyFeeEUR: 1350,
-        upgradeCostUSD: 2000,
-        upgradeCostEUR: 1800
+        monthlyFeeUSD: 2200,
+        monthlyFeeEUR: 2000,
+        upgradeCostUSD: 2200,
+        upgradeCostEUR: 2000
       },
       {
         name: "Dedicated Server",
         maxSubscribers: 15000,
-        monthlyFeeUSD: 6000,
-        monthlyFeeEUR: 5400,
-        upgradeCostUSD: 5000,
-        upgradeCostEUR: 4500
+        monthlyFeeUSD: 8000,
+        monthlyFeeEUR: 7200,
+        upgradeCostUSD: 8000,
+        upgradeCostEUR: 7200
       },
       {
         name: "Cloud Infrastructure",
         maxSubscribers: 50000,
-        monthlyFeeUSD: 25000,
-        monthlyFeeEUR: 22500,
-        upgradeCostUSD: 15000,
-        upgradeCostEUR: 13500
+        monthlyFeeUSD: 35000,
+        monthlyFeeEUR: 32000,
+        upgradeCostUSD: 35000,
+        upgradeCostEUR: 32000
       },
       {
         name: "Enterprise Cloud",
         maxSubscribers: 999999, // Unlimited
-        monthlyFeeUSD: 300000,
-        monthlyFeeEUR: 270000,
+        monthlyFeeUSD: 500000,
+        monthlyFeeEUR: 450000,
         upgradeCostUSD: 0,       // No more upgrades
         upgradeCostEUR: 0
       }
@@ -7347,6 +7347,17 @@
       
       // Update filter counts
       updateEmployeeFilterCounts();
+      
+      // Sync filter button states with currentEmployeeFilter (preserve filter selection during game ticks)
+      const employeePanel = document.querySelector('#employeesContainer');
+      if (employeePanel) {
+        employeePanel.querySelectorAll('.filter-pill').forEach(pill => {
+          pill.classList.remove('active');
+          if (pill.dataset.filter === currentEmployeeFilter) {
+            pill.classList.add('active');
+          }
+        });
+      }
       
       // Update navigation notifications
       updateNavigationNotifications();
