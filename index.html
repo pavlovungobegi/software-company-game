@@ -726,6 +726,26 @@
       color: #374151;
       line-height: 1.3;
     }
+
+    .hire-btn-role{
+      font-size: 0.6rem;
+      background: lightblue;
+      border-radius: 4px;
+      padding: 4px;
+    }
+    
+    .hire-btn-details{
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .cash-flow-positive{
+      color: #0fc98b;
+    }
+
+    .cash-flow-negative{
+      color: #f87171;
+    }
     
     /* Modal */
     .modal-overlay {
@@ -775,6 +795,103 @@
       display: flex;
       gap: 0.5rem;
       justify-content: center;
+    }
+    
+    /* Team Penalty Question Mark */
+    .team-penalty-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      font-size: 0.65rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 0.25rem;
+      transition: all 0.2s;
+      border: 1.5px solid;
+    }
+    
+    .team-penalty-icon:hover {
+      transform: scale(1.15);
+    }
+    
+    .team-penalty-icon.grey {
+      background: #f3f4f6;
+      color: #6b7280;
+      border-color: #d1d5db;
+    }
+    
+    .team-penalty-icon.orange {
+      background: #fed7aa;
+      color: #c2410c;
+      border-color: #fb923c;
+    }
+    
+    .team-penalty-icon.red {
+      background: #fecaca;
+      color: #991b1b;
+      border-color: #ef4444;
+    }
+    
+    /* Team Penalty Popup Overlay */
+    .penalty-popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2000;
+      cursor: pointer;
+    }
+    
+    .penalty-popup-overlay.active {
+      display: block;
+    }
+    
+    /* Team Penalty Popup */
+    .penalty-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      color: white;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      z-index: 2001;
+      text-align: center;
+      min-width: 280px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+      animation: fadeInScale 0.2s ease-out;
+    }
+    
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+    
+    .penalty-popup-title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+    }
+    
+    .penalty-popup-message {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      line-height: 1.4;
     }
     
     .form-group {
@@ -1214,6 +1331,43 @@
     .employee-card:hover {
       border-color: #2563eb;
       box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    }
+    
+    /* Selectable Employee Cards (for assignment modals with checkboxes) */
+    .employee-card-selectable {
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .employee-card-selectable:hover {
+      border-color: #2563eb;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    }
+    
+    .employee-card-selectable.selected {
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+    
+    .employee-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      flex-shrink: 0;
+      accent-color: #2563eb;
+    }
+    
+    .employee-card-info {
+      flex: 1;
+      min-width: 0;
     }
     
     /* Assigned Person Cards (in product assignment sections) */
@@ -2065,6 +2219,15 @@
   <!-- Notification Container -->
   <div class="notification-container" id="notificationContainer"></div>
 
+  <!-- Team Penalty Popup Overlay -->
+  <div class="penalty-popup-overlay" id="teamPenaltyPopupOverlay" onclick="hidePenaltyPopup()"></div>
+  
+  <!-- Team Penalty Popup -->
+  <div class="penalty-popup" id="teamPenaltyPopup">
+    <div class="penalty-popup-title" id="penaltyPopupTitle">Large team penalty: 12%</div>
+    <div class="penalty-popup-message">Crowded teams lose effectiveness due to communication overhead.</div>
+  </div>
+
   <!-- Header Wrapper - Contains both header bars -->
   <div class="header-wrapper">
     <!-- Header -->
@@ -2278,13 +2441,16 @@
   <!-- Assign to R&D Modal -->
   <div class="modal-overlay" id="assignToRndModal">
     <div class="modal">
-      <div class="modal-header">👨‍💻 Assign Developer to R&D</div>
+      <div class="modal-header">👨‍💻 Assign Developers to R&D</div>
       <div class="modal-body">
-        <div class="modal-intro">Select a developer to assign to this R&D project.</div>
+        <div class="modal-intro">Select one or more developers to assign to this R&D project.</div>
         <div class="scrollable-list" id="availableDevelopersForRnd"></div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
         <button class="btn" onclick="hideAssignToRndModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="assignSelectedToRnd()" id="assignSelectedToRndBtn" disabled style="flex: 1;">
+          Assign Selected (<span id="selectedRndCount">0</span>)
+        </button>
       </div>
     </div>
   </div>
@@ -2353,13 +2519,16 @@
   <!-- Assign Developer to Product Modal -->
   <div class="modal-overlay" id="assignDeveloperModal">
     <div class="modal">
-      <div class="modal-header">👨‍💻 Assign Developer</div>
+      <div class="modal-header">👨‍💻 Assign Developers</div>
       <div class="modal-body">
         <div class="modal-intro" id="assignDeveloperProductName"></div>
         <div class="scrollable-list" id="assignDeveloperList"></div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
         <button class="btn" onclick="hideAssignDeveloperModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="assignSelectedDevelopers()" id="assignSelectedDevelopersBtn" disabled style="flex: 1;">
+          Assign Selected (<span id="selectedDevelopersCount">0</span>)
+        </button>
       </div>
     </div>
   </div>
@@ -2367,13 +2536,16 @@
   <!-- Assign Marketer to Product Modal -->
   <div class="modal-overlay" id="assignMarketerModal">
     <div class="modal">
-      <div class="modal-header">📢 Assign Marketer</div>
+      <div class="modal-header">📢 Assign Marketers</div>
       <div class="modal-body">
         <div class="modal-intro" id="assignMarketerProductName"></div>
         <div class="scrollable-list" id="assignMarketerList"></div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
         <button class="btn" onclick="hideAssignMarketerModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="assignSelectedMarketers()" id="assignSelectedMarketersBtn" disabled style="flex: 1;">
+          Assign Selected (<span id="selectedMarketersCount">0</span>)
+        </button>
       </div>
     </div>
   </div>
@@ -2994,46 +3166,70 @@
       {
         name: "Task Manager",
         developmentEffort: 3,
-        lifetimeMonths: 36,
+        lifetimeMonths: 24,
         monthlyPriceUSD: 13,
         monthlyPriceEUR: 12,
         description: "Simple to-do list app"
       },
       {
         name: "Time Tracking App",
-        developmentEffort: 4,
-        lifetimeMonths: 48,
-        monthlyPriceUSD: 20,
-        monthlyPriceEUR: 19,
+        developmentEffort: 6,
+        lifetimeMonths: 24,
+        monthlyPriceUSD: 16,
+        monthlyPriceEUR: 14,
         description: "Employee time logging"
       },
       {
+        name: "Password Manager",
+        developmentEffort: 9,
+        lifetimeMonths: 36,
+        monthlyPriceUSD: 14,
+        monthlyPriceEUR: 12,
+        description: "Secure credential vault"
+      },
+      {
+        name: "Form Builder",
+        developmentEffort: 12,
+        lifetimeMonths: 36,
+        monthlyPriceUSD: 14,
+        monthlyPriceEUR: 12,
+        description: "Drag-and-drop forms"
+      },
+      {
         name: "CRM Lite",
-        developmentEffort: 8,
-        lifetimeMonths: 60,
-        monthlyPriceUSD: 30,
-        monthlyPriceEUR: 27,
+        developmentEffort: 18,
+        lifetimeMonths: 36,
+        monthlyPriceUSD: 24,
+        monthlyPriceEUR: 22,
         description: "Basic CRM"
       },
       {
+        name: "Social Media Manager",
+        developmentEffort: 18,
+        lifetimeMonths: 48,
+        monthlyPriceUSD: 28,
+        monthlyPriceEUR: 25,
+        description: "Post scheduling & analytics"
+      },
+      {
         name: "Email Marketing Tool",
-        developmentEffort: 12,
-        lifetimeMonths: 60,
-        monthlyPriceUSD: 33,
-        monthlyPriceEUR: 30,
+        developmentEffort: 24,
+        lifetimeMonths: 48,
+        monthlyPriceUSD: 28,
+        monthlyPriceEUR: 26,
         description: "Campaign management"
       },
       {
         name: "Analytics Dashboard",
-        developmentEffort: 18,
+        developmentEffort: 30,
         lifetimeMonths: 48,
-        monthlyPriceUSD: 38,
+        monthlyPriceUSD: 30,
         monthlyPriceEUR: 35,
         description: "Data viz tool"
       },
       {
         name: "Invoicing Software",
-        developmentEffort: 24,
+        developmentEffort: 36,
         lifetimeMonths: 60,
         monthlyPriceUSD: 34,
         monthlyPriceEUR: 32,
@@ -3041,75 +3237,51 @@
       },
       {
         name: "Project Management Suite",
-        developmentEffort: 36,
+        developmentEffort: 48,
         lifetimeMonths: 72,
-        monthlyPriceUSD: 54,
-        monthlyPriceEUR: 49,
+        monthlyPriceUSD: 44,
+        monthlyPriceEUR: 40,
         description: "Full PM tool"
       },
       {
-        name: "HR Management System",
-        developmentEffort: 48,
-        lifetimeMonths: 72,
-        monthlyPriceUSD: 66,
-        monthlyPriceEUR: 60,
-        description: "Employee management"
-      },
-      {
-        name: "E-commerce Platform",
-        developmentEffort: 60,
-        lifetimeMonths: 108,
-        monthlyPriceUSD: 80,
-        monthlyPriceEUR: 72,
-        description: "Online store builder"
-      },
-      {
         name: "Video Conferencing Tool",
-        developmentEffort: 36,
+        developmentEffort: 48,
         lifetimeMonths: 48,
         monthlyPriceUSD: 17,
         monthlyPriceEUR: 15,
         description: "Remote meetings"
       },
       {
+        name: "HR Management System",
+        developmentEffort: 72,
+        lifetimeMonths: 72,
+        monthlyPriceUSD: 50,
+        monthlyPriceEUR: 45,
+        description: "Employee management"
+      },
+      {
+        name: "E-commerce Platform",
+        developmentEffort: 96,
+        lifetimeMonths: 108,
+        monthlyPriceUSD: 60,
+        monthlyPriceEUR: 54,
+        description: "Online store builder"
+      },
+      {
         name: "AI Chatbot",
-        developmentEffort: 120,
+        developmentEffort: 132,
         lifetimeMonths: 60,
-        monthlyPriceUSD: 99,
-        monthlyPriceEUR: 90,
+        monthlyPriceUSD: 80,
+        monthlyPriceEUR: 72,
         description: "Customer service bot"
       },
       {
         name: "ERP System",
-        developmentEffort: 180,
+        developmentEffort: 240,
         lifetimeMonths: 120,
-        monthlyPriceUSD: 190,
-        monthlyPriceEUR: 171,
+        monthlyPriceUSD: 100,
+        monthlyPriceEUR: 90,
         description: "Enterprise resource planning"
-      },
-      {
-        name: "Social Media Manager",
-        developmentEffort: 12,
-        lifetimeMonths: 48,
-        monthlyPriceUSD: 32,
-        monthlyPriceEUR: 29,
-        description: "Post scheduling & analytics"
-      },
-      {
-        name: "Password Manager",
-        developmentEffort: 6,
-        lifetimeMonths: 72,
-        monthlyPriceUSD: 14,
-        monthlyPriceEUR: 12,
-        description: "Secure credential vault"
-      },
-      {
-        name: "Form Builder",
-        developmentEffort: 9,
-        lifetimeMonths: 36,
-        monthlyPriceUSD: 18,
-        monthlyPriceEUR: 16,
-        description: "Drag-and-drop forms"
       }
     ];
 
@@ -4405,9 +4577,14 @@
         if (product.status === 'in_development') {
           let dailyProgress = 0;
           
+          // Apply team overhead penalty based on team size
+          const teamSize = product.assignedDevelopers.length;
+          
           // Founder contribution
           if (product.assignedDevelopers.includes('founder')) {
-            const contribution = (founder.efficiency / 30) * efficiencyMultiplier; // 1 month = 30 days
+            const baseEfficiency = founder.efficiency * efficiencyMultiplier;
+            const effectiveEfficiency = getEffectiveEfficiency(baseEfficiency, teamSize);
+            const contribution = effectiveEfficiency / 30; // 1 month = 30 days
             dailyProgress += contribution;
           }
           
@@ -4416,7 +4593,9 @@
             if (devId !== 'founder') {
               const developer = developers.find(d => d.id === devId);
               if (developer) {
-                const contribution = (developer.efficiency / 30) * efficiencyMultiplier;
+                const baseEfficiency = developer.efficiency * efficiencyMultiplier;
+                const effectiveEfficiency = getEffectiveEfficiency(baseEfficiency, teamSize);
+                const contribution = effectiveEfficiency / 30;
                 dailyProgress += contribution;
               }
             }
@@ -4519,9 +4698,14 @@
       rndProjects.forEach(project => {
         let dailyProgress = 0;
         
+        // Apply team overhead penalty based on team size
+        const teamSize = project.assignedDevelopers.length;
+        
         // Founder contribution
         if (project.assignedDevelopers.includes('founder')) {
-          const contribution = (founder.efficiency / 30) * efficiencyMultiplier;
+          const baseEfficiency = founder.efficiency * efficiencyMultiplier;
+          const effectiveEfficiency = getEffectiveEfficiency(baseEfficiency, teamSize);
+          const contribution = effectiveEfficiency / 30;
           dailyProgress += contribution;
         }
         
@@ -4530,7 +4714,9 @@
           if (devId !== 'founder') {
             const developer = developers.find(d => d.id === devId);
             if (developer) {
-              const contribution = (developer.efficiency / 30) * efficiencyMultiplier;
+              const baseEfficiency = developer.efficiency * efficiencyMultiplier;
+              const effectiveEfficiency = getEffectiveEfficiency(baseEfficiency, teamSize);
+              const contribution = effectiveEfficiency / 30;
               dailyProgress += contribution;
             }
           }
@@ -4646,16 +4832,20 @@
           effectText = `⚡ Employee Efficiency +${(project.effect.value * 100).toFixed(0)}%`;
         }
         
-        // Calculate total efficiency
+        // Calculate total efficiency with team overhead penalty
+        const teamSize = project.assignedDevelopers.length;
         let totalEfficiency = 0;
+        
         if (project.assignedDevelopers.includes('founder')) {
-          totalEfficiency += founder.efficiency * efficiencyMultiplier;
+          const baseEfficiency = founder.efficiency * efficiencyMultiplier;
+          totalEfficiency += getEffectiveEfficiency(baseEfficiency, teamSize);
         }
         project.assignedDevelopers.forEach(devId => {
           if (devId !== 'founder') {
             const developer = developers.find(d => d.id === devId);
             if (developer) {
-              totalEfficiency += developer.efficiency * efficiencyMultiplier;
+              const baseEfficiency = developer.efficiency * efficiencyMultiplier;
+              totalEfficiency += getEffectiveEfficiency(baseEfficiency, teamSize);
             }
           }
         });
@@ -4739,7 +4929,7 @@
         // Development Team section (non-collapsible, matching product card design)
         html += '<div style="margin-top: 0.75rem;">';
         html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
-        html += '👥 Development Team (' + devCount + ')';
+        html += '👥 Development Team (' + devCount + ')' + generatePenaltyIcon(devCount);
         html += '</div>';
         
         html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
@@ -4904,6 +5094,10 @@
     
     function showAssignToRndModal(projectId) {
       pauseGame(); // Auto-pause when opening modal
+      currentAssignRndProjectId = projectId;
+      selectedDevelopersForRnd.clear(); // Reset selection
+      updateAssignToRndButton();
+      
       const project = rndProjects.find(p => p.id === projectId);
       if (!project) return;
       
@@ -4947,14 +5141,18 @@
         list.innerHTML = '<div class="empty-state">No available developers. All developers are currently assigned to products or R&D projects. Unassign them first to reassign.</div>';
       } else {
         list.innerHTML = availableDevelopers.map(dev => {
+          const devIdStr = typeof dev.id === 'string' ? `'${dev.id}'` : dev.id;
           return `
-            <div class="employee-card" onclick="assignToRnd(${projectId}, ${typeof dev.id === 'string' ? `'${dev.id}'` : dev.id})" style="cursor: pointer;">
-              <div class="employee-header" style="margin-bottom: 0.4rem;">
-                <span class="employee-name">${dev.name}</span>
-                <span class="employee-role">${dev.role}</span>
-              </div>
-              <div class="employee-stats">
-                <span>⚡ Efficiency: ${Math.round(dev.efficiency * 100)}%</span>
+            <div class="employee-card-selectable" onclick="toggleRndDeveloperSelection(${devIdStr})" id="rnd-card-${dev.id}">
+              <input type="checkbox" class="employee-checkbox" id="rnd-checkbox-${dev.id}" onchange="toggleRndDeveloperSelection(${devIdStr})" onclick="event.stopPropagation();">
+              <div class="employee-card-info">
+                <div class="employee-header" style="margin-bottom: 0.4rem;">
+                  <span class="employee-name">${dev.name}</span>
+                  <span class="employee-role">${dev.role}</span>
+                </div>
+                <div class="employee-stats">
+                  <span>⚡ Efficiency: ${Math.round(dev.efficiency * 100)}%</span>
+                </div>
               </div>
             </div>
           `;
@@ -4966,7 +5164,41 @@
     
     function hideAssignToRndModal() {
       document.getElementById('assignToRndModal').classList.remove('active');
+      currentAssignRndProjectId = null;
+      selectedDevelopersForRnd.clear();
       startGame(); // Resume game when cancelled
+    }
+    
+    function toggleRndDeveloperSelection(devId) {
+      if (selectedDevelopersForRnd.has(devId)) {
+        selectedDevelopersForRnd.delete(devId);
+      } else {
+        selectedDevelopersForRnd.add(devId);
+      }
+      
+      // Update UI
+      const card = document.getElementById('rnd-card-' + devId);
+      const checkbox = document.getElementById('rnd-checkbox-' + devId);
+      if (card && checkbox) {
+        if (selectedDevelopersForRnd.has(devId)) {
+          card.classList.add('selected');
+          checkbox.checked = true;
+        } else {
+          card.classList.remove('selected');
+          checkbox.checked = false;
+        }
+      }
+      
+      updateAssignToRndButton();
+    }
+    
+    function updateAssignToRndButton() {
+      const btn = document.getElementById('assignSelectedToRndBtn');
+      const count = document.getElementById('selectedRndCount');
+      if (btn && count) {
+        count.textContent = selectedDevelopersForRnd.size;
+        btn.disabled = selectedDevelopersForRnd.size === 0;
+      }
     }
     
     function assignToRnd(projectId, developerId) {
@@ -5099,15 +5331,20 @@
           dailyGrowth += (organicBase + wordOfMouthBonus) * organicGrowthMultiplier;
           
           // Marketer contributions (much higher than organic)
+          // Apply team overhead penalty based on marketing team size
+          const mktTeamSize = product.assignedMarketers.length;
+          
           product.assignedMarketers.forEach(mktId => {
             if (mktId === 'founder') {
               // Founder as marketer
-              dailyGrowth += 5 * founder.efficiency;
+              const effectiveEfficiency = getEffectiveEfficiency(founder.efficiency, mktTeamSize);
+              dailyGrowth += 5 * effectiveEfficiency;
             } else {
               const marketer = marketers.find(m => m.id === mktId);
               if (marketer) {
                 // Base growth: 5 subscribers per day per 1x marketer
-                dailyGrowth += 5 * marketer.efficiency;
+                const effectiveEfficiency = getEffectiveEfficiency(marketer.efficiency, mktTeamSize);
+                dailyGrowth += 5 * effectiveEfficiency;
               }
             }
           });
@@ -5225,16 +5462,20 @@
           html += '<span class="product-stat-value">' + devCount + '</span>';
           html += '</div>';
           
-          // Calculate estimated completion
+          // Calculate estimated completion with team overhead penalty
+          const teamSize = product.assignedDevelopers.length;
           let totalEfficiency = 0;
+          
           if (product.assignedDevelopers.includes('founder')) {
-            totalEfficiency += founder.efficiency * efficiencyMultiplier;
+            const baseEfficiency = founder.efficiency * efficiencyMultiplier;
+            totalEfficiency += getEffectiveEfficiency(baseEfficiency, teamSize);
           }
           product.assignedDevelopers.forEach(devId => {
             if (devId !== 'founder') {
               const developer = developers.find(d => d.id === devId);
               if (developer) {
-                totalEfficiency += developer.efficiency * efficiencyMultiplier;
+                const baseEfficiency = developer.efficiency * efficiencyMultiplier;
+                totalEfficiency += getEffectiveEfficiency(baseEfficiency, teamSize);
               }
             }
           });
@@ -5336,7 +5577,7 @@
           
           html += '<div style="margin-top: 0.75rem;">';
           html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
-          html += '👥 Development Team (' + devCount + ')';
+          html += '👥 Development Team (' + devCount + ')' + generatePenaltyIcon(devCount);
           html += '</div>';
           
           html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
@@ -5383,7 +5624,7 @@
           
           html += '<div style="margin-top: 0.75rem;">';
           html += '<div style="font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; font-size: 0.875rem;">';
-          html += '📢 Marketing Team (' + mktCount + ')';
+          html += '📢 Marketing Team (' + mktCount + ')' + generatePenaltyIcon(mktCount);
           html += '</div>';
           
           html += '<div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">';
@@ -5795,7 +6036,7 @@
       
       const dialogContent = `
         <div class="space-y-4">
-          <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div class="bg-gray-50 rounded-lg p-3 space-y-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <i data-lucide="bar-chart-3" class="w-4 h-4 text-gray-600"></i>
@@ -5817,8 +6058,12 @@
                 <i data-lucide="dollar-sign" class="w-4 h-4 text-gray-600"></i>
                 <span class="text-sm text-gray-700">Monthly Cost:</span>
               </div>
-              <span class="font-semibold text-gray-900">
-                ${formatCurrency(nextFee)}/mo
+              <span class="font-medium text-gray-900">
+                ${formatCurrency(currentFee)}
+                <i data-lucide="arrow-right" class="inline w-3.5 h-3.5 mx-1.5 text-gray-400"></i>
+                <span class="text-indigo-700">
+                  ${formatCurrency(nextFee)}
+                </span>
               </span>
             </div>
             
@@ -8147,14 +8392,82 @@
       }
     }
     
+    // ============================================
+    // TEAM COMMUNICATION OVERHEAD PENALTY SYSTEM
+    // ============================================
+    
+    // Calculate team communication overhead penalty
+    // Formula: (teamSize - 1) × 6%, capped at 90%
+    function getTeamOverheadPenalty(teamSize) {
+      if (teamSize <= 1) return 0;
+      return Math.min(0.90, (teamSize - 1) * 0.06);
+    }
+    
+    // Calculate effective efficiency for a team member
+    function getEffectiveEfficiency(baseEfficiency, teamSize) {
+      const penalty = getTeamOverheadPenalty(teamSize);
+      return baseEfficiency * (1 - penalty);
+    }
+    
+    // Get penalty icon color based on penalty percentage
+    function getPenaltyIconColor(penalty) {
+      if (penalty < 0.15) return 'grey';
+      if (penalty < 0.30) return 'orange';
+      return 'red';
+    }
+    
+    // Show penalty popup
+    function showPenaltyPopup(teamSize, penaltyPercent) {
+      const overlay = document.getElementById('teamPenaltyPopupOverlay');
+      const popup = document.getElementById('teamPenaltyPopup');
+      const title = document.getElementById('penaltyPopupTitle');
+      
+      if (overlay && popup && title) {
+        title.textContent = `Large team penalty: ${penaltyPercent}%`;
+        overlay.classList.add('active');
+        popup.style.display = 'block';
+      }
+    }
+    
+    // Hide penalty popup
+    function hidePenaltyPopup() {
+      const overlay = document.getElementById('teamPenaltyPopupOverlay');
+      const popup = document.getElementById('teamPenaltyPopup');
+      if (overlay && popup) {
+        overlay.classList.remove('active');
+        popup.style.display = 'none';
+      }
+    }
+    
+    // Generate penalty icon HTML
+    function generatePenaltyIcon(teamSize) {
+      if (teamSize <= 1) return '';
+      
+      const penalty = getTeamOverheadPenalty(teamSize);
+      const penaltyPercent = Math.round(penalty * 100);
+      const colorClass = getPenaltyIconColor(penalty);
+      
+      return `<span class="team-penalty-icon ${colorClass}" 
+                    onclick="event.stopPropagation(); showPenaltyPopup(${teamSize}, ${penaltyPercent})">?</span>`;
+    }
+    
     // ASSIGN DEVELOPER/MARKETER TO PRODUCT MODALS
     // ============================================
     
     let currentAssignProductId = null;
+    let currentAssignRndProjectId = null;
+    
+    // Track selected employees for batch assignment
+    let selectedDevelopersForProduct = new Set();
+    let selectedMarketersForProduct = new Set();
+    let selectedDevelopersForRnd = new Set();
     
     function showAssignDeveloperModal(productId) {
       pauseGame(); // Auto-pause when opening modal
       currentAssignProductId = productId;
+      selectedDevelopersForProduct.clear(); // Reset selection
+      updateAssignDevelopersButton();
+      
       const product = products.find(p => p.id === productId);
       if (!product) return;
       
@@ -8162,7 +8475,7 @@
       const list = document.getElementById('assignDeveloperList');
       const productNameEl = document.getElementById('assignDeveloperProductName');
       
-      productNameEl.textContent = `Select a developer to assign to "${product.name}"`;
+      productNameEl.textContent = `Select one or more developers to assign to "${product.name}"`;
       
       // Get available developers (not assigned to ANY product or R&D project)
       const availableDevelopers = [];
@@ -8196,20 +8509,23 @@
       if (availableDevelopers.length === 0) {
         list.innerHTML = '<div class="empty-state">No available developers. All developers are currently assigned to other products or R&D projects. Unassign them first to reassign.</div>';
       } else {
-        list.innerHTML = availableDevelopers.map(dev => `
-          <button 
-            class="hire-btn" 
-            onclick="${dev.isFounder ? 'assignFounderToProduct' : 'assignEmployeeToProduct'}(${dev.isFounder ? productId : dev.id + ',' + productId}); hideAssignDeveloperModal();"
-          >
-            <div class="hire-btn-header">
-              <span class="hire-btn-title">👨‍💻 ${dev.name}</span>
-              <span class="hire-btn-role">${dev.role}</span>
+        list.innerHTML = availableDevelopers.map(dev => {
+          const devIdStr = typeof dev.id === 'string' ? `'${dev.id}'` : dev.id;
+          return `
+            <div class="employee-card-selectable" onclick="toggleDeveloperSelection(${devIdStr})" id="dev-card-${dev.id}">
+              <input type="checkbox" class="employee-checkbox" id="dev-checkbox-${dev.id}" onchange="toggleDeveloperSelection(${devIdStr})" onclick="event.stopPropagation();">
+              <div class="employee-card-info">
+                <div class="hire-btn-header">
+                  <span class="hire-btn-title">👨‍💻 ${dev.name}</span>
+                  <span class="hire-btn-role">${dev.role}</span>
+                </div>
+                <div class="hire-btn-details">
+                  <span>⚡ Efficiency: ${Math.round(dev.efficiency * 100)}%</span>
+                </div>
+              </div>
             </div>
-            <div class="hire-btn-details">
-              <span>⚡ Efficiency: ${Math.round(dev.efficiency * 100)}%</span>
-            </div>
-          </button>
-        `).join('');
+          `;
+        }).join('');
       }
       
       modal.classList.add('active');
@@ -8218,12 +8534,48 @@
     function hideAssignDeveloperModal() {
       document.getElementById('assignDeveloperModal').classList.remove('active');
       currentAssignProductId = null;
+      selectedDevelopersForProduct.clear();
       startGame(); // Resume game when cancelled
+    }
+    
+    function toggleDeveloperSelection(devId) {
+      if (selectedDevelopersForProduct.has(devId)) {
+        selectedDevelopersForProduct.delete(devId);
+      } else {
+        selectedDevelopersForProduct.add(devId);
+      }
+      
+      // Update UI
+      const card = document.getElementById('dev-card-' + devId);
+      const checkbox = document.getElementById('dev-checkbox-' + devId);
+      if (card && checkbox) {
+        if (selectedDevelopersForProduct.has(devId)) {
+          card.classList.add('selected');
+          checkbox.checked = true;
+        } else {
+          card.classList.remove('selected');
+          checkbox.checked = false;
+        }
+      }
+      
+      updateAssignDevelopersButton();
+    }
+    
+    function updateAssignDevelopersButton() {
+      const btn = document.getElementById('assignSelectedDevelopersBtn');
+      const count = document.getElementById('selectedDevelopersCount');
+      if (btn && count) {
+        count.textContent = selectedDevelopersForProduct.size;
+        btn.disabled = selectedDevelopersForProduct.size === 0;
+      }
     }
     
     function showAssignMarketerModal(productId) {
       pauseGame(); // Auto-pause when opening modal
       currentAssignProductId = productId;
+      selectedMarketersForProduct.clear(); // Reset selection
+      updateAssignMarketersButton();
+      
       const product = products.find(p => p.id === productId);
       if (!product) return;
       
@@ -8231,7 +8583,7 @@
       const list = document.getElementById('assignMarketerList');
       const productNameEl = document.getElementById('assignMarketerProductName');
       
-      productNameEl.textContent = `Select a marketer to assign to "${product.name}"`;
+      productNameEl.textContent = `Select one or more marketers to assign to "${product.name}"`;
       
       // Get available marketers (not assigned to ANY product or R&D)
       const availableMarketers = [];
@@ -8265,20 +8617,23 @@
       if (availableMarketers.length === 0) {
         list.innerHTML = '<div class="empty-state">No available marketers. All marketers are currently assigned to other products. Unassign them first to reassign.</div>';
       } else {
-        list.innerHTML = availableMarketers.map(mkt => `
-          <button 
-            class="hire-btn" 
-            onclick="${mkt.isFounder ? 'assignFounderToProductAsMarketer' : 'assignEmployeeToProduct'}(${mkt.isFounder ? productId : mkt.id + ',' + productId}); hideAssignMarketerModal();"
-          >
-            <div class="hire-btn-header">
-              <span class="hire-btn-title">📢 ${mkt.name}</span>
-              <span class="hire-btn-role">${mkt.role}</span>
+        list.innerHTML = availableMarketers.map(mkt => {
+          const mktIdStr = typeof mkt.id === 'string' ? `'${mkt.id}'` : mkt.id;
+          return `
+            <div class="employee-card-selectable" onclick="toggleMarketerSelection(${mktIdStr})" id="mkt-card-${mkt.id}">
+              <input type="checkbox" class="employee-checkbox" id="mkt-checkbox-${mkt.id}" onchange="toggleMarketerSelection(${mktIdStr})" onclick="event.stopPropagation();">
+              <div class="employee-card-info">
+                <div class="hire-btn-header">
+                  <span class="hire-btn-title">📢 ${mkt.name}</span>
+                  <span class="hire-btn-role">${mkt.role}</span>
+                </div>
+                <div class="hire-btn-details">
+                  <span>⚡ Efficiency: ${Math.round(mkt.efficiency * 100)}%</span>
+                </div>
+              </div>
             </div>
-            <div class="hire-btn-details">
-              <span>⚡ Efficiency: ${Math.round(mkt.efficiency * 100)}%</span>
-            </div>
-          </button>
-        `).join('');
+          `;
+        }).join('');
       }
       
       modal.classList.add('active');
@@ -8287,7 +8642,90 @@
     function hideAssignMarketerModal() {
       document.getElementById('assignMarketerModal').classList.remove('active');
       currentAssignProductId = null;
+      selectedMarketersForProduct.clear();
       startGame(); // Resume game when cancelled
+    }
+    
+    function toggleMarketerSelection(mktId) {
+      if (selectedMarketersForProduct.has(mktId)) {
+        selectedMarketersForProduct.delete(mktId);
+      } else {
+        selectedMarketersForProduct.add(mktId);
+      }
+      
+      // Update UI
+      const card = document.getElementById('mkt-card-' + mktId);
+      const checkbox = document.getElementById('mkt-checkbox-' + mktId);
+      if (card && checkbox) {
+        if (selectedMarketersForProduct.has(mktId)) {
+          card.classList.add('selected');
+          checkbox.checked = true;
+        } else {
+          card.classList.remove('selected');
+          checkbox.checked = false;
+        }
+      }
+      
+      updateAssignMarketersButton();
+    }
+    
+    function updateAssignMarketersButton() {
+      const btn = document.getElementById('assignSelectedMarketersBtn');
+      const count = document.getElementById('selectedMarketersCount');
+      if (btn && count) {
+        count.textContent = selectedMarketersForProduct.size;
+        btn.disabled = selectedMarketersForProduct.size === 0;
+      }
+    }
+    
+    // Batch assignment functions
+    function assignSelectedDevelopers() {
+      if (!currentAssignProductId || selectedDevelopersForProduct.size === 0) return;
+      
+      selectedDevelopersForProduct.forEach(devId => {
+        if (devId === 'founder') {
+          assignFounderToProduct(currentAssignProductId);
+        } else {
+          assignEmployeeToProduct(devId, currentAssignProductId);
+        }
+      });
+      
+      hideAssignDeveloperModal();
+      updateProductsUI();
+    }
+    
+    function assignSelectedMarketers() {
+      if (!currentAssignProductId || selectedMarketersForProduct.size === 0) return;
+      
+      selectedMarketersForProduct.forEach(mktId => {
+        if (mktId === 'founder') {
+          assignFounderToProductAsMarketer(currentAssignProductId);
+        } else {
+          assignEmployeeToProduct(mktId, currentAssignProductId);
+        }
+      });
+      
+      hideAssignMarketerModal();
+      updateProductsUI();
+    }
+    
+    function assignSelectedToRnd() {
+      if (!currentAssignRndProjectId || selectedDevelopersForRnd.size === 0) return;
+      
+      const project = rndProjects.find(p => p.id === currentAssignRndProjectId);
+      if (!project) return;
+      
+      selectedDevelopersForRnd.forEach(devId => {
+        if (!project.assignedDevelopers.includes(devId)) {
+          project.assignedDevelopers.push(devId);
+          
+          const devName = devId === 'founder' ? founder.name : developers.find(d => d.id === devId)?.name;
+          logEvent(`👨‍💻 ${devName} assigned to R&D: ${project.name}`);
+        }
+      });
+      
+      hideAssignToRndModal();
+      updateRndUI();
     }
     
     function canAffordOfficeUpgrade() {
@@ -8818,16 +9256,26 @@
     window.hideHireMarketerModal = hideHireMarketerModal;
     window.showAssignDeveloperModal = showAssignDeveloperModal;
     window.hideAssignDeveloperModal = hideAssignDeveloperModal;
+    window.toggleDeveloperSelection = toggleDeveloperSelection;
+    window.assignSelectedDevelopers = assignSelectedDevelopers;
     window.showPromotionModal = showPromotionModal;
     window.hidePromotionModal = hidePromotionModal;
     window.makePromotionOffer = makePromotionOffer;
     window.showAssignMarketerModal = showAssignMarketerModal;
     window.hideAssignMarketerModal = hideAssignMarketerModal;
+    window.toggleMarketerSelection = toggleMarketerSelection;
+    window.assignSelectedMarketers = assignSelectedMarketers;
+    window.showAssignToRndModal = showAssignToRndModal;
+    window.hideAssignToRndModal = hideAssignToRndModal;
+    window.toggleRndDeveloperSelection = toggleRndDeveloperSelection;
+    window.assignSelectedToRnd = assignSelectedToRnd;
     window.generateRandomCompanyName = generateRandomCompanyName;
     window.generateRandomFounderName = generateRandomFounderName;
     window.restartGame = restartGame;
     window.filterEmployees = filterEmployees;
     window.toggleEmployeeCard = toggleEmployeeCard;
+    window.showPenaltyPopup = showPenaltyPopup;
+    window.hidePenaltyPopup = hidePenaltyPopup;
 
     // ============================================
     // EVENT LISTENERS
