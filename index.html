@@ -7367,6 +7367,12 @@
       if (mktModal && mktModal.classList.contains('active')) {
         updateHireMarketerModalContent();
       }
+      
+      // Check if manager hiring modal is open and refresh it
+      const mgrModal = document.getElementById('hireManagerModal');
+      if (mgrModal && mgrModal.classList.contains('active')) {
+        updateHireManagerModalContent();
+      }
     }
     
     function checkMilestoneAchievement(previousEarnings, newEarnings) {
@@ -7435,13 +7441,13 @@
       const utilitiesPerPerson = currency === "USD" ? office.utilitiesPerPersonUSD : office.utilitiesPerPersonEUR;
       const utilities = utilitiesBase + (utilitiesPerPerson * teamSize);
       
-      // Insurance: 2% of gross revenue + base per employee
+      // Insurance: 2% of gross revenue + base per employee (including managers)
       const income = calculateMonthlyIncome();
       const insuranceBase = currency === "USD" ? 100 : 90;
-      const insurance = (income.grossRevenue * 0.02) + (insuranceBase * (developers.length + marketers.length));
+      const insurance = (income.grossRevenue * 0.02) + (insuranceBase * (developers.length + marketers.length + managers.length));
       
-      // Salaries
-      const salaries = [...developers, ...marketers].reduce((sum, emp) => sum + emp.monthlySalary, 0);
+      // Salaries (including managers)
+      const salaries = [...developers, ...marketers, ...managers].reduce((sum, emp) => sum + emp.monthlySalary, 0);
       
       // Server hosting fee (fixed monthly cost for tier)
       const server = SERVER_TIERS[currentServerTier];
@@ -8477,15 +8483,12 @@
     }
     
     function calculateManagerPromotionSalary(manager, newCapacity, oldCapacity) {
-      // Calculate proportional salary increase based on capacity increase
-      // Formula: newSalary = currentSalary * (newCapacity / oldCapacity)
-      // With ±10% randomness
+      // Calculate salary based on new capacity: capacity * 2000 with ±15% variance
+      // Example: newCapacity 6 = 12000 (±15%) = 10200-13800
       
-      const baseSalaryIncrease = manager.monthlySalary * (newCapacity / oldCapacity);
-      
-      // Add ±10% randomness
-      const randomMultiplier = 0.9 + (Math.random() * 0.2); // 0.9 to 1.1
-      const proposedSalary = Math.round(baseSalaryIncrease * randomMultiplier);
+      const baseSalary = newCapacity * 2000;
+      const variance = 0.85 + (Math.random() * 0.30); // 0.85 to 1.15 for ±15%
+      const proposedSalary = Math.round(baseSalary * variance);
       
       return proposedSalary;
     }
@@ -9532,7 +9535,7 @@
     }
     
     function hireFromPool(candidateIndex, type) {
-      // type: "developer" or "marketer"
+      // type: "developer", "marketer", or "manager"
       
       if (!canHireMoreEmployees()) {
         logEvent("❌ Office at capacity! Upgrade your office to hire more people.");
@@ -9540,9 +9543,14 @@
       }
       
       // Get candidate from pool
-      const candidate = type === "developer" 
-        ? candidatePool.developers[candidateIndex]
-        : candidatePool.marketers[candidateIndex];
+      let candidate;
+      if (type === "developer") {
+        candidate = candidatePool.developers[candidateIndex];
+      } else if (type === "marketer") {
+        candidate = candidatePool.marketers[candidateIndex];
+      } else if (type === "manager") {
+        candidate = candidatePool.managers[candidateIndex];
+      }
       
       if (!candidate) {
         logEvent("❌ Candidate not found!");
@@ -9560,36 +9568,45 @@
       
       // Add experience tracking to candidate
       candidate.experienceMonths = 0;
-      candidate.baseEfficiency = candidate.efficiency;
       
-      // Add manager system fields (if not already set)
-      if (candidate.managerId === undefined) {
-        candidate.managerId = null;
-        candidate.isManaged = false;
-      }
-      
-      // Add to team
-      if (type === "developer") {
-        developers.push(candidate);
-        logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+      if (type === "manager") {
+        // Manager-specific setup
+        candidate.baseEfficiency = candidate.efficiency;
+        candidate.managedEmployees = candidate.managedEmployees || [];
+        
+        managers.push(candidate);
+        logEvent(`👔 Hired ${candidate.name} as Manager (Capacity: ${candidate.capacity}) for ${formatCurrency(candidate.monthlySalary)}/mo`);
+        
+        // Remove from pool
+        candidatePool.managers.splice(candidateIndex, 1);
+        
+        // Close modal
+        document.getElementById('hireManagerModal').classList.remove('active');
       } else {
-        marketers.push(candidate);
-        logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+        // Developer/Marketer setup
+        candidate.baseEfficiency = candidate.efficiency;
+        
+        // Add manager system fields (if not already set)
+        if (candidate.managerId === undefined) {
+          candidate.managerId = null;
+          candidate.isManaged = false;
+        }
+        
+        // Add to team
+        if (type === "developer") {
+          developers.push(candidate);
+          logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+          candidatePool.developers.splice(candidateIndex, 1);
+          document.getElementById('hireDeveloperModal').classList.remove('active');
+        } else {
+          marketers.push(candidate);
+          logEvent(`✅ Hired ${candidate.name} as ${candidate.tierName} for ${formatCurrency(candidate.monthlySalary)}/mo`);
+          candidatePool.marketers.splice(candidateIndex, 1);
+          document.getElementById('hireMarketerModal').classList.remove('active');
+        }
       }
       
-      // Remove candidate from pool immediately to prevent duplicate hiring
-      if (type === "developer") {
-        candidatePool.developers.splice(candidateIndex, 1);
-      } else {
-        candidatePool.marketers.splice(candidateIndex, 1);
-      }
-      
-      // Close modal without resuming game (so user can assign the new hire)
-      if (type === "developer") {
-        document.getElementById('hireDeveloperModal').classList.remove('active');
-      } else {
-        document.getElementById('hireMarketerModal').classList.remove('active');
-      }
+      showNotification(`Hired ${candidate.name}!`, 'success');
       
       updateCashDisplay();
       updateEmployeesUI();
@@ -9743,8 +9760,11 @@
         tierName = "Senior Manager";
       }
       
-      // Calculate monthly salary: $8000 base + $100 per efficiency point
-      const monthlySalary = 8000 + (baseEfficiency * 100);
+      // Calculate monthly salary: capacity * 2000 with ±15% variance
+      // Example: capacity 3 = 6000 (±15%) = 5100-6900
+      const baseSalary = capacity * 2000;
+      const variance = 0.85 + (Math.random() * 0.30); // 0.85 to 1.15 for ±15%
+      const monthlySalary = Math.round(baseSalary * variance);
       
       return {
         id: id,
@@ -9783,30 +9803,32 @@
       const list = document.getElementById('hireManagerList');
       const candidates = candidatePool.managers;
       const hasCapacity = canHireMoreEmployees();
+      const daysUntilRefresh = 30 - (currentDay % 30);
       
       list.innerHTML = `
         <div style="margin-bottom: 1rem;">
           <h3 style="margin: 0.5rem 0; color: #1f2937;">Available Managers</h3>
           <p style="margin: 0.5rem 0; color: #6b7280; font-size: 0.9rem;">
-            Managers automate employee assignments and rebalancing. Pool refreshes monthly.
+            Managers automate employee assignments and rebalancing.
           </p>
+          <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+            <span>🔄</span>
+            <span>Pool refreshes in <strong>${daysUntilRefresh} day${daysUntilRefresh > 1 ? 's' : ''}</strong></span>
+          </div>
         </div>
-        ${candidates.map(candidate => {
+        ${candidates.map((candidate, index) => {
           const canAfford = cash >= candidate.monthlySalary;
           
           return `
             <button 
               class="hire-btn" 
-              onclick="confirmHireManager('${candidate.id}');"
+              onclick="showHireConfirmation('${candidate.id}', 'manager', ${index});"
               ${!canAfford || !hasCapacity ? 'disabled' : ''}
               style="width: 100%; margin-bottom: 0.5rem;"
             >
               <div class="hire-btn-info">
                 <div class="hire-btn-title">
                   <strong>${candidate.flag} ${candidate.name}</strong>
-                  <span class="badge" style="background: lightgray; border-radius: 10px; padding: 0.25rem 0.5rem; font-size: 0.8rem;">
-                    ${candidate.tierName}
-                  </span>
                 </div>
                 <div class="hire-btn-stats">
                   <span>💼 Efficiency: ${candidate.efficiency}%</span>
@@ -10431,8 +10453,17 @@
     
     function showHireConfirmation(candidateId, role, candidateIndex) {
       // Use new candidate pool structure - directly access by index
-      const candidates = role === 'developer' ? candidatePool.developers : candidatePool.marketers;
-      const candidate = candidates[candidateIndex];
+      let candidates, candidate;
+      
+      if (role === 'developer') {
+        candidates = candidatePool.developers;
+      } else if (role === 'marketer') {
+        candidates = candidatePool.marketers;
+      } else if (role === 'manager') {
+        candidates = candidatePool.managers;
+      }
+      
+      candidate = candidates[candidateIndex];
       
       if (!candidate) {
         console.error('Candidate not found at index:', candidateIndex, 'role:', role);
@@ -10444,7 +10475,7 @@
       const modal = document.getElementById('hireConfirmModal');
       
       document.getElementById('hireConfirmName').textContent = `${candidate.flag || '🌍'} ${candidate.name}`;
-      document.getElementById('hireConfirmRole').textContent = candidate.tierName;
+      document.getElementById('hireConfirmRole').textContent = candidate.tierName || `Manager (Capacity: ${candidate.capacity})`;
       document.getElementById('hireConfirmEfficiency').textContent = `${Math.round(candidate.efficiency * 100)}%`;
       document.getElementById('hireConfirmSalary').textContent = `${formatCurrency(candidate.monthlySalary)}/month`;
       
