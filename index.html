@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Software Company Simulator</title>
   
   <!-- Tailwind CSS -->
@@ -46,6 +46,7 @@
       color: #111827;
       line-height: 1.6;
       padding-top: 130px;
+      user-select: none;
     }
     
     /* Pause Border Overlay */
@@ -166,9 +167,7 @@
     .filter-container {
       background: white;
       border-radius: 0.5rem;
-      padding: 0.75rem;
-      margin: -1rem 1rem 1rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      margin-bottom: 0.5rem;
     }
     
     .filter-pills {
@@ -495,12 +494,6 @@
         margin-top: 0.15rem;
       }
       
-      /* Filter container on mobile */
-      .filter-container {
-        margin: -0.75rem 0.75rem 0.75rem;
-        padding: 0.5rem;
-      }
-      
       .filter-pill {
         font-size: 0.7rem;
         padding: 0.3rem 0.6rem;
@@ -508,16 +501,16 @@
       
       /* Product cards on mobile */
       .product-card-header {
-        padding: 0.75rem;
+        padding: 0.65rem;
       }
       
       .product-name {
-        font-size: 0.9rem;
+        font-size: 0.75rem;
       }
       
       .product-status {
-        font-size: 0.7rem;
-        padding: 0.1rem 0.4rem;
+        font-size: 0.6rem;
+        padding: 0.1rem 0.3rem;
       }
       
       .product-stats {
@@ -575,7 +568,7 @@
         border-radius: 0;
         margin-top: 10vh;
         /* Dynamic height based on header + bottom nav + margin */
-        height: calc(100vh - var(--header-height, 140px) - 70px - 3vh);
+        height: calc(100vh - var(--header-height, 140px) - 70px - 1vh);
         overflow-y: auto;
         padding: 1.5rem 0.5rem 1rem 0.5rem;
       }
@@ -583,11 +576,6 @@
       /* Hide desktop event log on mobile (it becomes its own panel) */
       #desktopEventLogWrapper {
         display: none !important;
-      }
-      
-      /* Show event log panel on mobile */
-      #eventLogPanel {
-        display: flex;
       }
       
       /* Show mobile navigation */
@@ -607,12 +595,6 @@
       }
     }
     
-    /* Hide mobile event log panel on desktop */
-    @media (min-width: 1025px) {
-      #eventLogPanel {
-        display: none;
-      }
-    }
     
     /* Panels */
     .panel {
@@ -721,10 +703,10 @@
     }
     
     .event {
-      padding: 0.2rem 0;
-      font-size: 0.8rem;
+      padding: 0.18rem 0;
+      font-size: 0.7rem;
       color: #374151;
-      line-height: 1.3;
+      line-height: 1.25;
     }
 
     .hire-btn-role{
@@ -990,7 +972,7 @@
     }
     
     .product-card-header {
-      padding: 0.7rem;
+      padding: 0.65rem;
       cursor: pointer;
       transition: background-color 0.2s;
     }
@@ -2248,18 +2230,7 @@
         </div>
 
         <!-- Controls -->
-        <div class="flex gap-2">
-          <button id="saveBtn" onclick="saveGame()" 
-                  class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-white border border-white/30">
-            <i data-lucide="save" class="w-4 h-4"></i>
-            <span>Save</span>
-          </button>
-          <button id="resetBtn" onclick="confirmReset()" 
-                  class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-white border border-white/30">
-            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-            <span>Reset</span>
-          </button>
-          <div class="flex-1"></div>
+        <div class="flex gap-2 justify-end">
           <button id="speedBtn" onclick="cycleSpeed()" 
                   class="px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-700 hover:bg-blue-800 text-white border border-blue-500">
             <span id="speedText">2x</span>
@@ -2321,9 +2292,6 @@
 
     <!-- Employees Panel -->
     <div class="panel">
-      <div class="panel-header">
-        <span>👥 Team</span>
-      </div>
       <div id="employeesContainer">
         <!-- Office Info -->
         <div class="office-info" id="officeInfo"></div>
@@ -2367,7 +2335,21 @@
 
     <!-- Event Log Panel (Mobile Only) -->
     <div class="panel" id="eventLogPanel">
-      <div id="eventLogMobile" style="font-size: 0.9rem;"></div>
+      <div id="eventLogMobile"></div>
+      
+      <!-- Game Controls -->
+      <div style="display: flex; gap: 0.5rem;">
+        <button id="saveBtnMobile" onclick="saveGame()" 
+                class="flex items-center gap-1 px-2 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-gray-700 border border-gray-300">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Save</span>
+        </button>
+        <button id="resetBtnMobile" onclick="confirmReset()" 
+                class="flex items-center gap-1 px-2 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-gray-700 border border-gray-300">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>Reset</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -2409,6 +2391,20 @@
   <div id="desktopEventLogWrapper" style="max-width: 1800px; margin: 0 auto; padding: 0 1.5rem 1.5rem;">
     <div class="event-log">
       <div id="eventLog"></div>
+    </div>
+    
+    <!-- Game Controls -->
+    <div style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+      <button id="saveBtn" onclick="saveGame()" 
+              class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-gray-700 border border-gray-300">
+        <i data-lucide="save" class="w-4 h-4"></i>
+        <span>Save</span>
+      </button>
+      <button id="resetBtn" onclick="confirmReset()" 
+              class="flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-white/10 hover:bg-white/20 text-gray-700 border border-gray-300">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        <span>Reset</span>
+      </button>
     </div>
   </div>
 
@@ -3304,7 +3300,7 @@
     let rndProjects = []; // Active R&D projects (similar to products)
     let completedRndProjects = []; // IDs of completed R&D projects
     let unlockedProducts = ['Task Manager']; // Initially only Task Manager is unlocked
-    let nextRndProjectId = 1;
+    let nextRndProjectId = 10000;  // Start at 10000 to avoid ID collision with products
 
     let currentServerTier = 0; // Shared Hosting (free)
     let currentOfficeTier = 0; // Home Office (no rent)
@@ -3340,7 +3336,7 @@
       {
         name: "Time Tracking App",
         developmentEffort: 6,
-        lifetimeMonths: 24,
+        lifetimeMonths: 36,
         monthlyPriceUSD: 16,
         monthlyPriceEUR: 14,
         description: "Employee time logging"
@@ -3349,14 +3345,14 @@
         name: "Password Manager",
         developmentEffort: 9,
         lifetimeMonths: 36,
-        monthlyPriceUSD: 14,
-        monthlyPriceEUR: 12,
+        monthlyPriceUSD: 16,
+        monthlyPriceEUR: 14,
         description: "Secure credential vault"
       },
       {
         name: "Form Builder",
         developmentEffort: 12,
-        lifetimeMonths: 36,
+        lifetimeMonths: 40,
         monthlyPriceUSD: 14,
         monthlyPriceEUR: 12,
         description: "Drag-and-drop forms"
@@ -3364,7 +3360,7 @@
       {
         name: "CRM Lite",
         developmentEffort: 18,
-        lifetimeMonths: 36,
+        lifetimeMonths: 40,
         monthlyPriceUSD: 24,
         monthlyPriceEUR: 22,
         description: "Basic CRM"
@@ -3389,24 +3385,24 @@
         name: "Analytics Dashboard",
         developmentEffort: 30,
         lifetimeMonths: 48,
-        monthlyPriceUSD: 30,
-        monthlyPriceEUR: 35,
+        monthlyPriceUSD: 28,
+        monthlyPriceEUR: 26,
         description: "Data viz tool"
       },
       {
         name: "Invoicing Software",
         developmentEffort: 36,
         lifetimeMonths: 60,
-        monthlyPriceUSD: 34,
-        monthlyPriceEUR: 32,
+        monthlyPriceUSD: 30,
+        monthlyPriceEUR: 28,
         description: "Billing & invoices"
       },
       {
         name: "Project Management Suite",
         developmentEffort: 48,
         lifetimeMonths: 72,
-        monthlyPriceUSD: 44,
-        monthlyPriceEUR: 40,
+        monthlyPriceUSD: 40,
+        monthlyPriceEUR: 36,
         description: "Full PM tool"
       },
       {
@@ -3421,32 +3417,32 @@
         name: "HR Management System",
         developmentEffort: 72,
         lifetimeMonths: 72,
-        monthlyPriceUSD: 50,
-        monthlyPriceEUR: 45,
+        monthlyPriceUSD: 44,
+        monthlyPriceEUR: 40,
         description: "Employee management"
       },
       {
         name: "E-commerce Platform",
         developmentEffort: 96,
         lifetimeMonths: 108,
-        monthlyPriceUSD: 60,
-        monthlyPriceEUR: 54,
+        monthlyPriceUSD: 55,
+        monthlyPriceEUR: 50,
         description: "Online store builder"
       },
       {
         name: "AI Chatbot",
         developmentEffort: 132,
         lifetimeMonths: 60,
-        monthlyPriceUSD: 80,
-        monthlyPriceEUR: 72,
+        monthlyPriceUSD: 64,
+        monthlyPriceEUR: 58,
         description: "Customer service bot"
       },
       {
         name: "ERP System",
         developmentEffort: 240,
         lifetimeMonths: 120,
-        monthlyPriceUSD: 100,
-        monthlyPriceEUR: 90,
+        monthlyPriceUSD: 80,
+        monthlyPriceEUR: 72,
         description: "Enterprise resource planning"
       }
     ];
@@ -3505,9 +3501,18 @@
         name: "Global Brand Authority",
         category: RND_CATEGORIES.GROWTH,
         developmentEffort: 120, // 24 months * 2
-        effect: { type: 'organic_growth', value: 0.30 },
+        effect: { type: 'organic_growth', value: 0.25 },
         description: "Achieve category leadership through brand trust, thought leadership, and network effects",
         prerequisites: ['growth_4']
+      },
+      {
+        id: 'growth_6',
+        name: "Market Penetration Strategy",
+        category: RND_CATEGORIES.GROWTH,
+        developmentEffort: 240, // 12 months * 2
+        effect: { type: 'organic_growth', value: 0.35 },
+        description: "Develop a systematic approach to market penetration and expansion",
+        prerequisites: ['growth_5']
       },
 
       
@@ -4525,7 +4530,7 @@
       // Remove after 3 seconds
       setTimeout(() => {
         notification.remove();
-      }, 3000);
+      }, 5000);
     }
 
     function updateEventLog() {
@@ -4616,7 +4621,7 @@
       
       products.push(product);
       
-      logEvent(`📋 Created "${product.name}" - assign developers to start building!`);
+      logEvent(`📋 Created "${product.name}"`);
       updateProductsUI();
     }
     
@@ -5258,7 +5263,7 @@
     function handleCreateRndProject() {
       const selected = document.querySelector('input[name="rndTemplate"]:checked');
       if (!selected) {
-        logEvent("❌ Please select an R&D project");
+        //logEvent("❌ Please select an R&D project");
         return;
       }
       
@@ -6597,7 +6602,7 @@
       console.log(`Summary: ${assignedCount} assigned, ${unassignedCount} unassigned`);
       console.log('');
       
-      logEvent(`👔 Manager optimization complete: ${assignedCount}/${managedEmployees.length} employees assigned`);
+      //logEvent(`👔 Manager optimization complete: ${assignedCount}/${managedEmployees.length} employees assigned`);
       
       // Update UI
       updateProductsUI();
@@ -7194,8 +7199,8 @@
       // Update hiring modals if they're open
       refreshOpenHiringModals();
       
-      // Auto-save every 10 days
-      if (currentDay % 10 === 0 && currentDay > 0) {
+      // Auto-save every 5 days
+      if (currentDay % 5 === 0 && currentDay > 0) {
         saveGame();
       }
       
@@ -7342,7 +7347,7 @@
       candidatePool.lastRefreshDay = currentDay;
       
       const milestone = getCurrentMilestone();
-      logEvent(`🔄 Hiring pool refreshed! ${milestone.badge} ${milestone.description}`);
+      //logEvent(`🔄 Hiring pool refreshed! ${milestone.badge} ${milestone.description}`);
     }
     
     function refreshCandidatePoolIfNeeded() {
@@ -7632,7 +7637,7 @@
       }
       
       lastCandidateRefresh = getCurrentMonth();
-      logEvent("📋 Candidate pools refreshed for this month");
+      //logEvent("📋 Candidate pools refreshed for this month");
     }
     
     function getCurrentMonth() {
@@ -8068,7 +8073,7 @@
         // Employee accepts!
         promoteEmployee(employee, offer, promotionRole);
         logEvent(`✅ ${employee.name} accepted the promotion offer of ${formatCurrency(offer)}/month!`);
-        showNotification(`🎓 ${employee.name} accepted promotion!`, 'success');
+        // Notification is shown by promoteEmployee() function
         hidePromotionModal();
         updateEmployeesUI();
       } else {
@@ -8607,25 +8612,20 @@
         actionButtons += '</div>';
       }
       
-      // Max tier badge
-      const maxTierBadge = currentOfficeTier >= OFFICE_TIERS.length - 1 
-        ? '<span style="font-size: 0.7rem; color: #10b981; font-weight: 600;">🏆 Max Tier</span>' 
-        : '';
-      
       const isFull = teamSize >= office.capacity;
       
       officeInfo.innerHTML = `
-        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.6rem 0.8rem 0.6rem 0.8rem; margin-bottom: 0.5rem;">
           <!-- Top Row: Office Name + Action Buttons -->
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
             <div class="office-name" style="font-weight: 600; font-size: 1rem; color: #1f2937;">
-              🏢 ${office.name} ${maxTierBadge}
+              🏢 ${office.name}
             </div>
             ${actionButtons}
           </div>
           
           <!-- Bottom Row: Employee Count + Hire + Rent -->
-          <div style="display: flex; align-items: center; gap: 1.5rem;">
+          <div style="display: flex; align-items: center; gap: 2rem;">
             <!-- Employee Count + Hire Button -->
             <div style="display: flex; align-items: center; gap: 0.5rem;">
               <span style="font-size: 1rem;">👥</span>
@@ -10112,7 +10112,7 @@
       }
       
       // Log event
-      logEvent(`👔 ${manager.name} now manages ${employee.name || founder.name}`);
+      //logEvent(`👔 ${manager.name} now manages ${employee.name || founder.name}`);
       showNotification(`${employee.name || founder.name} assigned to ${manager.name}`, 'success');
       
       // Refresh modal and UI
@@ -10153,7 +10153,7 @@
       console.log(`   Manager capacity now: ${manager.managedEmployees.length}/${manager.capacity}`);
       
       // Log event
-      logEvent(`👔 ${employee.name || founder.name} removed from ${manager.name}'s team`);
+      //logEvent(`👔 ${employee.name || founder.name} removed from ${manager.name}'s team`);
       showNotification(`${employee.name || founder.name} unassigned from ${manager.name}`, 'success');
       
       // Refresh modal and UI
@@ -10847,7 +10847,7 @@
           project.assignedDevelopers.push(devId);
           
           const devName = devId === 'founder' ? founder.name : developers.find(d => d.id === devId)?.name;
-          logEvent(`👨‍💻 ${devName} assigned to R&D: ${project.name}`);
+          //logEvent(`👨‍💻 ${devName} assigned to R&D: ${project.name}`);
         }
       });
       
@@ -10864,7 +10864,7 @@
     
     function handleMonthlyBilling() {
       const month = Math.floor(currentDay / 30);
-      logEvent(`📅 Month ${month} completed - Processing monthly billing...`);
+      //logEvent(`📅 Month ${month} completed - Processing monthly billing...`);
       
       // Refresh candidate pools for new month
       refreshCandidatePools();
@@ -10939,7 +10939,7 @@
       if (salaries > 0) expenseBreakdown.push(`Salaries: ${formatCurrency(salaries)}`);
       if (serverFee > 0) expenseBreakdown.push(`Server: ${formatCurrency(serverFee)}`);
       
-      logEvent(`💰 Monthly Expenses: ${formatCurrency(totalCosts)} (${expenseBreakdown.join(', ')})`);
+      logEvent(`💰 Monthly Expenses: ${formatCurrency(totalCosts)} `); //(${expenseBreakdown.join(', ')})
       
       // Log net result
       const netResult = totalRevenue - totalCosts;
@@ -11092,11 +11092,11 @@
       
       try {
         localStorage.setItem('softwareCompanyGame', JSON.stringify(saveData));
-        logEvent("💾 Game saved!");
+        //logEvent("💾 Game saved!");
         
         return true;
       } catch (e) {
-        logEvent("❌ Failed to save game: " + e.message);
+        //logEvent("❌ Failed to save game: " + e.message);
         alert("Failed to save game. Your browser might have storage disabled.");
         return false;
       }
@@ -11187,7 +11187,39 @@
         // Restore IDs
         nextProductId = save.gameState.nextProductId || 1;
         nextEmployeeId = save.gameState.nextEmployeeId || 1;
-        nextRndProjectId = save.gameState.nextRndProjectId || 1;
+        // Ensure R&D project IDs don't collide with product IDs (start at 10000 or higher)
+        nextRndProjectId = Math.max(save.gameState.nextRndProjectId || 10000, 10000);
+        
+        // Migration: Fix R&D projects with IDs that collide with products (< 10000)
+        rndProjects.forEach(rndProject => {
+          if (rndProject.id < 10000) {
+            const oldId = rndProject.id;
+            const newId = nextRndProjectId++;
+            rndProject.id = newId;
+            
+            // Update any employee assignments that point to the old R&D project ID
+            [...developers, ...marketers].forEach(emp => {
+              if (emp.assignedProduct === oldId) {
+                // Check if this assignment was meant for the R&D project (not a product)
+                const productExists = products.find(p => p.id === oldId);
+                if (productExists && productExists.status !== 'in_development') {
+                  // Product exists but is not in development, so this must be an R&D assignment
+                  emp.assignedProduct = newId;
+                }
+              }
+            });
+            
+            // Update founder assignment if needed
+            if (founder.assignedProduct === oldId) {
+              const productExists = products.find(p => p.id === oldId);
+              if (productExists && productExists.status !== 'in_development') {
+                founder.assignedProduct = newId;
+              }
+            }
+            
+            console.log(`🔧 Migration: R&D project "${rndProject.name}" ID changed ${oldId} → ${newId} to avoid collision`);
+          }
+        });
         
         // Restore UI state
         expandedTeamSections = save.gameState.expandedTeamSections || {};
@@ -11349,7 +11381,7 @@
       rndProjects = [];
       completedRndProjects = [];
       unlockedProducts = ['Task Manager']; // Only Task Manager unlocked at start
-      nextRndProjectId = 1;
+      nextRndProjectId = 10000;  // Start at 10000 to avoid ID collision with products
       
       // Initialize candidate pools (OLD SYSTEM - keeping for compatibility)
       developerCandidates = {};
@@ -11750,22 +11782,22 @@
     
     // Test candidate pool generation
     function testCandidatePool() {
-      console.log('=== Candidate Pool Test ===');
-      console.log('Generating new candidate pool...');
+      //console.log('=== Candidate Pool Test ===');
+      //console.log('Generating new candidate pool...');
       generateCandidatePool();
       
-      console.log('\nDevelopers:');
+      //console.log('\nDevelopers:');
       candidatePool.developers.forEach((c, i) => {
         console.log(`${i + 1}. ${c.name} (${c.tierName}) - ${Math.round(c.efficiency * 100)}% efficiency, ${formatCurrency(c.monthlySalary)}/mo`);
       });
       
-      console.log('\nMarketers:');
+      //console.log('\nMarketers:');
       candidatePool.marketers.forEach((c, i) => {
         console.log(`${i + 1}. ${c.name} (${c.tierName}) - ${Math.round(c.efficiency * 100)}% efficiency, ${formatCurrency(c.monthlySalary)}/mo`);
       });
       
-      console.log('\nLast refresh day:', candidatePool.lastRefreshDay);
-      console.log('Current milestone:', getCurrentMilestone().name);
+      //console.log('\nLast refresh day:', candidatePool.lastRefreshDay);
+      //console.log('Current milestone:', getCurrentMilestone().name);
     }
     
     // Fix manager capacity issues
@@ -11868,13 +11900,14 @@
     window.fixManagerCapacity = fixManagerCapacity;
     window.debugManagedEmployees = debugManagedEmployees;
     
-    console.log('🧪 Debug utilities loaded!');
+    /*console.log('🧪 Debug utilities loaded!');
     console.log('Available test functions:');
     console.log('  - testSaveLoad()');
     console.log('  - testMilestoneProgression()');
     console.log('  - testCandidatePool()');
     console.log('  - fixManagerCapacity() - Fix manager capacity display issues');
     console.log('  - debugManagedEmployees() - Debug why employees are not being assigned');
+    */
   </script>
 </body>
 </html>
