@@ -501,7 +501,7 @@
       
       /* Product cards on mobile */
       .product-card-header {
-        padding: 0.65rem;
+        padding: 0.5rem;
       }
       
       .product-name {
@@ -972,13 +972,9 @@
     }
     
     .product-card-header {
-      padding: 0.65rem;
+      padding: 0.5rem;
       cursor: pointer;
       transition: background-color 0.2s;
-    }
-    
-    .product-card-header:hover {
-      background: #f9fafb;
     }
     
     .product-header {
@@ -1002,7 +998,7 @@
     
     .product-name {
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: #111827;
       white-space: nowrap;
       overflow: hidden;
@@ -2297,7 +2293,7 @@
         <div class="office-info" id="officeInfo"></div>
         
         <!-- Employee Filter Pills -->
-        <div class="product-filter-pills" style="margin-bottom: 0.75rem; flex-wrap: wrap;">
+        <div class="product-filter-pills" style="margin-bottom: 0.25rem; flex-wrap: wrap;">
           <button class="filter-pill active" data-filter="all" onclick="filterEmployees('all')">
             All (<span id="employee-count-all">0</span>)
           </button>
@@ -3328,8 +3324,8 @@
       {
         name: "Task Manager",
         developmentEffort: 3,
-        lifetimeMonths: 24,
-        monthlyPriceUSD: 13,
+        lifetimeMonths: 36,
+        monthlyPriceUSD: 14,
         monthlyPriceEUR: 12,
         description: "Simple to-do list app"
       },
@@ -4842,6 +4838,65 @@
       return true;
     }
     
+    function hasAvailableProductTemplates() {
+      // Check if there are any unlocked product templates that aren't already active
+      return PRODUCT_TEMPLATES.some(template => {
+        // Must be unlocked
+        if (!isProductUnlocked(template.name)) return false;
+        
+        // Must not already exist (unless deprecated)
+        const existingProduct = products.find(p => p.name === template.name && p.status !== "deprecated");
+        return !existingProduct;
+      });
+    }
+    
+    function hasAvailableRndProjects() {
+      // Check if there are any R&D projects that can be started
+      return RND_PROJECTS.some(project => canStartRndProject(project.id));
+    }
+    
+    function updateNewProductButtonState() {
+      const btn = document.getElementById('newProductBtn');
+      if (!btn) return;
+      
+      const hasAvailable = hasAvailableProductTemplates();
+      
+      if (hasAvailable) {
+        // Enable - green
+        btn.disabled = false;
+        btn.style.background = '#10b981';
+        btn.style.cursor = 'pointer';
+        btn.style.opacity = '1';
+      } else {
+        // Disable - grey
+        btn.disabled = true;
+        btn.style.background = '#9ca3af';
+        btn.style.cursor = 'not-allowed';
+        btn.style.opacity = '0.6';
+      }
+    }
+    
+    function updateNewRndButtonState() {
+      const btn = document.getElementById('newRndBtn');
+      if (!btn) return;
+      
+      const hasAvailable = hasAvailableRndProjects();
+      
+      if (hasAvailable) {
+        // Enable - blue
+        btn.disabled = false;
+        btn.style.background = '#3b82f6';
+        btn.style.cursor = 'pointer';
+        btn.style.opacity = '1';
+      } else {
+        // Disable - grey
+        btn.disabled = true;
+        btn.style.background = '#9ca3af';
+        btn.style.cursor = 'not-allowed';
+        btn.style.opacity = '0.6';
+      }
+    }
+    
     function startRndProject(templateId) {
       const template = RND_PROJECTS.find(p => p.id === templateId);
       if (!template) {
@@ -5145,6 +5200,9 @@
       
       // Set container HTML with bonus section + projects
       container.innerHTML = bonusHTML + projectsHTML;
+      
+      // Update "New R&D Project" button state based on availability
+      updateNewRndButtonState();
     }
     
     function showNewRndModal() {
@@ -5854,6 +5912,9 @@
       
       // Reapply current filter after UI update
       filterProducts(currentProductFilter);
+      
+      // Update "New Product" button state based on availability
+      updateNewProductButtonState();
     }
     
     // Product filtering system
@@ -7925,15 +7986,7 @@
       
       // Remove from manager's managed employees list
       if (employee.isManaged && employee.managerId) {
-        const manager = managers.find(m => m.id === employee.managerId || m.id.toString() === employee.managerId.toString());
-        if (manager) {
-          // Remove from manager's managedEmployees array (handle both string and number IDs)
-          manager.managedEmployees = manager.managedEmployees.filter(id => 
-            id !== employeeToFire && 
-            id.toString() !== employeeToFire.toString()
-          );
-          console.log(`✓ Removed ${employee.name} from manager ${manager.name}'s team (${manager.managedEmployees.length}/${manager.capacity} capacity)`);
-        }
+        removeEmployeeFromAllManagers(employeeToFire);
       }
       
       // Remove from team
@@ -8089,6 +8142,11 @@
           // Employee quits!
           logEvent(`💔 ${employee.name} has quit after 3 rejected promotion offers!`);
           showNotification(`💔 ${employee.name} quit!`, 'error');
+          
+          // Unassign from manager (if assigned)
+          if (employee.isManaged && employee.managerId) {
+            removeEmployeeFromAllManagers(employee.id);
+          }
           
           // Unassign from all products
           products.forEach(product => {
@@ -8774,10 +8832,27 @@
         const positionName = isFounder ? 'Founder' : emp.tierName;
         const salary = isFounder ? 'No salary' : formatCurrency(emp.monthlySalary) + '/mo';
         
+        // Check if employee is managed by a manager (for visual indicator)
+        const empIdForCheck = isFounder ? 'founder' : empId;
+        const currentManager = managers.find(m => 
+          m.managedEmployees.includes(empIdForCheck) || 
+          m.managedEmployees.includes(empIdForCheck.toString()) ||
+          (emp.isManaged && (m.id === emp.managerId || m.id.toString() === emp.managerId?.toString()))
+        );
+        const isManaged = !!currentManager;
+        
         // Card HTML (matching product card structure)
         let html = '<div class="product-card employee-card-collapsible"';
         if (isFounder) {
-          html += ' style="border: 2px solid #f59e0b; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);"';
+          // Founder gets special golden styling, plus managed indicator if applicable
+          html += ' style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);';
+          if (isManaged) {
+            html += ' border-left: 6px solid #e9d5ff;';
+          }
+          html += '"';
+        } else if (isManaged) {
+          // Add left border indicator for managed employees (matching manager card color)
+          html += ' style="border-left: 6px solid #e9d5ff;"';
         }
         html += '>';
         
@@ -8945,7 +9020,7 @@
                 const currentCapacity = getManagerCapacity(manager);
                 
                 return `
-                <div style="background: #e9d5ff; border-radius: 8px; padding: 0.75rem; color: #1f2937; position: relative;">
+                <div style="background: #e9d5ff; border-radius: 8px; padding: 0.6rem; color: #1f2937; position: relative;">
                   ${manager.readyForPromotion ? `
                     <div style="position: absolute; top: -8px; right: -8px; width: 28px; height: 28px; background: #f59e0b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); cursor: pointer;" 
                          onclick="showManagerPromotionModal('${manager.id}')" 
@@ -8974,20 +9049,20 @@
                   </div>
                   <div style="margin-top: 0.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
                     <button 
-                      onclick="showManageTeamModal('${manager.id}')" 
-                      style="padding: 0.5rem; background: rgba(255,255,255,0.5); border: 1px solid rgba(107, 33, 168, 0.3); border-radius: 6px; color: #6b21a8; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;"
-                      onmouseover="this.style.background='rgba(255,255,255,0.7)'"
-                      onmouseout="this.style.background='rgba(255,255,255,0.5)'"
-                    >
-                      👥 Manage Team
-                    </button>
-                    <button 
                       onclick="showFireManagerModal('${manager.id}')" 
                       style="padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; color: #dc2626; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;"
                       onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
                       onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'"
                     >
                       🔥 Fire
+                    </button>
+                    <button 
+                      onclick="showManageTeamModal('${manager.id}')" 
+                      style="padding: 0.5rem; background: rgba(255,255,255,0.5); border: 1px solid rgba(107, 33, 168, 0.3); border-radius: 6px; color: #6b21a8; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;"
+                      onmouseover="this.style.background='rgba(255,255,255,0.7)'"
+                      onmouseout="this.style.background='rgba(255,255,255,0.5)'"
+                    >
+                      👥 Manage Team
                     </button>
                   </div>
                 </div>
@@ -10025,7 +10100,7 @@
               }).join('')}
             </div>
           </div>
-        ` : '<p style="text-align: center; color: #9ca3af; padding: 2rem; margin-bottom: 1.5rem;">No available employees</p>'}
+        ` : '<p style="text-align: center; color: #9ca3af; padding: 2rem;">No available employees</p>'}
         
         ${managedEmployees.length > 0 ? `
           <div>
@@ -10062,7 +10137,7 @@
                 return `
                   <div style="background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
                     <div style="flex: 1; min-width: 0;">
-                      <div style="font-weight: 600; font-size: 0.85rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280; font-size: 0.75rem;">(${tierName})</span></div>
+                      <div style="font-weight: 600; font-size: 0.75rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280; font-size: 0.7rem;">(${tierName})</span></div>
                       <div style="font-size: 0.7rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         📌 ${assignmentText}
                       </div>
@@ -10084,6 +10159,27 @@
       `;
       
       modal.classList.add('active');
+      
+      // Reset the selected count to 0 (all checkboxes start unchecked)
+      // This ensures any browser caching issues are overridden
+      setTimeout(() => {
+        const countSpan = document.getElementById('selectedCount');
+        const addBtn = document.getElementById('addSelectedBtn');
+        
+        if (countSpan) countSpan.textContent = '0';
+        if (addBtn) {
+          addBtn.disabled = true;
+          addBtn.style.background = '#9ca3af';
+          addBtn.style.cursor = 'not-allowed';
+          addBtn.onmouseover = null;
+          addBtn.onmouseout = null;
+        }
+        
+        // Uncheck all checkboxes explicitly (in case browser cached state)
+        document.querySelectorAll('.employee-checkbox').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+      }, 0);
     }
     
     function hideManageTeamModal() {
@@ -10328,17 +10424,20 @@
       managers.forEach(m => cleanupManagerAssignments(m));
       
       // Get managers with capacity (dynamically calculated)
-      const availableManagers = managers.map(manager => {
-        const currentCapacity = getManagerCapacity(manager);
-        const hasCapacity = manager.managedEmployees.length < currentCapacity;
-        const isCurrentManager = currentManager && manager.id === currentManager.id;
-        return {
-          ...manager,
-          currentCapacity, // Add dynamic capacity to the object
-          hasCapacity,
-          isCurrentManager
-        };
-      });
+      // Only show managers who have available capacity OR are the current manager
+      const availableManagers = managers
+        .map(manager => {
+          const currentCapacity = getManagerCapacity(manager);
+          const hasCapacity = manager.managedEmployees.length < currentCapacity;
+          const isCurrentManager = currentManager && (manager.id === currentManager.id || manager.id.toString() === currentManager.id.toString());
+          return {
+            ...manager,
+            currentCapacity, // Add dynamic capacity to the object
+            hasCapacity,
+            isCurrentManager
+          };
+        })
+        .filter(manager => manager.hasCapacity || manager.isCurrentManager);
       
       list.innerHTML = `
         <div style="margin-bottom: 1rem;">
@@ -10618,7 +10717,7 @@
       console.log(`  - isManaged set to: ${employee.isManaged}`);
       console.log(`  - managerId set to: ${employee.managerId}`);
       
-      showNotification(`${employee.name || founder.name} removed from manager`, 'success');
+      //showNotification(`${employee.name || founder.name} removed from manager`, 'success');
       
       // Close modal and update UI
       console.log(`\n🔄 Updating UI...`);
@@ -11121,6 +11220,26 @@
         
         // Check if we reached a new milestone
         checkMilestoneAchievement(previousLifetimeEarnings, lifetimeEarnings);
+      }
+      
+      // ============================================
+      // CLEANUP: REMOVE OLD DEPRECATED PRODUCTS
+      // ============================================
+      
+      // Remove products that have been deprecated for more than 365 days
+      const productsBeforeCleanup = products.length;
+      products = products.filter(product => {
+        // Keep all non-deprecated products
+        if (product.status !== 'deprecated') return true;
+        
+        // Keep deprecated products that are less than 365 days old
+        const daysSinceDeprecation = currentDay - (product.deprecationDate || 0);
+        return daysSinceDeprecation < 365;
+      });
+      
+      const removedCount = productsBeforeCleanup - products.length;
+      if (removedCount > 0) {
+        logEvent(`🗑️ Removed ${removedCount} old deprecated product(s) (deprecated > 1 year)`);
       }
       
       // ============================================
