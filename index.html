@@ -2544,7 +2544,7 @@
       <div class="modal-body">
         <div class="scrollable-list" id="manageTeamList"></div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" id="manageTeamModalFooter">
         <button class="btn" onclick="hideManageTeamModal()">Close</button>
       </div>
     </div>
@@ -9913,8 +9913,24 @@
       const modal = document.getElementById('manageTeamModal');
       const header = document.getElementById('manageTeamModalHeader');
       const list = document.getElementById('manageTeamList');
+      const footer = document.getElementById('manageTeamModalFooter');
       
+      // Update header with just manager name
       header.textContent = `👔 Manage Team: ${manager.name}`;
+      
+      // Update footer with Close and Add Selected buttons
+      footer.innerHTML = `
+        <button class="btn" onclick="hideManageTeamModal()">Close</button>
+        <button 
+          id="addSelectedBtn"
+          class="btn"
+          onclick="addSelectedEmployeesToManager('${manager.id}')"
+          disabled
+          style="background: #9ca3af; color: white; cursor: not-allowed;"
+        >
+          Add Selected (<span id="selectedCount">0</span>)
+        </button>
+      `;
       
       // Get all employees (founder + developers + marketers, excluding managers)
       const allEmployees = [
@@ -9960,12 +9976,63 @@
           </div>
         </div>
         
-        ${managedEmployees.length > 0 ? `
+        ${availableEmployees.length > 0 ? `
           <div style="margin-bottom: 1.5rem;">
-            <h4 style="font-size: 0.9rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;">
+              ➕ Available Employees (${availableEmployees.length})
+            </h4>
+            ${!hasCapacity ? `
+              <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                <div style="color: #dc2626; font-size: 0.8rem; font-weight: 600;">⚠️ Manager at full capacity</div>
+                <div style="color: #991b1b; font-size: 0.7rem; margin-top: 0.15rem;">Remove employees or hire a manager with higher capacity.</div>
+              </div>
+            ` : ''}
+            <div style="display: flex; flex-direction: column; gap: 0.35rem; max-height: 250px; overflow-y: auto;">
+              ${availableEmployees.map(emp => {
+                const isManagedByOther = emp.isManaged && emp.managerId !== managerId;
+                const otherManager = isManagedByOther ? managers.find(m => m.id === emp.managerId) : null;
+                
+                // Get tier name for display
+                const tierName = emp.tierName || (emp.role === 'founder' ? 'Founder' : 'Employee');
+                
+                return `
+                  <div 
+                    onclick="${hasCapacity && !isManagedByOther ? `toggleEmployeeCheckbox('${emp.id}')` : ''}"
+                    style="background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 0.5rem; display: flex; align-items: center; gap: 0.5rem; ${!hasCapacity || isManagedByOther ? 'opacity: 0.5;' : 'cursor: pointer;'} transition: background 0.15s;"
+                    ${hasCapacity && !isManagedByOther ? `onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'"` : ''}
+                  >
+                    ${hasCapacity && !isManagedByOther ? `
+                      <input 
+                        type="checkbox" 
+                        class="employee-checkbox" 
+                        id="checkbox-${emp.id}"
+                        data-employee-id="${emp.id}"
+                        onclick="event.stopPropagation()"
+                        onchange="updateSelectedCount()"
+                        style="width: 16px; height: 16px; cursor: pointer; flex-shrink: 0;"
+                      />
+                    ` : '<div style="width: 16px; flex-shrink: 0;"></div>'}
+                    <div style="flex: 1; min-width: 0; pointer-events: none;">
+                      <div style="font-weight: 600; font-size: 0.85rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280; font-size: 0.75rem;">(${tierName})</span></div>
+                      ${isManagedByOther ? `
+                        <div style="font-size: 0.7rem; color: #9ca3af;">
+                          👔 Managed by ${otherManager ? otherManager.name : 'Another manager'}
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : '<p style="text-align: center; color: #9ca3af; padding: 2rem; margin-bottom: 1.5rem;">No available employees</p>'}
+        
+        ${managedEmployees.length > 0 ? `
+          <div>
+            <h4 style="font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem;">
               👥 Managed Employees (${managedEmployees.length})
             </h4>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.35rem; max-height: 250px; overflow-y: auto;">
               ${managedEmployees.map(emp => {
                 // Find current assignment
                 let assignmentText = 'Unassigned';
@@ -9993,16 +10060,16 @@
                 const tierName = emp.tierName || (emp.role === 'founder' ? 'Founder' : 'Employee');
                 
                 return `
-                  <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                      <div style="font-weight: 600; font-size: 0.9rem; color: #111827;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280;">(${tierName})</span></div>
-                      <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.15rem;">
+                  <div style="background: white; border: 1px solid #e5e7eb; border-radius: 4px; padding: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1; min-width: 0;">
+                      <div style="font-weight: 600; font-size: 0.85rem; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280; font-size: 0.75rem;">(${tierName})</span></div>
+                      <div style="font-size: 0.7rem; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         📌 ${assignmentText}
                       </div>
                     </div>
                     <button 
                       onclick="unassignFromManager('${managerId}', '${emp.id}')"
-                      style="padding: 0.4rem 0.75rem; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: pointer;"
+                      style="padding: 0.3rem 0.6rem; background: #ef4444; color: white; border: none; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap; margin-left: 0.5rem;"
                       onmouseover="this.style.background='#dc2626'"
                       onmouseout="this.style.background='#ef4444'"
                     >
@@ -10014,50 +10081,6 @@
             </div>
           </div>
         ` : ''}
-        
-        ${availableEmployees.length > 0 ? `
-          <div>
-            <h4 style="font-size: 0.9rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">
-              ➕ Available Employees (${availableEmployees.length})
-            </h4>
-            ${!hasCapacity ? `
-              <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 0.75rem; border-radius: 6px; margin-bottom: 0.75rem;">
-                <div style="color: #dc2626; font-size: 0.85rem; font-weight: 600;">⚠️ Manager at full capacity</div>
-                <div style="color: #991b1b; font-size: 0.75rem; margin-top: 0.25rem;">Remove employees or hire a manager with higher capacity.</div>
-              </div>
-            ` : ''}
-            <div style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto;">
-              ${availableEmployees.map(emp => {
-                const isManagedByOther = emp.isManaged && emp.managerId !== managerId;
-                const otherManager = isManagedByOther ? managers.find(m => m.id === emp.managerId) : null;
-                
-                // Get tier name for display
-                const tierName = emp.tierName || (emp.role === 'founder' ? 'Founder' : 'Employee');
-                
-                return `
-                  <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center; ${!hasCapacity || isManagedByOther ? 'opacity: 0.5;' : ''}">
-                    <div>
-                      <div style="font-weight: 600; font-size: 0.9rem; color: #111827;">${emp.flag || '👤'} ${emp.displayName} <span style="font-weight: 400; color: #6b7280;">(${tierName})</span></div>
-                      ${isManagedByOther ? `
-                        <div style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.15rem;">
-                          👔 Managed by ${otherManager ? otherManager.name : 'Another manager'}
-                        </div>
-                      ` : ''}
-                    </div>
-                    <button 
-                      onclick="assignToManagerFromModal('${managerId}', '${emp.id}')"
-                      ${!hasCapacity || isManagedByOther ? 'disabled' : ''}
-                      style="padding: 0.4rem 0.75rem; background: ${!hasCapacity || isManagedByOther ? '#e5e7eb' : '#10b981'}; color: ${!hasCapacity || isManagedByOther ? '#9ca3af' : 'white'}; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: 600; cursor: ${!hasCapacity || isManagedByOther ? 'not-allowed' : 'pointer'};"
-                      ${!hasCapacity || isManagedByOther ? '' : 'onmouseover="this.style.background=\'#059669\'" onmouseout="this.style.background=\'#10b981\'"'}
-                    >
-                      Add
-                    </button>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </div>
-        ` : '<p style="text-align: center; color: #9ca3af; padding: 2rem;">No available employees</p>'}
       `;
       
       modal.classList.add('active');
@@ -10161,6 +10184,107 @@
       updateEmployeesUI();
     }
     
+    function toggleEmployeeCheckbox(employeeId) {
+      const checkbox = document.getElementById(`checkbox-${employeeId}`);
+      if (checkbox) {
+        checkbox.checked = !checkbox.checked;
+        updateSelectedCount();
+      }
+    }
+    
+    function updateSelectedCount() {
+      const checkboxes = document.querySelectorAll('.employee-checkbox:checked');
+      const count = checkboxes.length;
+      const countSpan = document.getElementById('selectedCount');
+      const addBtn = document.getElementById('addSelectedBtn');
+      
+      if (countSpan) countSpan.textContent = count;
+      if (addBtn) {
+        if (count > 0) {
+          // Enable button - green
+          addBtn.disabled = false;
+          addBtn.style.background = '#10b981';
+          addBtn.style.cursor = 'pointer';
+          addBtn.onmouseover = function() { this.style.background = '#059669'; };
+          addBtn.onmouseout = function() { this.style.background = '#10b981'; };
+        } else {
+          // Disable button - grey
+          addBtn.disabled = true;
+          addBtn.style.background = '#9ca3af';
+          addBtn.style.cursor = 'not-allowed';
+          addBtn.onmouseover = null;
+          addBtn.onmouseout = null;
+        }
+      }
+    }
+    
+    function addSelectedEmployeesToManager(managerId) {
+      const manager = managers.find(m => m.id === managerId || m.id.toString() === managerId);
+      if (!manager) {
+        showNotification('Manager not found!', 'error');
+        return;
+      }
+      
+      // Get all checked checkboxes
+      const checkboxes = document.querySelectorAll('.employee-checkbox:checked');
+      const selectedIds = Array.from(checkboxes).map(cb => cb.dataset.employeeId);
+      
+      if (selectedIds.length === 0) {
+        showNotification('No employees selected!', 'warning');
+        return;
+      }
+      
+      // Check capacity
+      const currentCapacity = getManagerCapacity(manager);
+      const availableCapacity = currentCapacity - manager.managedEmployees.length;
+      
+      if (selectedIds.length > availableCapacity) {
+        showNotification(`Manager only has capacity for ${availableCapacity} more employee(s)!`, 'warning');
+        return;
+      }
+      
+      let successCount = 0;
+      
+      // Assign each selected employee
+      selectedIds.forEach(employeeId => {
+        // Find employee
+        let employee = null;
+        if (employeeId === 'founder') {
+          employee = founder;
+        } else {
+          employee = [...developers, ...marketers].find(e => 
+            e.id === employeeId || e.id.toString() === employeeId.toString()
+          );
+        }
+        
+        if (employee && !employee.isManaged) {
+          // Assign employee to manager
+          employee.isManaged = true;
+          employee.managerId = managerId;
+          
+          // Add to manager's list if not already there
+          const alreadyManaged = manager.managedEmployees.some(id => 
+            id === employeeId || id.toString() === employeeId.toString()
+          );
+          
+          if (!alreadyManaged) {
+            manager.managedEmployees.push(employeeId);
+            successCount++;
+          }
+        }
+      });
+      
+      if (successCount > 0) {
+        showNotification(`✅ ${successCount} employee(s) assigned to ${manager.name}`, 'success');
+        console.log(`✅ Bulk assigned ${successCount} employees to ${manager.name}`);
+        console.log(`   Manager capacity now: ${manager.managedEmployees.length}/${currentCapacity}`);
+      }
+      
+      // Refresh modal and UI
+      showManageTeamModal(managerId);
+      updateEmployeesUI();
+    }
+    
     // ========================================
     // ASSIGN TO MANAGER MODAL (Select Manager for Employee)
     // ========================================
@@ -10192,10 +10316,16 @@
       
       header.textContent = `👔 Assign ${employeeName}`;
       
-      // Check if currently managed
+      // Check if currently managed (handle both string and number IDs)
       const currentManager = employee.isManaged && employee.managerId 
-        ? managers.find(m => m.id === employee.managerId) 
+        ? managers.find(m => 
+            m.id === employee.managerId || 
+            m.id.toString() === employee.managerId.toString()
+          )
         : null;
+      
+      // Clean up all managers' assignments first to ensure accurate display
+      managers.forEach(m => cleanupManagerAssignments(m));
       
       // Get managers with capacity (dynamically calculated)
       const availableManagers = managers.map(manager => {
@@ -10292,12 +10422,60 @@
       startGame();
     }
     
+    // Cleanup function to remove invalid/orphaned employee IDs from manager's list
+    function cleanupManagerAssignments(manager) {
+      if (!manager || !manager.managedEmployees) return;
+      
+      // Get all employees (including founder)
+      const allEmployees = [founder, ...developers, ...marketers];
+      
+      // Store original count
+      const beforeCount = manager.managedEmployees.length;
+      
+      // Remove IDs that either:
+      // 1. Don't correspond to any real employee, OR
+      // 2. Correspond to an employee who is NOT actually managed by this manager
+      manager.managedEmployees = manager.managedEmployees.filter(id => {
+        // Find the employee with this ID (handle both string and number)
+        const employee = allEmployees.find(e => 
+          e.id === id || 
+          e.id.toString() === id.toString()
+        );
+        
+        // If employee doesn't exist at all, remove the ID
+        if (!employee) {
+          console.log(`🧹 Removing non-existent employee ID from ${manager.name}: ${id} (type: ${typeof id})`);
+          return false;
+        }
+        
+        // If employee exists but is NOT managed by this manager, remove the ID
+        if (!employee.isManaged || (employee.managerId !== manager.id && employee.managerId?.toString() !== manager.id?.toString())) {
+          console.log(`🧹 Removing unmanaged employee from ${manager.name}: ${employee.name || 'Founder'} (ID: ${id})`);
+          return false;
+        }
+        
+        // Employee exists AND is managed by this manager - keep the ID
+        return true;
+      });
+      
+      const afterCount = manager.managedEmployees.length;
+      const removed = beforeCount - afterCount;
+      
+      if (removed > 0) {
+        console.log(`✓ Cleaned up ${manager.name}: removed ${removed} invalid ID(s), now ${afterCount}/${getManagerCapacity(manager)} capacity`);
+        logEvent(`🧹 Fixed ${manager.name}'s team count (was ${beforeCount}, now ${afterCount})`);
+      }
+    }
+    
     function assignEmployeeToManager(employeeId, managerId) {
       const manager = managers.find(m => m.id === managerId || m.id.toString() === managerId);
       if (!manager) {
         showNotification('Manager not found!', 'error');
         return;
       }
+      
+      // Clean up manager's list before assignment to fix any previous bugs
+      cleanupManagerAssignments(manager);
       
       // Find employee
       let employee = null;
@@ -10323,6 +10501,9 @@
       if (employee.isManaged && employee.managerId) {
         const oldManager = managers.find(m => m.id === employee.managerId || m.id.toString() === employee.managerId.toString());
         if (oldManager) {
+          // Clean up old manager's list first
+          cleanupManagerAssignments(oldManager);
+          
           // Handle both string and number IDs
           oldManager.managedEmployees = oldManager.managedEmployees.filter(id => 
             id !== employeeId && id.toString() !== employeeId.toString()
@@ -10365,37 +10546,85 @@
     }
     
     function removeEmployeeFromAllManagers(employeeId) {
+      console.log(`\n🔄 removeEmployeeFromAllManagers called with employeeId: ${employeeId} (type: ${typeof employeeId})`);
+      
       // Find employee
       let employee = null;
       if (employeeId === 'founder') {
         employee = founder;
       } else {
-        employee = [...developers, ...marketers].find(e => e.id === employeeId || e.id.toString() === employeeId);
+        employee = [...developers, ...marketers].find(e => e.id === employeeId || e.id.toString() === employeeId.toString());
       }
       
       if (!employee) {
+        console.error(`❌ Employee not found with ID: ${employeeId}`);
         showNotification('Employee not found!', 'error');
         return;
       }
       
+      console.log(`✓ Found employee: ${employee.name || founder.name}`);
+      console.log(`  - isManaged: ${employee.isManaged}`);
+      console.log(`  - managerId: ${employee.managerId} (type: ${typeof employee.managerId})`);
+      
       // Find and remove from current manager
       if (employee.isManaged && employee.managerId) {
-        const manager = managers.find(m => m.id === employee.managerId);
+        console.log(`\n🔍 Looking for manager with ID: ${employee.managerId}`);
+        console.log(`  Available managers:`, managers.map(m => `${m.name} (id: ${m.id}, type: ${typeof m.id})`));
+        
+        // Find manager (handle both string and number IDs)
+        const manager = managers.find(m => 
+          m.id === employee.managerId || 
+          m.id.toString() === employee.managerId.toString()
+        );
+        
         if (manager) {
-          manager.managedEmployees = manager.managedEmployees.filter(id => id !== employeeId);
+          // Clean up manager's list first to fix any previous bugs
+          cleanupManagerAssignments(manager);
+          console.log(`✓ Found manager: ${manager.name}`);
+          console.log(`  - Current managedEmployees:`, manager.managedEmployees);
+          console.log(`  - Current capacity: ${manager.managedEmployees.length}/${getManagerCapacity(manager)}`);
+          
+          // Remove from manager's list (handle both string and number IDs)
+          const beforeCount = manager.managedEmployees.length;
+          manager.managedEmployees = manager.managedEmployees.filter(id => 
+            id !== employeeId && id.toString() !== employeeId.toString()
+          );
+          const afterCount = manager.managedEmployees.length;
+          
+          console.log(`  - After removal:`, manager.managedEmployees);
+          console.log(`  - New capacity: ${afterCount}/${getManagerCapacity(manager)}`);
+          console.log(`  - Removed: ${beforeCount - afterCount} employee(s)`);
+          
+          if (beforeCount === afterCount) {
+            console.warn(`⚠️ WARNING: Employee was NOT removed from manager's list! ID mismatch?`);
+            console.warn(`  - Looking for: ${employeeId} (type: ${typeof employeeId})`);
+            console.warn(`  - In array:`, manager.managedEmployees.map(id => `${id} (type: ${typeof id})`));
+          }
+          
           logEvent(`👔 ${employee.name || founder.name} removed from ${manager.name}'s team`);
+        } else {
+          console.error(`❌ Manager with ID ${employee.managerId} not found!`);
+          console.error(`  Employee managerId: ${employee.managerId} (type: ${typeof employee.managerId})`);
+          console.error(`  Available manager IDs:`, managers.map(m => `${m.id} (type: ${typeof m.id})`));
         }
+      } else {
+        console.log(`⏭️ Skipping manager removal - employee not managed or no managerId`);
       }
       
       // Unassign employee
+      console.log(`\n✂️ Clearing employee management flags`);
       employee.isManaged = false;
       employee.managerId = null;
+      console.log(`  - isManaged set to: ${employee.isManaged}`);
+      console.log(`  - managerId set to: ${employee.managerId}`);
       
       showNotification(`${employee.name || founder.name} removed from manager`, 'success');
       
       // Close modal and update UI
+      console.log(`\n🔄 Updating UI...`);
       hideAssignToManagerModal();
       updateEmployeesUI();
+      console.log(`✅ removeEmployeeFromAllManagers completed\n`);
     }
     
     function showMarketerCandidates(tierIndex) {
@@ -11351,6 +11580,8 @@
       founder.baseEfficiency = 1.0;
       founder.experienceMonths = 0;
       founder.assignedProduct = null;
+      founder.isManaged = false;
+      founder.managerId = null;
       currency = selectedCurrency;
       cash = selectedCapital;
       currentDay = 0;
@@ -11365,6 +11596,7 @@
       products = [];
       developers = [];
       marketers = [];
+      managers = [];
       nextEmployeeId = 1;
       nextProductId = 1;
       currentOfficeTier = 0; // Start with Home Office
@@ -11392,6 +11624,7 @@
       // Initialize NEW candidate pool system
       candidatePool.developers = [];
       candidatePool.marketers = [];
+      candidatePool.managers = [];
       candidatePool.lastRefreshDay = 0;
       generateCandidatePool(); // Generate initial pool based on startup milestone
       
