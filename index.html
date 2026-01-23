@@ -5998,13 +5998,37 @@
           details.classList.remove('expanded');
           icon.textContent = '▼';
           icon.style.transform = 'rotate(0deg)';
-          expandedEmployeeCards[employeeId] = false;
+          delete expandedEmployeeCards[employeeId]; // Remove from tracking
         } else {
           details.classList.add('expanded');
           icon.textContent = '▲';
           icon.style.transform = 'rotate(180deg)';
-          expandedEmployeeCards[employeeId] = true;
+          expandedEmployeeCards[employeeId] = currentDay; // Store the day it was expanded
         }
+      }
+    }
+    
+    function autoCollapseOldEmployeeCards() {
+      // Auto-collapse employee cards that have been expanded for 60+ days
+      const cardsToCollapse = [];
+      
+      for (const employeeId in expandedEmployeeCards) {
+        const expandedDay = expandedEmployeeCards[employeeId];
+        const daysSinceExpanded = currentDay - expandedDay;
+        
+        if (daysSinceExpanded >= 60) {
+          cardsToCollapse.push(employeeId);
+        }
+      }
+      
+      // Collapse cards that have been open too long
+      if (cardsToCollapse.length > 0) {
+        cardsToCollapse.forEach(employeeId => {
+          delete expandedEmployeeCards[employeeId];
+        });
+        
+        // Refresh employee UI to reflect collapsed state
+        updateEmployeesUI();
       }
     }
     
@@ -6695,16 +6719,16 @@
       }
       
       // Assign developers
-      console.log(`\n  🔄 Assigning ${devs.length} unassigned developers...`);
+      //console.log(`\n  🔄 Assigning ${devs.length} unassigned developers...`);
       for (const dev of devs) {
         const devName = dev.name || founder.name;
         const devId = dev.id === 'founder' || dev.name === founder.name ? 'founder' : dev.id;
         
-        console.log(`\n    👤 Processing ${devName}:`);
-        console.log(`       - ID: ${devId}`);
-        console.log(`       - Current assignedProduct: ${dev.assignedProduct || 'none'}`);
-        console.log(`       - isManaged: ${dev.isManaged}`);
-        console.log(`       - managerId: ${dev.managerId}`);
+        //console.log(`\n    👤 Processing ${devName}:`);
+        //console.log(`       - ID: ${devId}`);
+        //console.log(`       - Current assignedProduct: ${dev.assignedProduct || 'none'}`);
+        //console.log(`       - isManaged: ${dev.isManaged}`);
+        //console.log(`       - managerId: ${dev.managerId}`);
         
         const target = findBestAssignment(dev, devProjects);
         
@@ -7218,6 +7242,9 @@
       currentDay++;
       updateDayDisplay();
       updateCashDisplay();
+      
+      // Auto-collapse employee cards that have been expanded for 60+ days
+      autoCollapseOldEmployeeCards();
 
       // R&D Development
       updateRndDevelopment();
@@ -8785,7 +8812,7 @@
       // Helper function to render an employee card (collapsible design)
       function renderEmployeeCard(emp, isFounder = false) {
         const empId = isFounder ? 'founder' : emp.id;
-        const isExpanded = expandedEmployeeCards[empId] === true;
+        const isExpanded = expandedEmployeeCards.hasOwnProperty(empId); // Card is expanded if it exists in tracking
         
         // Find assignment
         let assignment = null;
@@ -8946,47 +8973,39 @@
         html += '</div>';
         
         // Action buttons
-        html += '<div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">';
+        // Promote button (if ready for promotion) - full width
         if (emp.readyForPromotion) {
-          html += '<button class="btn" onclick="event.stopPropagation(); showPromotionModal(' + (isFounder ? "'founder'" : emp.id) + ', \'' + (isFounder ? 'developer' : emp.role) + '\')" style="flex: 1; background: #10b981; border-color: #059669; color: white; padding: 0.5rem;">🎓 Promote</button>';
+          html += '<div style="margin-top: 0.75rem;">';
+          html += '<button class="btn" onclick="event.stopPropagation(); showPromotionModal(' + (isFounder ? "'founder'" : emp.id) + ', \'' + (isFounder ? 'developer' : emp.role) + '\')" style="width: 100%; background: #10b981; border-color: #059669; color: white; padding: 0.5rem;">🎓 Promote</button>';
+          html += '</div>';
         }
-        if (!isFounder) {
-          html += '<button class="btn" onclick="event.stopPropagation(); fireEmployee(' + emp.id + ')" style="flex: 1; background: #ef4444; border-color: #dc2626; padding: 0.5rem;">🔥 Fire</button>';
-        }
-        html += '</div>';
         
-        // Manager assignment button (show if managers are unlocked)
-        if (lifetimeEarnings >= 2000000 && managers.length > 0) {
-          const empIdForModal = isFounder ? "'founder'" : emp.id;
-          const empIdForCheck = isFounder ? 'founder' : emp.id;
+        // Fire button + Manager assignment button (side by side)
+        // Note: empIdForCheck and currentManager already defined above for managed indicator
+        const empIdForModal = isFounder ? "'founder'" : emp.id;
+        
+        // Show Fire + Manager buttons row (if not founder OR if managers are unlocked)
+        if (!isFounder || (lifetimeEarnings >= 2000000 && managers.length > 0)) {
+          html += '<div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">';
           
-          // Find which manager (if any) is managing this employee
-          // Check manager's managedEmployees array as source of truth (not just emp.isManaged)
-          const currentManager = managers.find(m => 
-            m.managedEmployees.includes(empIdForCheck) || 
-            m.managedEmployees.includes(empIdForCheck.toString()) ||
-            (emp.isManaged && (m.id === emp.managerId || m.id.toString() === emp.managerId?.toString()))
-          );
+          // Fire button (1x width) - only for non-founder
+          if (!isFounder) {
+            html += '<button class="btn" onclick="event.stopPropagation(); fireEmployee(' + emp.id + ')" style="flex: 1; background: #ef4444; border-color: #dc2626; padding: 0.5rem;">🔥 Fire</button>';
+          }
           
-          const isManaged = !!currentManager;
-          
-          html += '<div style="margin-top: 0.5rem;">';
-          
-          if (isManaged && currentManager) {
-            // Show managed status (not a button)
-            html += '<div style="width: 100%; background: #e9d5ff; border: 1px solid #c4b5fd; color: #6b21a8; padding: 0.5rem; font-size: 0.85rem; font-weight: 600; border-radius: 6px; text-align: center;">';
-            html += '👔 Managed by: ' + currentManager.name;
-            html += '</div>';
-            
-            // Add a small "Change Manager" link below
-            html += '<div style="text-align: center; margin-top: 0.25rem;">';
-            html += '<a href="#" onclick="event.preventDefault(); event.stopPropagation(); showAssignToManagerModal(' + empIdForModal + ')" style="color: #6b21a8; font-size: 0.75rem; text-decoration: underline;">Change Manager</a>';
-            html += '</div>';
-          } else {
-            // Show assignment button
-            html += '<button class="btn" onclick="event.stopPropagation(); showAssignToManagerModal(' + empIdForModal + ')" style="width: 100%; background: #e9d5ff; border: none; color: #6b21a8; padding: 0.5rem; font-size: 0.85rem; font-weight: 600;">';
-            html += '👔 Assign to Manager';
-            html += '</button>';
+          // Manager assignment button (3x width) - show if managers are unlocked
+          if (lifetimeEarnings >= 2000000 && managers.length > 0) {
+            if (isManaged && currentManager) {
+              // Show managed status - clickable to change manager
+              html += '<div onclick="event.stopPropagation(); showAssignToManagerModal(' + empIdForModal + ')" style="flex: 3; background: #e9d5ff; border: 1px solid #c4b5fd; color: #6b21a8; padding: 0.5rem; font-size: 0.85rem; font-weight: 600; border-radius: 6px; text-align: center; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'#ddd6fe\'" onmouseout="this.style.background=\'#e9d5ff\'">';
+              html += '👔 Managed by: ' + currentManager.name;
+              html += '</div>';
+            } else {
+              // Show assignment button
+              html += '<button class="btn" onclick="event.stopPropagation(); showAssignToManagerModal(' + empIdForModal + ')" style="flex: 3; background: #e9d5ff; border: none; color: #6b21a8; padding: 0.5rem; font-size: 0.85rem; font-weight: 600;">';
+              html += '👔 Assign to Manager';
+              html += '</button>';
+            }
           }
           
           html += '</div>';
@@ -11575,6 +11594,17 @@
         expandedProductCards = save.gameState.expandedProductCards || {};
         currentEmployeeFilter = save.gameState.currentEmployeeFilter || 'all';
         expandedEmployeeCards = save.gameState.expandedEmployeeCards || {};
+        
+        // Migrate old boolean values to current day (for backward compatibility)
+        for (const empId in expandedEmployeeCards) {
+          if (typeof expandedEmployeeCards[empId] === 'boolean') {
+            if (expandedEmployeeCards[empId] === true) {
+              expandedEmployeeCards[empId] = currentDay; // Treat as just expanded
+            } else {
+              delete expandedEmployeeCards[empId]; // Remove if it was false
+            }
+          }
+        }
         
         // Restore candidate pools (OLD SYSTEM)
         developerCandidates = save.gameState.developerCandidates || {};
