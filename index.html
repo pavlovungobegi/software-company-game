@@ -3448,7 +3448,8 @@
       GROWTH: 'growth',
       RETENTION: 'retention',
       EFFICIENCY: 'efficiency',
-      UNLOCK: 'unlock'
+      UNLOCK: 'unlock',
+      PREMIUM: 'premium'
     };
 
     const RND_PROJECTS = [
@@ -3703,6 +3704,35 @@
         effect: { type: 'unlock_product', value: 'ERP System' },
         description: "Build enterprise resource planning integration framework",
         prerequisites: ['unlock_ai_chatbot']
+      },
+      
+      // PREMIUM PRICING STREET (Sequential)
+      {
+        id: 'premium_1',
+        name: "Value-Based Pricing Strategy",
+        category: RND_CATEGORIES.PREMIUM,
+        developmentEffort: 24, // 12 months * 2
+        effect: { type: 'price_increase', value: 0.05 },
+        description: "Research customer willingness to pay and implement value-based pricing models",
+        prerequisites: []
+      },
+      {
+        id: 'premium_2',
+        name: "Premium Feature Packaging",
+        category: RND_CATEGORIES.PREMIUM,
+        developmentEffort: 48, // 24 months * 2
+        effect: { type: 'price_increase', value: 0.05 },
+        description: "Create tiered feature packages that justify higher price points",
+        prerequisites: ['premium_1']
+      },
+      {
+        id: 'premium_3',
+        name: "Brand Premium Positioning",
+        category: RND_CATEGORIES.PREMIUM,
+        developmentEffort: 96, // 48 months * 2
+        effect: { type: 'price_increase', value: 0.05 },
+        description: "Establish premium brand perception through quality signals and market positioning",
+        prerequisites: ['premium_2']
       }
     ];
 
@@ -4794,7 +4824,8 @@
       const effects = {
         organicGrowth: 0,
         churnReduction: 0,
-        employeeEfficiency: 0
+        employeeEfficiency: 0,
+        priceIncrease: 0
       };
       
       completedRndProjects.forEach(projectId => {
@@ -4806,6 +4837,8 @@
             effects.churnReduction += project.effect.value;
           } else if (project.effect.type === 'employee_efficiency') {
             effects.employeeEfficiency += project.effect.value;
+          } else if (project.effect.type === 'price_increase') {
+            effects.priceIncrease += project.effect.value;
           }
         }
       });
@@ -5003,7 +5036,7 @@
       
       // Build bonus display section
       let bonusHTML = '';
-      const hasAnyBonus = effects.organicGrowth > 0 || effects.churnReduction > 0 || effects.employeeEfficiency > 0;
+      const hasAnyBonus = effects.organicGrowth > 0 || effects.churnReduction > 0 || effects.employeeEfficiency > 0 || effects.priceIncrease > 0;
       
       if (hasAnyBonus) {
         bonusHTML += '<div style="margin-bottom: 0.5rem; padding: 0.4rem; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px;">';
@@ -5031,6 +5064,14 @@
           bonusHTML += '<span style="font-size: 0.7rem;">⚡</span>';
           bonusHTML += '<span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">+' + (effects.employeeEfficiency * 100).toFixed(0) + '%</span>';
           bonusHTML += '<span style="font-size: 0.7rem; color: #6b7280;">efficiency</span>';
+          bonusHTML += '</div>';
+        }
+        
+        if (effects.priceIncrease > 0) {
+          bonusHTML += '<div style="display: flex; align-items: center; gap: 0.1rem; padding: 0.15rem 0.3rem; background: white; border: 1px solid #e5e7eb; border-radius: 4px;">';
+          bonusHTML += '<span style="font-size: 0.7rem;">💎</span>';
+          bonusHTML += '<span style="font-size: 0.75rem; font-weight: 600; color: #10b981;">+' + (effects.priceIncrease * 100).toFixed(0) + '%</span>';
+          bonusHTML += '<span style="font-size: 0.7rem; color: #6b7280;">price</span>';
           bonusHTML += '</div>';
         }
         
@@ -5214,7 +5255,8 @@
         [RND_CATEGORIES.GROWTH]: [],
         [RND_CATEGORIES.RETENTION]: [],
         [RND_CATEGORIES.EFFICIENCY]: [],
-        [RND_CATEGORIES.UNLOCK]: []
+        [RND_CATEGORIES.UNLOCK]: [],
+        [RND_CATEGORIES.PREMIUM]: []
       };
       
       RND_PROJECTS.forEach(project => {
@@ -5246,7 +5288,8 @@
         [RND_CATEGORIES.GROWTH]: '📈 Organic Growth',
         [RND_CATEGORIES.RETENTION]: '🛡️ Churn Reduction',
         [RND_CATEGORIES.EFFICIENCY]: '⚡ Employee Efficiency',
-        [RND_CATEGORIES.UNLOCK]: '🔓 Product Unlocks'
+        [RND_CATEGORIES.UNLOCK]: '🔓 Product Unlocks',
+        [RND_CATEGORIES.PREMIUM]: '💎 Premium Pricing'
       };
       
       // Check if any projects are available
@@ -5727,7 +5770,9 @@
         }
         
         if (product.status === 'published') {
-          const monthlyRevenue = product.subscribers * product.monthlyPrice;
+          const effects = getRndEffects();
+          const priceMultiplier = 1 + effects.priceIncrease;
+          const monthlyRevenue = product.subscribers * product.monthlyPrice * priceMultiplier;
           
           html += '<div class="product-stat">';
           html += '<span class="product-stat-icon">💰</span>';
@@ -5765,7 +5810,9 @@
           html += '<span class="product-stat-label">subs</span>';
           html += '</div>';
           
-          const deprecatedRevenue = product.subscribers * product.monthlyPrice;
+          const effects = getRndEffects();
+          const priceMultiplier = 1 + effects.priceIncrease;
+          const deprecatedRevenue = product.subscribers * product.monthlyPrice * priceMultiplier;
           html += '<div class="product-stat">';
           html += '<span class="product-stat-icon">💰</span>';
           html += '<span class="product-stat-label">' + formatCurrency(deprecatedRevenue) + '/mo</span>';
@@ -7511,10 +7558,12 @@
     
     function calculateMonthlyIncome() {
       let totalRevenue = 0;
+      const effects = getRndEffects();
+      const priceMultiplier = 1 + effects.priceIncrease;
       
       products.forEach(product => {
         if (product.status === 'published' || product.status === 'deprecated') {
-          totalRevenue += product.subscribers * product.monthlyPrice;
+          totalRevenue += product.subscribers * product.monthlyPrice * priceMultiplier;
         }
       });
       
@@ -11218,10 +11267,12 @@
       
       // Calculate monthly revenue from all products (published and deprecated)
       let totalRevenue = 0;
+      const effects = getRndEffects();
+      const priceMultiplier = 1 + effects.priceIncrease;
       
       products.forEach(product => {
         if (product.status === 'published' || product.status === 'deprecated') {
-          const productRevenue = product.subscribers * product.monthlyPrice;
+          const productRevenue = product.subscribers * product.monthlyPrice * priceMultiplier;
           totalRevenue += productRevenue;
         }
       });
