@@ -3507,6 +3507,24 @@
         description: "Develop a systematic approach to market penetration and expansion",
         prerequisites: ['growth_5']
       },
+      {
+        id: 'growth_7',
+        name: "Viral Network Effects",
+        category: RND_CATEGORIES.GROWTH,
+        developmentEffort: 300, // 30 months * 2
+        effect: { type: 'organic_growth', value: 0.10 },
+        description: "Create self-sustaining viral loops and network effects that exponentially accelerate growth",
+        prerequisites: ['growth_6']
+      },
+      {
+        id: 'growth_8',
+        name: "Global Expansion & Market Dominance",
+        category: RND_CATEGORIES.GROWTH,
+        developmentEffort: 480, // 240 months * 2
+        effect: { type: 'organic_growth', value: 0.20 },
+        description: "Achieve worldwide market penetration through strategic partnerships, localization, and international scaling that establishes category dominance",
+        prerequisites: ['growth_7']
+      },
 
       
       // CHURN REDUCTION STREET (Sequential)
@@ -3546,6 +3564,33 @@
         description: "Personalized marketing campaigns and targeted promotions",
         prerequisites: ['retention_3']
       },
+      {
+        id: 'retention_5',
+        name: "Loyalty & Engagement Platform",
+        category: RND_CATEGORIES.RETENTION,
+        developmentEffort: 300, // 30 months * 2
+        effect: { type: 'churn_reduction', value: 0.10 },
+        description: "Build comprehensive loyalty programs and engagement systems that create strong emotional bonds with users",
+        prerequisites: ['retention_4']
+      },
+      {
+        id: 'retention_6',
+        name: "Customer Lifetime Value Optimization",
+        category: RND_CATEGORIES.RETENTION,
+        developmentEffort: 480, // 240 months * 2
+        effect: { type: 'churn_reduction', value: 0.10 },
+        description: "Advanced predictive modeling and proactive intervention systems that maximize customer lifetime value and prevent churn at scale",
+        prerequisites: ['retention_5']
+      },
+      {
+        id: 'retention_7',
+        name: "Emotional Intelligence & Experience Design",
+        category: RND_CATEGORIES.RETENTION,
+        developmentEffort: 600, // 300 months * 2
+        effect: { type: 'churn_reduction', value: 0.10 },
+        description: "Create deeply personalized, emotionally resonant experiences that build unbreakable customer loyalty through psychological insights and behavioral design",
+        prerequisites: ['retention_6']
+      },
       
       // EMPLOYEE EFFECTIVENESS STREET (Sequential)
       {
@@ -3574,6 +3619,15 @@
         effect: { type: 'employee_efficiency', value: 0.15 },
         description: "AI-powered code completion, debugging, and refactoring",
         prerequisites: ['efficiency_2']
+      },
+      {
+        id: 'efficiency_4',
+        name: "Autonomous Development Systems",
+        category: RND_CATEGORIES.EFFICIENCY,
+        developmentEffort: 360, // 180 months * 2
+        effect: { type: 'employee_efficiency', value: 0.05 },
+        description: "Self-optimizing development workflows and intelligent automation that dramatically reduces manual overhead and accelerates delivery",
+        prerequisites: ['efficiency_3']
       },
       
       // PRODUCT UNLOCK STREET (Sequential chain)
@@ -3744,7 +3798,8 @@
       { threshold: 500000, name: "Growing Company", badge: "🚀", description: "Quality Candidates" },
       { threshold: 2000000, name: "Established Company", badge: "🏢", description: "Senior Talent Available" },
       { threshold: 10000000, name: "Major Player", badge: "⭐", description: "Elite Talent Pool" },
-      { threshold: 1000000000, name: "Fortune 500", badge: "💰", description: "Fortune 500 Talent Pool" }
+      { threshold: 1000000000, name: "Fortune 500", badge: "💰", description: "Fortune 500 Talent Pool" },
+      { threshold: 100000000000, name: "Global Giant", badge: "🌍", description: "Global Giant Talent Pool" }
     ];
 
     // Probability tables: [Junior%, Intermediate%, Senior%, Lead%, Expert%]
@@ -3753,7 +3808,9 @@
       100000:   [70,  25, 5,  0,  0],  // Small Business: Mostly Junior, some Intermediate
       500000:   [40,  40, 15, 5,  0],  // Growing Company: Balanced mix
       2000000:  [20,  30, 30, 15, 5],  // Established: More Senior talent
-      10000000: [5,   20, 35, 25, 15]  // Major Player: Mostly Senior/Lead/Expert
+      10000000: [5,   20, 35, 25, 15],  // Major Player: Mostly Senior/Lead/Expert
+      1000000000: [0,   0, 25, 40, 35],  // Fortune 500: Mostly Senior/Lead/Expert
+      100000000000: [0,   0, 0, 0, 100]  // Global Giant: Mostly Senior/Lead/Expert
     };
 
     const MARKETER_TIER_PROBABILITIES = {
@@ -3761,7 +3818,9 @@
       100000:   [70,  25, 5,  0,  0],  // Small Business: Mostly Junior, some Intermediate
       500000:   [40,  40, 15, 5,  0],  // Growing Company: Balanced mix
       2000000:  [20,  30, 30, 15, 5],  // Established: More Senior talent
-      10000000: [5,   20, 35, 25, 15]  // Major Player: Mostly Senior/Lead/Expert
+      10000000: [5,   20, 35, 25, 15],  // Major Player: Mostly Senior/Lead/Expert
+      1000000000: [0,   0, 25, 40, 35],  // Fortune 500: Mostly Senior/Lead/Expert
+      100000000000: [0,   0, 0, 0, 100]  // Global Giant: Mostly Senior/Lead/Expert
     };
 
     // ============================================
@@ -5103,6 +5162,8 @@
           effectText = `🛡️ Churn Reduction -${(project.effect.value * 100).toFixed(0)}%`;
         } else if (project.effect.type === 'employee_efficiency') {
           effectText = `⚡ Employee Efficiency +${(project.effect.value * 100).toFixed(0)}%`;
+        } else if (project.effect.type === 'price_increase') {
+          effectText = `💎 Price Increase +${(project.effect.value * 100).toFixed(0)}%`;
         }
         
         // Calculate total efficiency with team overhead penalty
@@ -7602,10 +7663,25 @@
       };
     }
     
+    function calculateMonthlyTax() {
+      const income = calculateMonthlyIncome();
+      const costs = calculateMonthlyCosts();
+      const profit = income.netIncome - costs.total;
+      
+      // Tax is 30% of profit, only if profit is positive
+      const tax = profit > 0 ? profit * 0.30 : 0;
+      
+      return {
+        profit: profit,
+        tax: tax
+      };
+    }
+    
     function calculateNetCashFlow() {
       const income = calculateMonthlyIncome();
       const costs = calculateMonthlyCosts();
-      return income.netIncome - costs.total;
+      const taxInfo = calculateMonthlyTax();
+      return income.netIncome - costs.total - taxInfo.tax;
     }
     
     function calculateBurnRate() {
@@ -9217,6 +9293,18 @@
                 <div class="font-semibold text-red-600" id="finance-expenses-total"></div>
               </div>
 
+              <!-- Tax -->
+              <div class="flex items-start justify-between">
+                <div class="flex items-start gap-2">
+                  <i data-lucide="landmark" class="w-4 h-4 text-orange-600 mt-0.5"></i>
+                  <div>
+                    <div class="font-medium text-gray-900 text-sm">Tax:</div>
+                    <div class="text-xs text-gray-500" id="finance-tax-breakdown"></div>
+                  </div>
+                </div>
+                <div class="font-semibold text-orange-600" id="finance-tax-total"></div>
+              </div>
+
               <div class="border-t border-gray-200"></div>
 
               <!-- Net Cash Flow -->
@@ -9369,6 +9457,21 @@
       const expensesTotalEl = document.getElementById('finance-expenses-total');
       if (expensesTotalEl) {
         expensesTotalEl.textContent = formatCurrency(costs.total);
+      }
+      
+      // Update tax
+      const taxInfo = calculateMonthlyTax();
+      const taxBreakdownEl = document.getElementById('finance-tax-breakdown');
+      if (taxBreakdownEl) {
+        if (taxInfo.profit > 0) {
+          taxBreakdownEl.textContent = `30% of profit (${formatCurrency(taxInfo.profit)})`;
+        } else {
+          taxBreakdownEl.textContent = `No tax (loss: ${formatCurrency(Math.abs(taxInfo.profit))})`;
+        }
+      }
+      const taxTotalEl = document.getElementById('finance-tax-total');
+      if (taxTotalEl) {
+        taxTotalEl.textContent = formatCurrency(taxInfo.tax);
       }
       
       // Update cash flow
@@ -11328,6 +11431,21 @@
       cash -= totalCosts;
       
       // ============================================
+      // TAX CALCULATION AND PAYMENT
+      // ============================================
+      
+      // Calculate profit before tax
+      const profitBeforeTax = totalRevenue - totalCosts;
+      
+      // Calculate tax (30% of profit, only if profitable)
+      const taxAmount = profitBeforeTax > 0 ? profitBeforeTax * 0.30 : 0;
+      
+      // Deduct tax
+      if (taxAmount > 0) {
+        cash -= taxAmount;
+      }
+      
+      // ============================================
       // CONSOLIDATED LOGGING
       // ============================================
       
@@ -11346,10 +11464,15 @@
       
       logEvent(`💰 Monthly Expenses: ${formatCurrency(totalCosts)} `); //(${expenseBreakdown.join(', ')})
       
+      // Log tax
+      if (taxAmount > 0) {
+        logEvent(`🏛️ Tax Payment (30% of profit): ${formatCurrency(taxAmount)}`);
+      }
+      
       // Log net result
-      const netResult = totalRevenue - totalCosts;
+      const netResult = profitBeforeTax - taxAmount;
       if (netResult >= 0) {
-        logEvent(`✅ Net Profit: ${formatCurrency(netResult)}`);
+        logEvent(`✅ Net Profit (after tax): ${formatCurrency(netResult)}`);
       } else {
         logEvent(`⚠️ Net Loss: ${formatCurrency(Math.abs(netResult))}`);
       }
