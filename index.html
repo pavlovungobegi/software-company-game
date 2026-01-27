@@ -2693,6 +2693,10 @@
               <span style="color: #6b7280;">Efficiency:</span>
               <span style="font-weight: 600;" id="hireConfirmEfficiency">2.2x</span>
             </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: #6b7280;">Age:</span>
+              <span style="font-weight: 600;" id="hireConfirmAge">28 years</span>
+            </div>
             <div style="border-top: 1px solid #e5e7eb; margin: 0.5rem 0; padding-top: 0.5rem;"></div>
             <div style="display: flex; justify-content: space-between;">
               <span style="color: #dc2626; font-weight: 600;">Monthly Salary:</span>
@@ -3128,8 +3132,12 @@
       experienceMonths: 0,
       assignedProduct: null,
       readyForPromotion: false,
-      efficiencyCap: 4.0, // 400% cap (same as expert employees)
+      efficiencyCap: 5.0, // 400% cap (same as expert employees)
       isFounder: true,
+      // Age and retirement tracking
+      age: 28, // Founder starts at 28 years old
+      hiredDate: 0, // Founder starts at day 0
+      retirementAge: 65,
       // Manager system fields
       managerId: null,
       isManaged: false
@@ -4019,9 +4027,18 @@
       },
       {
         name: "Enterprise Cloud",
-        maxSubscribers: 999999, // Unlimited
+        maxSubscribers: 1000000, // Unlimited
         monthlyFeeUSD: 500000,
         monthlyFeeEUR: 450000,
+        upgradeCostUSD: 500000,       // No more upgrades
+        upgradeCostEUR: 450000
+      }
+      ,
+      {
+        name: "Data Center",
+        maxSubscribers: 20000000, // Unlimited
+        monthlyFeeUSD: 5000000,
+        monthlyFeeEUR: 4500000,
         upgradeCostUSD: 0,       // No more upgrades
         upgradeCostEUR: 0
       }
@@ -4185,7 +4202,7 @@
         ],
         lastNames: [
           "Martin", "Bernard", "Dubois", "Thomas", "Robert", "Richard", "Petit", "Durand", "Leroy", "Moreau",
-          "Simon", "Laurent", "Lefebvre", "Michel", "Garcia", "David", "Bertrand", "Roux", "Vincent", "Fournier",
+          "Simon", "Laurent", "Lefebvre", "Michel", "David", "Bertrand", "Roux", "Vincent", "Fournier",
           "Morel", "Girard", "André", "Lefevre", "Mercier", "Dupont", "Lambert", "Bonnet", "François", "Martinez",
           "Legrand", "Garnier", "Faure", "Rousseau", "Blanc", "Guerin", "Muller", "Henry", "Roussel", "Nicolas",
           "Perrin", "Morin", "Mathieu", "Clement", "Gauthier", "Dumont", "Lopez", "Fontaine", "Chevalier", "Robin",
@@ -4253,13 +4270,13 @@
           "Mehmet", "Ayşe", "Ahmet", "Fatma", "Mustafa", "Emine", "Ali", "Hatice", "Hüseyin", "Zeynep",
           "Hasan", "Elif", "İbrahim", "Hacer", "Osman", "Sultan", "Yusuf", "Meryem", "İsmail", "Esma",
           "Emre", "Selin", "Burak", "Derya", "Can", "Özge", "Murat", "Ebru", "Serkan", "Aylin",
-          "Kemal", "Gül", "Cem", "Deniz", "Volkan", "Canan", "Onur", "Burcu", "Berk", "Pınar",
-          "Koray", "Merve", "Baran", "Dilara", "Eren", "Aslı", "Ege", "İrem", "Tolga", "Yasemin",
+          "Kemal", "Gül", "Cem", "Deniz", "Feyyaz", "Volkan", "Canan", "Onur", "Burcu", "Berk", "Berke", "Berkcan", "Pınar",
+          "Koray", "Kerimcan","Merve", "Baran", "Dilara", "Eren", "Aslı", "Ege", "İrem", "Tolga", "Yasemin",
           "Kaan", "Tuğçe", "Barış", "Gamze", "Çağlar", "Şebnem", "Alper", "Melis", "Umut", "Belgin",
           "Selim", "Nurcan", "Orkun", "Serpil", "Taner", "Filiz", "Erhan", "Gülay", "Hakan", "Serap",
           "Yaşar", "Müge", "Engin", "Sibel", "Halil", "Sevda", "Recep", "Aysel", "Ömer", "Hanife",
           "Süleyman", "Fadime", "Ramazan", "Gülsüm", "Mahmut", "Şerife", "Celal", "Güler", "Salih", "Havva",
-          "Veli", "Zeliha", "Orhan", "Neriman", "Kadir", "Sabiha", "Zeki", "Şeyma", "Adem", "Rukiye"
+          "Veli", "Zeliha", "Orhan", "Neriman", "Kadir", "Sabiha", "Zeki", "Şeyma", "Adem", "Rukiye", "Bulut"
         ],
         lastNames: [
           "Yılmaz", "Kaya", "Demir", "Şahin", "Çelik", "Yıldız", "Yıldırım", "Öztürk", "Aydın", "Özdemir",
@@ -4271,7 +4288,7 @@
           "Toprak", "Şeker", "Duman", "Topal", "Kırmızı", "Sarı", "Beyaz", "Mavi", "Yeşil", "Ayhan",
           "Gül", "Dağ", "Deniz", "Kök", "Dal", "Taşkın", "Erdem", "Ünlü", "Kaynak", "Savaş",
           "Barış", "Bilgin", "Özmen", "Genç", "Akın", "Durmaz", "Eryılmaz", "Yalçın", "Güven", "Akgül",
-          "Özkan", "Çolak", "Güzel", "Tan", "Ay", "Öztürk", "Aydoğan", "Ergin", "Koçak", "Akbulut"
+          "Özkan", "Çolak", "Güzel", "Tan", "Ay", "Öztürk", "Aydoğan", "Ergin", "Koçak", "Akbulut", "Akdemir"
         ]
       },
       "Japanese": {
@@ -4547,7 +4564,7 @@
       "Horizon", "Velocity", "Momentum", "Aurora", "Cascade", "Fusion", "Helix", "Radiant", "Synapse", "Titanium",
       // Abstract/Professional
       "Alpha", "Beta", "Sigma", "Omega", "Zeta", "Vertex", "Vector", "Matrix", "Cipher", "Pixel",
-      "Byte", "Synth", "Forge", "Atlas", "Orbit", "Pulse", "Node", "Edge", "Core", "Axis"
+      "Byte", "Synth","Master", "Forge", "Atlas", "Orbit", "Pulse", "Node", "Edge", "Core", "Axis"
     ];
 
     const COMPANY_SUFFIXES = [
@@ -7343,6 +7360,103 @@
       return opportunities.sort((a, b) => b.gain - a.gain);
     }
 
+    // ============================================
+    // EMPLOYEE RETIREMENT SYSTEM
+    // ============================================
+    
+    function checkEmployeeRetirements() {
+      const yearsElapsed = Math.floor(currentDay / 360);
+      const retirees = [];
+      
+      // Check all employees for retirement
+      const allEmployees = [
+        ...developers.map(e => ({ employee: e, role: 'developer' })),
+        ...marketers.map(e => ({ employee: e, role: 'marketer' })),
+        ...managers.map(e => ({ employee: e, role: 'manager' }))
+      ];
+      
+      // Add founder if not already retired
+      if (founder) {
+        allEmployees.push({ employee: founder, role: 'founder' });
+      }
+      
+      allEmployees.forEach(({ employee, role }) => {
+        // Calculate current age
+        const yearsWithCompany = Math.floor((currentDay - (employee.hiredDate || 0)) / 360);
+        const currentAge = (employee.age || 28) + yearsWithCompany;
+        
+        // Check if reached retirement age
+        if (currentAge >= (employee.retirementAge || 65)) {
+          retirees.push({ employee, role, currentAge });
+        }
+      });
+      
+      // Process retirements
+      retirees.forEach(({ employee, role, currentAge }) => {
+        logEvent(`👴 ${employee.name} (${role}) has retired at age ${currentAge} after ${Math.floor((currentDay - (employee.hiredDate || 0)) / 360)} years with the company`);
+        
+        // Remove from appropriate array
+        if (role === 'developer') {
+          const index = developers.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            // Unassign from product if assigned
+            if (employee.assignedProduct) {
+              const product = products.find(p => p.id === employee.assignedProduct);
+              if (product) {
+                const devIndex = product.assignedDevelopers.indexOf(employee.id);
+                if (devIndex !== -1) product.assignedDevelopers.splice(devIndex, 1);
+              }
+            }
+            developers.splice(index, 1);
+          }
+        } else if (role === 'marketer') {
+          const index = marketers.findIndex(e => e.id === employee.id);
+          if (index !== -1) {
+            // Unassign from product if assigned
+            if (employee.assignedProduct) {
+              const product = products.find(p => p.id === employee.assignedProduct);
+              if (product) {
+                const mktIndex = product.assignedMarketers.indexOf(employee.id);
+                if (mktIndex !== -1) product.assignedMarketers.splice(mktIndex, 1);
+              }
+            }
+            marketers.splice(index, 1);
+          }
+        } else if (role === 'manager') {
+          const index = managers.findIndex(m => m.id === employee.id);
+          if (index !== -1) {
+            // Unassign all managed employees
+            if (employee.managedEmployees && employee.managedEmployees.length > 0) {
+              employee.managedEmployees.forEach(empId => {
+                const dev = developers.find(d => d.id === empId);
+                const mkt = marketers.find(m => m.id === empId);
+                if (dev) {
+                  dev.managerId = null;
+                  dev.isManaged = false;
+                }
+                if (mkt) {
+                  mkt.managerId = null;
+                  mkt.isManaged = false;
+                }
+              });
+            }
+            managers.splice(index, 1);
+          }
+        } else if (role === 'founder') {
+          // Founder retirement ends the game or shows special message
+          pauseGame();
+          logEvent("🎉 The founder has retired! Thank you for playing!");
+          showNotification("The founder has retired after a long career!", 'info');
+        }
+      });
+      
+      // Show notification if any non-founder employees retired
+      const nonFounderRetirees = retirees.filter(r => r.role !== 'founder');
+      if (nonFounderRetirees.length > 0) {
+        showNotification(`${nonFounderRetirees.length} employee(s) retired this year`, 'info');
+      }
+    }
+    
     function gameTick() {
       currentDay++;
       updateDayDisplay();
@@ -7380,6 +7494,11 @@
       // Phase 3: Monthly billing (every 30 days)
       if (currentDay % 30 === 0) {
         handleMonthlyBilling();
+      }
+      
+      // Check for employee retirements (every 360 days - 1 year)
+      if (currentDay % 360 === 0 && currentDay > 0) {
+        checkEmployeeRetirements();
       }
       
       // Update UI
@@ -7496,6 +7615,17 @@
       const salaryVariation = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2 (±20%)
       const monthlySalary = Math.round(baseSalary * salaryVariation);
       
+      // Generate age based on tier (more experienced = older)
+      const ageRanges = [
+        [21, 27], // Junior
+        [26, 33], // Intermediate
+        [30, 40], // Senior
+        [37, 49], // Lead
+        [44, 52]  // Expert
+      ];
+      const [minAge, maxAge] = ageRanges[tierIndex] || [22, 35];
+      const age = minAge + Math.floor(Math.random() * (maxAge - minAge + 1));
+      
       // Generate candidate with name data
       const nameData = generateEmployeeName();
       return {
@@ -7509,6 +7639,9 @@
         skill: tier.skill,
         efficiency: efficiency,
         monthlySalary: monthlySalary,
+        age: age,
+        hiredDate: null, // Will be set when actually hired
+        retirementAge: 65,
         assignedProduct: null,
         // Manager system fields
         managerId: null,
@@ -7815,15 +7948,35 @@
       const salaryVariation = 0.90 + (Math.random() * 0.20); // 0.90 to 1.10
       const finalSalary = Math.round(baseSalary * salaryVariation);
       
+      // Generate age based on tier (more experienced = older)
+      // Junior: 22-28, Intermediate: 26-35, Senior: 32-45, Lead: 38-52, Expert: 45-58
+      const ageRanges = [
+        [21, 27], // Junior
+        [26, 33], // Intermediate
+        [30, 40], // Senior
+        [37, 49], // Lead
+        [44, 52]  // Expert
+      ];
+      const [minAge, maxAge] = ageRanges[tierIndex] || [22, 35];
+      const age = minAge + Math.floor(Math.random() * (maxAge - minAge + 1));
+      
+      // Generate name data (includes name, flag, region)
+      const nameData = generateEmployeeName();
+      
       return {
         id: Math.random().toString(36).substr(2, 9), // Unique ID for this candidate
-        name: generateEmployeeName(),
+        name: nameData.name,
+        flag: nameData.flag,
+        region: nameData.region,
         role: role,
         tier: tierIndex,
         tierName: tier.name,
         skill: tier.skill,
         efficiency: efficiency,
-        monthlySalary: finalSalary
+        monthlySalary: finalSalary,
+        age: age,
+        hiredDate: null, // Will be set when actually hired
+        retirementAge: 65
       };
     }
     
@@ -9060,6 +9213,22 @@
         html += '<span class="product-detail-value">' + (currentEfficiency * 100).toFixed(0) + '%</span>';
         html += '</div>';
         
+        // Age and Retirement
+        const yearsWithCompany = Math.floor((currentDay - (emp.hiredDate || 0)) / 360);
+        const currentAge = (emp.age || 28) + yearsWithCompany;
+        const yearsUntilRetirement = (emp.retirementAge || 65) - currentAge;
+        const isNearRetirement = yearsUntilRetirement <= 1 && yearsUntilRetirement >= 0;
+        
+        html += '<div class="product-detail-row">';
+        html += '<span class="product-detail-label">👤 Age</span>';
+        html += '<span class="product-detail-value">';
+        html += currentAge + ' years old';
+        if (isNearRetirement) {
+          html += ' <span style="color: #f59e0b; font-weight: 600; margin-left: 0.5rem;">⚠️ Retiring in ' + yearsUntilRetirement + ' year' + (yearsUntilRetirement === 1 ? '' : 's') + '</span>';
+        }
+        html += '</span>';
+        html += '</div>';
+        
         // Progress bar
         if (!isMaxLevel && !emp.readyForPromotion) {
           html += '<div style="margin: 0.25rem 0;">';
@@ -9176,6 +9345,24 @@
                     <div style="background: rgba(255,255,255,0.5); padding: 0.3rem; border-radius: 6px; display: flex; align-items: center; gap: 0.3rem;">
                       <div style="color: #6b21a8; opacity: 0.7; font-size: 0.65rem;">Capacity:</div>
                       <div style="font-weight: 600; color: #6b21a8;">${manager.managedEmployees.length} / ${currentCapacity}</div>
+                    </div>
+                  </div>
+                  <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-size: 0.8rem; margin-top: 0.25rem;">
+                    <div style="background: rgba(255,255,255,0.5); padding: 0.3rem; border-radius: 6px; display: flex; align-items: center; gap: 0.3rem;">
+                      <div style="color: #6b21a8; opacity: 0.7; font-size: 0.65rem;">Age:</div>
+                      <div style="font-weight: 600; color: #6b21a8;">
+                        ${(() => {
+                          const yearsWithCompany = Math.floor((currentDay - (manager.hiredDate || 0)) / 360);
+                          const currentAge = (manager.age || 35) + yearsWithCompany;
+                          const yearsUntilRetirement = (manager.retirementAge || 65) - currentAge;
+                          const isNearRetirement = yearsUntilRetirement <= 1 && yearsUntilRetirement >= 0;
+                          let ageText = currentAge + ' years';
+                          if (isNearRetirement) {
+                            ageText += ' ⚠️ Retiring in ' + yearsUntilRetirement + ' year' + (yearsUntilRetirement === 1 ? '' : 's');
+                          }
+                          return ageText;
+                        })()}
+                      </div>
                     </div>
                   </div>
                   <div style="margin-top: 0.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
@@ -9611,6 +9798,7 @@
               <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
                 <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
                 <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
+                <div>👤 ${candidate.age || 28} years old</div>
                 <div style="color: ${!canAfford ? '#dc2626' : '#059669'}; font-weight: 600;">💼 ${formatCurrency(candidate.monthlySalary)}/mo</div>
                 ${!canAfford ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ Cannot afford</div>' : ''}
                 ${!hasCapacity ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ No office capacity</div>' : ''}
@@ -9802,6 +9990,9 @@
       // Add experience tracking to candidate
       candidate.experienceMonths = 0;
       
+      // Set hired date (for age/retirement tracking)
+      candidate.hiredDate = currentDay;
+      
       if (type === "manager") {
         // Manager-specific setup
         candidate.baseEfficiency = candidate.efficiency;
@@ -9933,6 +10124,7 @@
               <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem;">
                 <div><span class="skill-badge skill-${tier.skill}" style="font-size: 0.7rem; padding: 0.15rem 0.4rem;">${tier.name}</span></div>
                 <div>⚡ ${Math.round(candidate.efficiency * 100)}% efficiency</div>
+                <div>👤 ${candidate.age || 28} years old</div>
                 <div style="color: ${!canAfford ? '#dc2626' : '#059669'}; font-weight: 600;">💼 ${formatCurrency(candidate.monthlySalary)}/mo</div>
                 ${!canAfford ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ Cannot afford</div>' : ''}
                 ${!hasCapacity ? '<div style="color: #ef4444; font-size: 0.75rem;">⚠️ No office capacity</div>' : ''}
@@ -9999,6 +10191,16 @@
       const variance = 0.85 + (Math.random() * 0.30); // 0.85 to 1.15 for ±15%
       const monthlySalary = Math.round(baseSalary * variance);
       
+      // Generate age based on tier (managers are typically more experienced)
+      // Junior Manager: 32-42, Mid Manager: 38-50, Senior Manager: 45-58
+      const ageRanges = [
+        [32, 42], // Junior Manager
+        [38, 50], // Mid Manager
+        [45, 58]  // Senior Manager
+      ];
+      const [minAge, maxAge] = ageRanges[tier] || [35, 45];
+      const age = minAge + Math.floor(Math.random() * (maxAge - minAge + 1));
+      
       return {
         id: id,
         name: nameData.name,
@@ -10012,7 +10214,10 @@
         capacity: capacity,
         managedEmployees: [],
         monthlySalary: monthlySalary,
-        experienceMonths: 0
+        experienceMonths: 0,
+        age: age,
+        hiredDate: null, // Will be set when actually hired
+        retirementAge: 65
       };
     }
     
@@ -10963,6 +11168,7 @@
       document.getElementById('hireConfirmName').textContent = `${candidate.flag || '🌍'} ${candidate.name}`;
       document.getElementById('hireConfirmRole').textContent = candidate.tierName || `Manager (Capacity: ${candidate.capacity})`;
       document.getElementById('hireConfirmEfficiency').textContent = `${Math.round(candidate.efficiency * 100)}%`;
+      document.getElementById('hireConfirmAge').textContent = `${candidate.age || 28} years`;
       document.getElementById('hireConfirmSalary').textContent = `${formatCurrency(candidate.monthlySalary)}/month`;
       
       modal.classList.add('active');
@@ -11557,7 +11763,7 @@
     
     function saveGame() {
       const saveData = {
-        version: "3.1", // Updated to 3.1 for manager system
+        version: "3.2", // Updated to 3.2 for age/retirement system
         timestamp: Date.now(),
         gameState: {
           // Game config
@@ -11661,6 +11867,11 @@
         founder.experienceMonths = save.gameState.founder.experienceMonths || 0;
         founder.assignedProduct = save.gameState.founder.assignedProduct;
         
+        // Migration: Add age and hiredDate to founder if missing
+        founder.age = save.gameState.founder.age || 28;
+        founder.hiredDate = save.gameState.founder.hiredDate !== undefined ? save.gameState.founder.hiredDate : 0;
+        founder.retirementAge = save.gameState.founder.retirementAge || 65;
+        
         // Migration: Convert old XP/level system to new experience system (if old save)
         if (save.gameState.founder.skillLevel !== undefined && save.gameState.founder.experienceMonths === undefined) {
           // Old save - estimate experience months based on old efficiency
@@ -11692,6 +11903,19 @@
           if (dev.baseEfficiency === undefined) {
             dev.baseEfficiency = dev.efficiency || DEVELOPER_TIERS[dev.tier].efficiency;
           }
+          // Migration: Add age and hiredDate to old employees
+          if (dev.age === undefined) {
+            // Estimate age based on tier
+            const ageRanges = [[22, 28], [26, 35], [32, 45], [38, 52], [45, 58]];
+            const [minAge, maxAge] = ageRanges[dev.tier] || [28, 35];
+            dev.age = Math.floor((minAge + maxAge) / 2); // Use middle of range
+          }
+          if (dev.hiredDate === undefined) {
+            dev.hiredDate = 0; // Assume hired at company start for old saves
+          }
+          if (dev.retirementAge === undefined) {
+            dev.retirementAge = 65;
+          }
         });
         marketers.forEach(mkt => {
           if (!mkt.skill && mkt.tier !== undefined) {
@@ -11704,6 +11928,35 @@
           // Migration: Add baseEfficiency to old employees (use current efficiency as baseline)
           if (mkt.baseEfficiency === undefined) {
             mkt.baseEfficiency = mkt.efficiency || MARKETER_TIERS[mkt.tier].efficiency;
+          }
+          // Migration: Add age and hiredDate to old employees
+          if (mkt.age === undefined) {
+            // Estimate age based on tier
+            const ageRanges = [[22, 28], [26, 35], [32, 45], [38, 52], [45, 58]];
+            const [minAge, maxAge] = ageRanges[mkt.tier] || [28, 35];
+            mkt.age = Math.floor((minAge + maxAge) / 2); // Use middle of range
+          }
+          if (mkt.hiredDate === undefined) {
+            mkt.hiredDate = 0; // Assume hired at company start for old saves
+          }
+          if (mkt.retirementAge === undefined) {
+            mkt.retirementAge = 65;
+          }
+        });
+        
+        // Migration: Add age and hiredDate to managers
+        managers.forEach(mgr => {
+          if (mgr.age === undefined) {
+            // Estimate age based on tier
+            const ageRanges = [[32, 42], [38, 50], [45, 58]];
+            const [minAge, maxAge] = ageRanges[mgr.tier] || [35, 45];
+            mgr.age = Math.floor((minAge + maxAge) / 2); // Use middle of range
+          }
+          if (mgr.hiredDate === undefined) {
+            mgr.hiredDate = 0; // Assume hired at company start for old saves
+          }
+          if (mgr.retirementAge === undefined) {
+            mgr.retirementAge = 65;
           }
         });
         
@@ -12068,6 +12321,18 @@
       if (saveLoaded) {
         // Hide new game modal if save was loaded
         document.getElementById('newGameModal').classList.remove('active');
+        
+        // Migration: Check if candidate pool needs regeneration (candidates without age property)
+        const needsPoolRegeneration = 
+          (candidatePool.developers && candidatePool.developers.length > 0 && !candidatePool.developers[0].age) ||
+          (candidatePool.marketers && candidatePool.marketers.length > 0 && !candidatePool.marketers[0].age) ||
+          (candidatePool.managers && candidatePool.managers.length > 0 && !candidatePool.managers[0].age);
+        
+        if (needsPoolRegeneration) {
+          console.log('🔄 Migrating candidate pool to include age data...');
+          generateCandidatePool();
+        }
+        
         logEvent("🎮 Welcome back to " + companyName + "!");
       } else {
         // No save found, show new game modal with random names
